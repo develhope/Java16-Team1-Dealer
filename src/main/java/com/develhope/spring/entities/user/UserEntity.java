@@ -1,14 +1,12 @@
 package com.develhope.spring.entities.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter    
+@Setter
 public class UserEntity {
 
     private Long id;
