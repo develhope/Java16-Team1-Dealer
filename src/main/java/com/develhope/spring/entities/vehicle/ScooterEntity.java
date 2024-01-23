@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Scooter")
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScooterEntity extends VehicleEntity{
