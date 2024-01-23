@@ -18,7 +18,7 @@ import java.time.OffsetDateTime;
 public class VehicleEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(nullable = false)
     private String marca;
