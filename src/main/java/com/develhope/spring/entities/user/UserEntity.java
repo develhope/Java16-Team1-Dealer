@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @Entity
-@Table(name = "account")
+@Table(name = "users")
 @SuperBuilder
 public class UserEntity {
     @Id

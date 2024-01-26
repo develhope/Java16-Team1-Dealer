@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 @Entity
-@Table(name = "Vehicle")
+@Table(name = "Vehicles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,26 +22,32 @@ public class VehicleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(nullable = false)
-    private String marca;
+    private String brand;
     @Column(nullable = false)
-    private String modello;
+    private String model;
     @Column(nullable = false)
-    private int cilindrata;
+    private int engineCapacity;
     @Column(nullable = false)
-    private String colore;
+    private String colour;
     @Column(nullable = false)
-    private int potenza;
+    private int hp;
     @Column(nullable = false)
-    private String tipoCambio;
+    @Enumerated(EnumType.STRING)
+    private GearType gearType;
     @Column(nullable = false)
-    private OffsetDateTime annoImmatricolazione;
+    private LocalDate registerYear;
     @Column(nullable = false)
-    private String alimentazione;
+    private String fuelType;
     @Column(nullable = false)
-    private BigDecimal prezzo;
+    private BigDecimal price;
     @Column(nullable = false)
-    private int scontoPrezzo;
+    private int priceDscnt;
     @Column(nullable = false)
-    private String accessori;
+    private String accessories;
+    @Column(nullable = false)
+    private Boolean rentable;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SellType sellType;
 
 }

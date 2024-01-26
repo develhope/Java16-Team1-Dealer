@@ -9,7 +9,6 @@ import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
-
 @Getter
 @Setter
 public class MotoEntity extends VehicleEntity{
