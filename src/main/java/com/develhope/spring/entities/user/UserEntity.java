@@ -26,5 +26,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String psw;
 
+    @Enumerated
+    @Column(nullable = false)
+    private UserType type;
+
 
 }
