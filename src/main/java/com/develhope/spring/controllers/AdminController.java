@@ -111,4 +111,15 @@ public class AdminController {
     public void showVehicleBestSellerInPeriodRange(){
 
     }
+
+    @GetMapping("/show/vehicle/maxPrice")
+    public void showVehicleMaxPrice(){
+
+    }
+
+    @GetMapping("/show/vehicle/maxBuyer")
+    public void showVehicleMaxBuyer(){
+
+    }
+
 }
