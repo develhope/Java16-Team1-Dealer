@@ -3,7 +3,11 @@ package com.develhope.spring.controllers;
 
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
+import com.develhope.spring.entities.user.SellerEntity;
+import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
+import com.develhope.spring.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +18,9 @@ import java.util.Optional;
 @RequestMapping(path = "/v1/seller")
 
 public class SellerController {
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping(path = "/show/vehicle/by/{id}")
     public Optional<VehicleEntity> getVehicleById(@PathVariable long id) {
