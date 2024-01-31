@@ -1,34 +1,34 @@
 package com.develhope.spring.controllers;
 
-
-import ch.qos.logback.core.net.server.Client;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
-import org.hibernate.query.Order;
+import com.develhope.spring.services.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/client")
 public class ClientController {
+
+    @Autowired
+    private OrderService orderService;
 
     @PostMapping("/neworder")
     public @ResponseBody OrderEntity newOrder(@RequestBody VehicleEntity orderableVehicle) {
         return new OrderEntity();
     }
 
-    @GetMapping("/myorders/{id}")
-    public void showOrders(@PathVariable long id) {
+    @GetMapping("/show/orders")
+    public List<OrderEntity> showOrders(@RequestParam Long id) {
+        return orderService.orderListIdClient(id);
     }
 
     @DeleteMapping("/delorder/{id}")
-    public void deleteOrder(@PathVariable long id) {
+    public void deleteOrder(@PathVariable Long id) {
     }
 
     @PostMapping("/newpurchase")
@@ -36,7 +36,7 @@ public class ClientController {
     }
 
     @GetMapping("/mypurchases/{id}")
-    public void showPurchases(@PathVariable long id) {
+    public void showPurchases(@PathVariable Long id) {
     }
 
     @PostMapping("/newrent")
@@ -45,19 +45,19 @@ public class ClientController {
     }
 
     @GetMapping("/myrents/{id}")
-    public void showRents (@PathVariable long id) {
+    public void showRents (@PathVariable Long id) {
     }
 
     @DeleteMapping("/delrent/{id}")
-    public void deleteRent(@PathVariable long id) {
+    public void deleteRent(@PathVariable Long id) {
     }
 
     @DeleteMapping("/delclient/{id}")
-    public void deleteClient(@PathVariable long id) {
+    public void deleteClient(@PathVariable Long id) {
     }
 
     @PutMapping("/updclient/{id}")
-    public @ResponseBody ClientEntity updateClient (@PathVariable long id, @RequestBody ClientEntity updClient) {
+    public @ResponseBody ClientEntity updateClient (@PathVariable Long id, @RequestBody ClientEntity updClient) {
     return new ClientEntity();
     }
 

@@ -22,21 +22,21 @@ public class OrderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @OneToOne
-    @JoinColumn(name = "id_seller", columnDefinition = "BIGINT(19) DEFAULT '0'", nullable = false)
+    @JoinColumn(name = "id_seller", nullable = false)
     private UserEntity sellerId;
     @OneToOne
-    @JoinColumn(name = "id_client", columnDefinition = "BIGINT(19) DEFAULT '0'", nullable = false)
+    @JoinColumn(name = "id_client", nullable = false)
     private UserEntity clientId;
     @OneToOne
-    @JoinColumn(name = "id_vehicle", columnDefinition = "BIGINT(19) DEFAULT '0'", nullable = false)
+    @JoinColumn(name = "id_vehicle", nullable = false)
     private VehicleEntity vehicleId;
-    @Column(name = "adv_payment", columnDefinition = "DECIMAL(20,6) DEFAULT '0.000000'", nullable = false)
+    @Column(name = "adv_payment", nullable = false)
     private BigDecimal advPayment;
-    @Column(name = "is_paid", columnDefinition = "TINYINT(3)", nullable = false)
+    @Column(name = "is_paid", nullable = false)
     private boolean isPaid;
-    @Column(name = "order_stat", columnDefinition = "ENUM('PENDING','SHIPPED','DELIVERED','CANCELLED'", nullable = false)
+    @Column(name = "order_stat", nullable = false)
     private OrderState orderState;
 
 }
