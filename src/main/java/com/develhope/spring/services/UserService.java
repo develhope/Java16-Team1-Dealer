@@ -1,11 +1,13 @@
 package com.develhope.spring.services;
 
-import com.develhope.spring.entities.user.*;
+import com.develhope.spring.entities.user.AdminEntity;
+import com.develhope.spring.entities.user.ClientEntity;
+import com.develhope.spring.entities.user.SellerEntity;
+import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -13,7 +15,7 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
 
-    public Optional<UserEntity> createUser(UserEntity user) {
+    public UserEntity createUser(UserEntity user) {
         switch (user.getType()) {
             case CLIENT -> {
                 ClientEntity client = new ClientEntity();
@@ -22,7 +24,7 @@ public class UserService {
                 client.setEmail(user.getEmail());
                 client.setPsw(user.getPsw());
                 client.setType(user.getType());
-                return Optional.of(client);
+                return userRepo.save(client);
             }
 
             case SELLER -> {
@@ -32,7 +34,7 @@ public class UserService {
                 seller.setEmail(user.getEmail());
                 seller.setPsw(user.getPsw());
                 seller.setType(user.getType());
-                return Optional.of(seller);
+                return userRepo.save(seller);
             }
             case ADMIN -> {
                 AdminEntity admin = new AdminEntity();
@@ -41,9 +43,11 @@ public class UserService {
                 admin.setEmail(user.getEmail());
                 admin.setPsw(user.getPsw());
                 admin.setType(user.getType());
-                return Optional.of(admin);
+                return userRepo.save(admin);
+            }
+            default -> {
+                return null;
             }
         }
-        return Optional.empty();
     }
 }

@@ -1,5 +1,6 @@
 package com.develhope.spring.entities.user;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,5 +1,6 @@
 package com.develhope.spring.controllers;
 
+import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(path = "/create/new/user")
-    public void userCreation(@RequestBody UserEntity user) {
-        userService.createUser(user);
+    public UserEntity userCreation(@RequestBody UserEntity user) {
+        return userService.createUser(user);
     }
 }
