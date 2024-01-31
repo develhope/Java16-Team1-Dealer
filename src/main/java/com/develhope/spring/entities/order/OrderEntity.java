@@ -1,14 +1,11 @@
 package com.develhope.spring.entities.order;
 
-import com.develhope.spring.entities.user.ClientEntity;
-import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.catalina.User;
 
 import java.math.BigDecimal;
 

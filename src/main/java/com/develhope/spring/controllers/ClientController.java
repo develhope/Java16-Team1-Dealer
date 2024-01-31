@@ -4,8 +4,6 @@ import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
-import com.develhope.spring.services.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,18 +12,12 @@ import java.util.List;
 @RequestMapping("/v1/client")
 public class ClientController {
 
-    @Autowired
-    private OrderService orderService;
-
     @PostMapping("/neworder")
     public @ResponseBody OrderEntity newOrder(@RequestBody VehicleEntity orderableVehicle) {
         return new OrderEntity();
     }
 
-    @GetMapping("/show/orders")
-    public List<OrderEntity> showOrders(@RequestParam Long id) {
-        return orderService.orderListIdClient(id);
-    }
+
 
     @DeleteMapping("/delorder/{id}")
     public void deleteOrder(@PathVariable Long id) {

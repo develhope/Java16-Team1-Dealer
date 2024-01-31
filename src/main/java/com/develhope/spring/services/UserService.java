@@ -15,6 +15,7 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
 
+
     public UserEntity createUser(UserEntity user) {
         switch (user.getType()) {
             case CLIENT -> {

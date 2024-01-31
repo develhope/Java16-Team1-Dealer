@@ -22,4 +22,8 @@ public class UserController {
     public UserEntity userCreation(@RequestBody UserEntity user) {
         return userService.createUser(user);
     }
+
+
+
+
 }
