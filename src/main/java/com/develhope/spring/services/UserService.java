@@ -1,11 +1,11 @@
 package com.develhope.spring.services;
 
+import com.develhope.spring.dto.LoginCredentials;
 import com.develhope.spring.entities.user.AdminEntity;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.repositories.UserRepository;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,21 +56,18 @@ public class UserService {
     }
 
 
-    public Boolean checkEmail(String email) {
+    public Optional<UserEntity> login(LoginCredentials loginCredentials) {
         for (UserEntity u : userRepository.findAll()) {
-            if (u.getEmail().equals(email) && !(u.getEmail().isBlank())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
-    public Boolean checkPsw(String psw) {
-        for (UserEntity u : userRepository.findAll()) {
-            if (u.getPsw().equals(psw) && !(u.getPsw().isBlank())) {
-                return true;
+            boolean emailC1 = !(u.getEmail().isBlank());
+            boolean emailC2 = (u.getEmail().equals(loginCredentials.getEmail()));
+            boolean pswC1 = !(u.getPsw().isBlank());
+            boolean pswC2 = (u.getPsw().equals(loginCredentials.getPsw()));
+
+            if (emailC1 && emailC2 && pswC1 && pswC2) {
+                return Optional.of(u);
             }
         }
-        return false;
+        return Optional.empty();
     }
 }
