@@ -4,16 +4,19 @@ import com.develhope.spring.entities.user.AdminEntity;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.user.UserEntity;
-import com.develhope.spring.repositories.UserRepo;
+import com.develhope.spring.repositories.UserRepository;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 
 @Service
 public class UserService {
 
     @Autowired
-    private UserRepo userRepo;
+    private UserRepository userRepository;
 
 
     public UserEntity createUser(UserEntity user) {
@@ -25,7 +28,7 @@ public class UserService {
                 client.setEmail(user.getEmail());
                 client.setPsw(user.getPsw());
                 client.setType(user.getType());
-                return userRepo.save(client);
+                return userRepository.save(client);
             }
 
             case SELLER -> {
@@ -35,7 +38,7 @@ public class UserService {
                 seller.setEmail(user.getEmail());
                 seller.setPsw(user.getPsw());
                 seller.setType(user.getType());
-                return userRepo.save(seller);
+                return userRepository.save(seller);
             }
             case ADMIN -> {
                 AdminEntity admin = new AdminEntity();
@@ -44,11 +47,30 @@ public class UserService {
                 admin.setEmail(user.getEmail());
                 admin.setPsw(user.getPsw());
                 admin.setType(user.getType());
-                return userRepo.save(admin);
+                return userRepository.save(admin);
             }
             default -> {
                 return null;
             }
         }
+    }
+
+
+    public Boolean checkEmail(String email) {
+        for (UserEntity u : userRepository.findAll()) {
+            if (u.getEmail().equals(email) && !(u.getEmail().isBlank())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Boolean checkPsw(String psw) {
+        for (UserEntity u : userRepository.findAll()) {
+            if (u.getPsw().equals(psw) && !(u.getPsw().isBlank())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
