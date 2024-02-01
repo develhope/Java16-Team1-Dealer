@@ -5,14 +5,11 @@ import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.repositories.UserRepository;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
-
-import static java.awt.geom.Path2D.contains;
 
 
 @Service
@@ -59,11 +56,21 @@ public class UserService {
     }
 
 
-    public void checkEmail(UserEntity user) {
-
-        Optional< UserEntity> toCheckUser = userRepository.findById(user.getId());
-        if(userRepository.existsById(user.getId())) {
-
+    public Boolean checkEmail(String email) {
+        for (UserEntity u : userRepository.findAll()) {
+            if (u.getEmail().equals(email) && !(u.getEmail().isBlank())) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    public Boolean checkPsw(String psw) {
+        for (UserEntity u : userRepository.findAll()) {
+            if (u.getPsw().equals(psw) && !(u.getPsw().isBlank())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
