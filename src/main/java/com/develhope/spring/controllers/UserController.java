@@ -1,13 +1,10 @@
 package com.develhope.spring.controllers;
 
-import com.develhope.spring.entities.user.SellerEntity;
+import com.develhope.spring.dto.LoginCredentials;
 import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -23,7 +20,8 @@ public class UserController {
         return userService.createUser(user);
     }
 
-
-
-
+    @GetMapping(path = "/login")
+    public Optional<UserEntity> login(@RequestBody LoginCredentials loginCredentials) {
+        return userService.login(loginCredentials);
+    }
 }
