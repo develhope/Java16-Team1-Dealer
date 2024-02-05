@@ -32,7 +32,7 @@ public class OrderEntity {
     @Column(name = "adv_payment", nullable = false)
     private BigDecimal advPayment;
     @Column(name = "is_paid", nullable = false)
-    private boolean isPaid;
+    private Boolean isPaid;
     @Column(name = "order_stat", nullable = false)
     private OrderState orderState;
 

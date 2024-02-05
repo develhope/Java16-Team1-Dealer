@@ -11,7 +11,7 @@ import java.util.Optional;
 public class VehicleController {
 
     @PostMapping("/create/vehicle") // POST CREAZIONE VEICOLO
-    public Optional<VehicleEntity> createVehicle(@RequestBody VehicleEntity vehicle) {
+    public Optional<VehicleEntity> createVehicle(@RequestBody VehicleEntity vehicle, @RequestParam String type) {
         return null;
     }
 

@@ -1,9 +1,12 @@
 package com.develhope.spring.controllers;
 
+import com.develhope.spring.dto.IdLogin;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
+import com.develhope.spring.services.ClientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,10 +14,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/client")
 public class ClientController {
+    @Autowired
+    private IdLogin idLogin;
+
+    @Autowired
+    private ClientService clientService;
 
     @PostMapping("/create/order")
-    public @ResponseBody OrderEntity newOrder(@RequestBody VehicleEntity orderableVehicle) {
-        return new OrderEntity();
+    public @ResponseBody OrderEntity newOrder(
+            @RequestBody(required = true) OrderEntity order,
+            @RequestParam(name = "id_seller" , required = true) Long idSeller,
+            @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
+
+        return clientService.newOrder(order, idSeller, idVehicle, idLogin.getId());
     }
 
     @GetMapping("/show/order/list")
