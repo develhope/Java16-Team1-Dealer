@@ -1,16 +1,12 @@
 package com.develhope.spring.entities.order;
 
-import com.develhope.spring.entities.user.ClientEntity;
-import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
+
 
 
 @Data

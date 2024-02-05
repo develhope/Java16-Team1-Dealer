@@ -1,6 +1,5 @@
 package com.develhope.spring.controllers;
 
-import com.develhope.spring.dto.IdLogin;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.user.ClientEntity;
@@ -43,11 +42,12 @@ public class ClientController {
             @RequestBody(required = true) OrderEntity order,
             @RequestParam(name = "id_seller" , required = true) Long idSeller,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
-        return null;
+        return clientService.newPurchase(order, idSeller, idVehicle);
     }
 
     @GetMapping("/show/purchase/list")
-    public void showPurchases(@PathVariable Long id) {
+    public @ResponseBody List<OrderEntity> showPurchases() {
+        return clientService.purhcaseList();
     }
 
     @PostMapping("/create/rent")

@@ -2,11 +2,7 @@ package com.develhope.spring.services;
 
 import com.develhope.spring.dto.IdLogin;
 import com.develhope.spring.entities.order.OrderEntity;
-import com.develhope.spring.entities.order.OrderState;
 import com.develhope.spring.entities.order.OrderType;
-import com.develhope.spring.entities.user.ClientEntity;
-import com.develhope.spring.entities.user.SellerEntity;
-import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
@@ -29,7 +25,6 @@ public class ClientService {
     @Autowired
     private OrderRepository orderRepository;
 
-
     public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
         VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
         if (vehicle.getSellType().equals(SellType.ORDERABLE)) {
@@ -47,7 +42,6 @@ public class ClientService {
         }
 
     }
-
     public OrderEntity newOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle) {
         OrderEntity order = createOrder(orderEntity, idSeller, idVehicle, idLogin.getId());
         if (order != null) {
@@ -84,7 +78,6 @@ public class ClientService {
 
     }
 
-
     public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle) {
         OrderEntity purchase = createPurchase(orderEntity, idSeller, idVehicle, idLogin.getId());
         if (purchase != null) {
@@ -94,6 +87,9 @@ public class ClientService {
         }
     }
 
+    public List<OrderEntity> purhcaseList() {
+        return orderRepository.showListPurchase(idLogin.getId());
+    }
 
 
 
