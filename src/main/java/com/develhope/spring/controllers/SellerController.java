@@ -2,8 +2,10 @@ package com.develhope.spring.controllers;
 
 
 import com.develhope.spring.entities.order.OrderEntity;
+import com.develhope.spring.entities.order.OrderState;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
+import com.develhope.spring.services.SellerService;
 import com.develhope.spring.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,8 @@ import java.util.Optional;
 public class SellerController {
 
     @Autowired
-    private UserService userService;
+    private SellerService sellerService;
+
 
     @GetMapping(path = "/show/vehicle/by/{id}")
     public Optional<VehicleEntity> getVehicleById(@PathVariable Long id) {
@@ -26,28 +29,35 @@ public class SellerController {
     }
 
     @PostMapping(path = "/create/order")
-    public Optional<OrderEntity> createOrderFromVehicle() {
-        return null;
+    @ResponseBody
+    public OrderEntity newOrder(
+            @RequestBody(required = true) OrderEntity order,
+            @RequestParam(name = "id_client" , required = true) Long idClient,
+            @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
+        return sellerService.newOrder(order, idClient, idVehicle);
     }
-
-    @DeleteMapping(path = "/delete/order/{id}")
-    public Optional<OrderEntity> deleteOrder() {
-        return null;
+    @PutMapping(path = "/update/status/order/cancelled/{idOrder}")
+    @ResponseBody
+    public OrderEntity deleteOrder(
+            @PathVariable(name = "idOrder" ) Long id) {
+        return sellerService.updateStatusCancelled(id);
     }
+    @PatchMapping(path = "/update/order/{idOrder}")
+    public OrderEntity editOrder(
+            @PathVariable(name = "idOrder" ) Long idOrder,
+            @RequestBody OrderEntity order) {
 
-    @PatchMapping(path = "/update/order/{id}")
-    public Optional<OrderEntity> editOrder() {
-        return null;
+        return sellerService.updateOrder(order, idOrder);
     }
 
     @GetMapping(path = "/show/order/{id}")
-    public Optional<OrderEntity> checkOrder(@PathVariable Long id) {
-        return null;
+    public OrderEntity checkOrder(@PathVariable(name = "id") Long id) {
+        return sellerService.checkOrder(id);
     }
 
     @GetMapping(path = "/show/order/list/by/status")
-    public List<OrderEntity> checkAllOrdersByStatus() {
-        return null;
+    public List<OrderEntity> checkAllOrdersByStatus(@RequestParam(name = "status")OrderState status) {
+        return sellerService.checkAllOrdersByStatus(status);
     }
 
     @PostMapping(path = "/create/rent")

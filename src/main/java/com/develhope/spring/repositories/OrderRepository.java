@@ -1,6 +1,7 @@
 package com.develhope.spring.repositories;
 
 import com.develhope.spring.entities.order.OrderEntity;
+import com.develhope.spring.entities.order.OrderState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +21,10 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     @Query(value = "SELECT * FROM orders AS o WHERE o.id_client = :idClient AND o.order_type = 'ORDER'",nativeQuery = true)
     List<OrderEntity> showListPurchase(@Param("idClient")Long idClient);
+
+    @Query(value = "SELECT * FROM orders AS o WHERE o.order_stat = :#{#status.toString().toUpperCase()}",nativeQuery = true)
+    List<OrderEntity> showListByStatus(@Param("status") OrderState status);
+
 
 
 }

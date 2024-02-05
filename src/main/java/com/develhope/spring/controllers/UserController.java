@@ -28,6 +28,7 @@ public class UserController {
     public Optional<IdLogin> login(@RequestBody LoginCredentials loginCredentials) {
         Optional<UserEntity> user = userService.login(loginCredentials);
         idLogin.setId(user.get().getId());
-        return Optional.of(idLogin);
+        idLogin.setType(user.get().getType().toString());
+        return Optional.ofNullable(idLogin);
     }
 }

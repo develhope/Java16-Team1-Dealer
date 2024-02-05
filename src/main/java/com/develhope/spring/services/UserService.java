@@ -28,6 +28,7 @@ public class UserService {
                 client.setEmail(user.getEmail());
                 client.setPsw(user.getPsw());
                 client.setType(user.getType());
+
                 return userRepository.save(client);
             }
 

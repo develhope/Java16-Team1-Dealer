@@ -14,4 +14,6 @@ import org.springframework.stereotype.Component;
 public class IdLogin {
 
     private Long id;
+
+    private String type;
 }

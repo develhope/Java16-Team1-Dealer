@@ -43,16 +43,23 @@ public class ClientService {
 
     }
     public OrderEntity newOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle) {
-        OrderEntity order = createOrder(orderEntity, idSeller, idVehicle, idLogin.getId());
-        if (order != null) {
-            return orderRepository.save(order);
-        } else {
-            return null;
+        if(idLogin.getType().equals("CLIENT")){
+            OrderEntity order = createOrder(orderEntity, idSeller, idVehicle, idLogin.getId());
+            if (order != null) {
+                return orderRepository.save(order);
+            } else {
+                return null;
+            }
         }
+        return null;
     }
 
     public List<OrderEntity> orderEntityList() {
-        return orderRepository.showListOrder(idLogin.getId());
+        if(idLogin.getType().equals("CLIENT")){
+            return orderRepository.showListOrder(idLogin.getId());
+        }else{
+            return null;
+        }
     }
 
     public OrderEntity updateStatusCancelled(Long idOrder) {
@@ -79,16 +86,24 @@ public class ClientService {
     }
 
     public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle) {
-        OrderEntity purchase = createPurchase(orderEntity, idSeller, idVehicle, idLogin.getId());
-        if (purchase != null) {
-            return orderRepository.save(purchase);
-        } else {
-            return null;
+        if(idLogin.getType().equals("CLIENT")){
+            OrderEntity purchase = createPurchase(orderEntity, idSeller, idVehicle, idLogin.getId());
+            if (purchase != null) {
+                return orderRepository.save(purchase);
+            } else {
+                return null;
+            }
         }
+        return null;
+
     }
 
     public List<OrderEntity> purhcaseList() {
-        return orderRepository.showListPurchase(idLogin.getId());
+        if(idLogin.getType().equals("CLIENT")){
+            return orderRepository.showListPurchase(idLogin.getId());
+        }else{
+            return null;
+        }
     }
 
 
