@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Transactional
 @Service
 public class ClientService {
     @Autowired
@@ -59,7 +59,8 @@ public class ClientService {
     }
 
     public OrderEntity updateStatusCancelled(Long idOrder) {
-        return orderRepository.updateStatusCancelledOrderWithId(idOrder);
+        orderRepository.updateStatusCancelledOrderWithId(idOrder);
+        return orderRepository.findById(idOrder).get();
     }
 
 

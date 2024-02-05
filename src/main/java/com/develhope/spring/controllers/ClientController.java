@@ -32,8 +32,8 @@ public class ClientController {
         return clientService.orderEntityList();
     }
 
-    @DeleteMapping("/delete/order/{id}")
-    public OrderEntity updateStatusCancelledId(@PathVariable(name = "idOrder" ) Long id) {
+    @PutMapping("/update/status/order/cancelled/{idOrder}")
+    public @ResponseBody OrderEntity updateStatusCancelledId(@PathVariable(name = "idOrder" ) Long id) {
         return clientService.updateStatusCancelled(id);
     }
 
