@@ -1,5 +1,9 @@
 package com.develhope.spring.entities.vehicle;
 
+import com.develhope.spring.entities.order.OrderEntity;
+import com.develhope.spring.entities.rent.RentEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +13,10 @@ import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.List;
+
 @Entity
-@Table(name = "Vehicles")
+@Table(name = "vehicle")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -49,5 +55,13 @@ public class VehicleEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private SellType sellType;
+
+    @OneToMany(mappedBy = "vehicleId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<OrderEntity> orderList;
+
+    @OneToMany(mappedBy = "vehicleId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<RentEntity> rentList;
 
 }

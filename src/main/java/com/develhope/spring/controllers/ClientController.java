@@ -15,27 +15,26 @@ import java.util.List;
 @RequestMapping("/v1/client")
 public class ClientController {
     @Autowired
-    private IdLogin idLogin;
-
-    @Autowired
     private ClientService clientService;
 
     @PostMapping("/create/order")
-    public @ResponseBody OrderEntity newOrder(
+    @ResponseBody
+    public OrderEntity newOrder(
             @RequestBody(required = true) OrderEntity order,
             @RequestParam(name = "id_seller" , required = true) Long idSeller,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
 
-        return clientService.newOrder(order, idSeller, idVehicle, idLogin.getId());
+        return clientService.newOrder(order, idSeller, idVehicle);
     }
 
     @GetMapping("/show/order/list")
     public @ResponseBody List<OrderEntity> orderEntityList() {
-        return null;
+        return clientService.orderEntityList();
     }
 
     @DeleteMapping("/delete/order/{id}")
-    public void deleteOrder(@PathVariable Long id) {
+    public OrderEntity updateStatusCancelledId(@PathVariable(name = "idOrder" ) Long id) {
+        return clientService.updateStatusCancelled(id);
     }
 
     @PostMapping("/create/purchase")

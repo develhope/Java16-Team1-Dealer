@@ -3,8 +3,11 @@ package com.develhope.spring.entities.rent;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,24 +15,27 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "rents")
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class RentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_seller")
-    private SellerEntity sellerEntity;
+    private SellerEntity sellerId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_client")
-    private ClientEntity clientEntity;
+    private ClientEntity clientId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_vehicle")
-    private VehicleEntity vehicleEntity;
+    private VehicleEntity vehicleId;
 
     @Column(name = "starting_date")
     private LocalDateTime startingDate;
