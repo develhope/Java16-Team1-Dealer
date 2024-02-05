@@ -1,5 +1,6 @@
 package com.develhope.spring.controllers;
 
+import com.develhope.spring.dto.IdLogin;
 import com.develhope.spring.dto.LoginCredentials;
 import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.services.UserService;
@@ -15,13 +16,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private IdLogin idLogin;
+
     @PostMapping(path = "/create/new/user")
     public UserEntity userCreation(@RequestBody UserEntity user) {
         return userService.createUser(user);
     }
 
     @GetMapping(path = "/login")
-    public Optional<UserEntity> login(@RequestBody LoginCredentials loginCredentials) {
-        return userService.login(loginCredentials);
+    public Optional<IdLogin> login(@RequestBody LoginCredentials loginCredentials) {
+        Optional<UserEntity> user = userService.login(loginCredentials);
+        idLogin.setId(user.get().getId());
+        return Optional.of(idLogin);
     }
 }
