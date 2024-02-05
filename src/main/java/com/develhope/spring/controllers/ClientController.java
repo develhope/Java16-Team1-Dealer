@@ -38,7 +38,12 @@ public class ClientController {
     }
 
     @PostMapping("/create/purchase")
-    public void newPurchase(@RequestBody VehicleEntity purchasableVehicle) {
+    @ResponseBody
+    public OrderEntity createPurchase(
+            @RequestBody(required = true) OrderEntity order,
+            @RequestParam(name = "id_seller" , required = true) Long idSeller,
+            @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
+        return null;
     }
 
     @GetMapping("/show/purchase/list")

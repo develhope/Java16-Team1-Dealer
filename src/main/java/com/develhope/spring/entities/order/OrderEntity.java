@@ -36,7 +36,6 @@ public class OrderEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_vehicle", nullable = false)
-//    @JsonBackReference("vehicleId")
     private VehicleEntity vehicleId;
 
     @Column(name = "adv_payment", nullable = false)
@@ -49,4 +48,7 @@ public class OrderEntity {
     @Enumerated(EnumType.STRING)
     private OrderState orderState;
 
+    @Column(name = "order_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OrderType orderType;
 }

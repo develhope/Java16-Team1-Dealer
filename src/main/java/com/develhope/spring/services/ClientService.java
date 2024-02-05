@@ -2,6 +2,8 @@ package com.develhope.spring.services;
 
 import com.develhope.spring.dto.IdLogin;
 import com.develhope.spring.entities.order.OrderEntity;
+import com.develhope.spring.entities.order.OrderState;
+import com.develhope.spring.entities.order.OrderType;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.user.UserEntity;
@@ -32,6 +34,7 @@ public class ClientService {
         VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
         if (vehicle.getSellType().equals(SellType.ORDERABLE)) {
             OrderEntity newOrder = new OrderEntity();
+            newOrder.setOrderType(OrderType.ORDER);
             newOrder.setOrderState(orderEntity.getOrderState());
             newOrder.setAdvPayment(orderEntity.getAdvPayment());
             newOrder.setIsPaid(orderEntity.getIsPaid());
@@ -62,6 +65,42 @@ public class ClientService {
         orderRepository.updateStatusCancelledOrderWithId(idOrder);
         return orderRepository.findById(idOrder).get();
     }
+
+    public OrderEntity createPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
+        VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
+        if (vehicle.getSellType().equals(SellType.RFD)) {
+            OrderEntity newOrder = new OrderEntity();
+            newOrder.setOrderType(OrderType.PURCHASE);
+            newOrder.setOrderState(orderEntity.getOrderState());
+            newOrder.setAdvPayment(orderEntity.getAdvPayment());
+            newOrder.setIsPaid(orderEntity.getIsPaid());
+            newOrder.setVehicleId(vehicleRepository.findById(idVehicle).get());
+            newOrder.setClientId(clientRepository.findById(idClient).get());
+            newOrder.setSellerId(sellerRepository.findById(idSeller).get());
+            return newOrder;
+        } else {
+            return null;
+        }
+
+    }
+
+
+    public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle) {
+        OrderEntity purchase = createPurchase(orderEntity, idSeller, idVehicle, idLogin.getId());
+        if (purchase != null) {
+            return orderRepository.save(purchase);
+        } else {
+            return null;
+        }
+    }
+
+
+
+
+
+
+
+
 
 
 }
