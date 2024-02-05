@@ -33,7 +33,7 @@ public class ClientService {
             newOrder.setOrderState(orderEntity.getOrderState());
             newOrder.setAdvPayment(orderEntity.getAdvPayment());
             newOrder.setIsPaid(orderEntity.getIsPaid());
-            newOrder.setVehicleId(vehicleRepository.findById(idVehicle).get());
+            newOrder.setVehicleId(vehicle);
             newOrder.setClientId(clientRepository.findById(idClient).get());
             newOrder.setSellerId(sellerRepository.findById(idSeller).get());
             return newOrder;
@@ -75,7 +75,7 @@ public class ClientService {
             newOrder.setOrderState(orderEntity.getOrderState());
             newOrder.setAdvPayment(orderEntity.getAdvPayment());
             newOrder.setIsPaid(orderEntity.getIsPaid());
-            newOrder.setVehicleId(vehicleRepository.findById(idVehicle).get());
+            newOrder.setVehicleId(vehicle);
             newOrder.setClientId(clientRepository.findById(idClient).get());
             newOrder.setSellerId(sellerRepository.findById(idSeller).get());
             return newOrder;

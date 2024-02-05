@@ -15,7 +15,7 @@ public class AdminController {
     @PostMapping("/create/order/client")
     public OrderEntity createOrder(
             @RequestBody(required = true) OrderEntity order,
-            @RequestParam(name = "id_seller" , required = true) Long idSeller,
+            @RequestParam(name = "id_seller", required = true) Long idSeller,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle,
             @RequestParam(name = "id_client", required = true) Long idClient
     ) {
@@ -51,16 +51,30 @@ public class AdminController {
     }
 
     @PostMapping("/create/purchase/client")
-    public void createPurchase() {
+    @ResponseBody
+    public OrderEntity createPurchase(
+            @RequestBody(required = true) OrderEntity order,
+            @RequestParam(name = "id_seller", required = true) Long idSeller,
+            @RequestParam(name = "id_vehicle", required = true) Long idVehicle,
+            @RequestParam(name = "id_client", required = true) Long idClient) {
+
+        return adminService.createPurchase(order, idSeller, idVehicle, idClient);
     }
 
-    @DeleteMapping("/update/purchase/client/{idOrder}")
-    public void deletePurchase() {
+    @PutMapping("/update/status/purchase/client/cancelled/{idOrder}")
+    @ResponseBody
+    public OrderEntity updateStatusCancelledIdPurchase(
+            @PathVariable(name = "idOrder") Long id
+    ) {
+        return adminService.updateStatusCancelledPurchase(id);
     }
 
     @PatchMapping("/update/purchase/client/{idOrder}")
-    public OrderEntity updatePurchase() {
-        return new OrderEntity();
+    @ResponseBody
+    public OrderEntity updatePurchase(
+            @RequestBody OrderEntity order,
+            @PathVariable(name = "idOrder") Long idOrder) {
+        return adminService.updatePurchase(order, idOrder);
     }
 
     @GetMapping("/show/seller/orders/qty")
@@ -99,42 +113,42 @@ public class AdminController {
     }
 
     @GetMapping("/show/vehicle/notAvaiable")
-    public void showAllVehicleNotAvailable(){
+    public void showAllVehicleNotAvailable() {
 
     }
 
     @DeleteMapping("/delete/user/{id}")
-    public void deleteSingleUser(){
+    public void deleteSingleUser() {
 
     }
 
     @PatchMapping("/update/user/{id}")
-    public void updateSingleUser(){
+    public void updateSingleUser() {
 
     }
 
     @DeleteMapping("/delete/seller/{id}")
-    public void deleteSingleSeller(){
+    public void deleteSingleSeller() {
 
     }
 
     @PatchMapping("/update/seller/{id}")
-    public void updateSingleSeller(){
+    public void updateSingleSeller() {
 
     }
 
     @GetMapping("/show/vehicle/bestSeller/period")
-    public void showVehicleBestSellerInPeriodRange(){
+    public void showVehicleBestSellerInPeriodRange() {
 
     }
 
     @GetMapping("/show/vehicle/maxPrice")
-    public void showVehicleMaxPrice(){
+    public void showVehicleMaxPrice() {
 
     }
 
     @GetMapping("/show/vehicle/maxBuyer")
-    public void showVehicleMaxBuyer(){
+    public void showVehicleMaxBuyer() {
 
     }
 

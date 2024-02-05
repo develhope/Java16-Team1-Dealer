@@ -22,9 +22,12 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     @Query(value = "SELECT * FROM orders AS o WHERE o.id_client = :idClient AND o.order_type = 'PURCHASE'",nativeQuery = true)
     List<OrderEntity> showListPurchase(@Param("idClient")Long idClient);
 
-    @Query(value = "SELECT * FROM orders AS o WHERE o.order_stat = :#{#status.toString().toUpperCase()}",nativeQuery = true)
+    @Query(value = "SELECT * FROM orders AS o WHERE o.order_stat = :#{#status.toString()}",nativeQuery = true)
     List<OrderEntity> showListByStatus(@Param("status") OrderState status);
 
+    @Modifying
+    @Query(value = "UPDATE orders AS o SET o.order_stat = 'CANCELED' WHERE o.id = :idOrder AND o.order_type = 'PURCHASE'",nativeQuery = true)
+    void updateStatusCancelledPurchaseWithId(@Param("idOrder") Long idOrder);
 
 
 }
