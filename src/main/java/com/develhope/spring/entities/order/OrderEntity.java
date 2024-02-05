@@ -34,6 +34,7 @@ public class OrderEntity {
     @Column(name = "is_paid", nullable = false)
     private Boolean isPaid;
     @Column(name = "order_stat", nullable = false)
+    @Enumerated(EnumType.STRING)
     private OrderState orderState;
 
 }
