@@ -12,53 +12,56 @@ import java.util.List;
 @RequestMapping("/v1/client")
 public class ClientController {
 
-    @PostMapping("/neworder")
+    @PostMapping("/create/order")
     public @ResponseBody OrderEntity newOrder(@RequestBody VehicleEntity orderableVehicle) {
         return new OrderEntity();
     }
 
+    @GetMapping("/show/order/list")
+    public @ResponseBody List<OrderEntity> orderEntityList() {
+        return null;
+    }
 
-
-    @DeleteMapping("/delorder/{id}")
+    @DeleteMapping("/delete/order/{id}")
     public void deleteOrder(@PathVariable Long id) {
     }
 
-    @PostMapping("/newpurchase")
+    @PostMapping("/create/purchase")
     public void newPurchase(@RequestBody VehicleEntity purchasableVehicle) {
     }
 
-    @GetMapping("/mypurchases/{id}")
+    @GetMapping("/show/purchase/list")
     public void showPurchases(@PathVariable Long id) {
     }
 
-    @PostMapping("/newrent")
+    @PostMapping("/create/rent")
     public @ResponseBody RentEntity newRent (@RequestBody RentEntity rent) {
         return new RentEntity();
     }
 
-    @GetMapping("/myrents/{id}")
+    @GetMapping("/show/rent/list")
     public void showRents (@PathVariable Long id) {
     }
 
-    @DeleteMapping("/delrent/{id}")
+    @DeleteMapping("/delete/rent/{id}")
     public void deleteRent(@PathVariable Long id) {
     }
 
-    @DeleteMapping("/delclient/{id}")
+    @DeleteMapping("/delete/myaccount")
     public void deleteClient(@PathVariable Long id) {
     }
 
-    @PutMapping("/updclient/{id}")
+    @PutMapping("/upgrade/myaccount")
     public @ResponseBody ClientEntity updateClient (@PathVariable Long id, @RequestBody ClientEntity updClient) {
     return new ClientEntity();
     }
 
-    @GetMapping("/findvehicle")
+    @GetMapping("/show/list/vehicle/by/filter")
     public @ResponseBody VehicleEntity showVehicle() {
         return new VehicleEntity();
     }
 
-
+    // DA RIVEDERE NON LO GESTIREI IN QUESTO MODO
     @GetMapping("/findbyprice")
     public void findVehicleByPrice() {
     }
