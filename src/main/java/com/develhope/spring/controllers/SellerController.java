@@ -3,8 +3,6 @@ package com.develhope.spring.controllers;
 
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
-import com.develhope.spring.entities.user.SellerEntity;
-import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,36 +21,31 @@ public class SellerController {
     private UserService userService;
 
     @GetMapping(path = "/show/vehicle/by/{id}")
-    public Optional<VehicleEntity> getVehicleById(@PathVariable long id) {
+    public Optional<VehicleEntity> getVehicleById(@PathVariable Long id) {
         return null;
     }
 
-    @PostMapping(path = "/create/order/from/vehicle")
+    @PostMapping(path = "/create/order")
     public Optional<OrderEntity> createOrderFromVehicle() {
         return null;
     }
 
-    @DeleteMapping(path = "/delete/order")
+    @DeleteMapping(path = "/delete/order/{id}")
     public Optional<OrderEntity> deleteOrder() {
         return null;
     }
 
-    @PatchMapping(path = "/update/order")
+    @PatchMapping(path = "/update/order/{id}")
     public Optional<OrderEntity> editOrder() {
         return null;
     }
 
-    @GetMapping(path = "/show/order/by/{id}")
-    public Optional<OrderEntity> checkOrder(@PathVariable long id) {
+    @GetMapping(path = "/show/order/{id}")
+    public Optional<OrderEntity> checkOrder(@PathVariable Long id) {
         return null;
     }
 
-    @PatchMapping(path = "/update/order/by/{id}")
-    public Optional<OrderEntity> updateOrder() {
-        return null;
-    }
-
-    @GetMapping(path = "/check/all/orders/by/status")
+    @GetMapping(path = "/show/order/list/by/status")
     public List<OrderEntity> checkAllOrdersByStatus() {
         return null;
     }
@@ -67,7 +60,7 @@ public class SellerController {
         return null;
     }
 
-    @PatchMapping(path = "/update/rent")
+    @PatchMapping(path = "/update/rent/{id}")
     public Optional<RentEntity> editRent() {
         return null;
     }
