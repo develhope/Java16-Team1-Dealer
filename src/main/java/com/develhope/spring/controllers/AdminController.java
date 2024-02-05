@@ -1,24 +1,40 @@
 package com.develhope.spring.controllers;
 
 import com.develhope.spring.entities.order.OrderEntity;
+import com.develhope.spring.services.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/admin")
+@RequestMapping("/v1/admin")
 @RestController
 public class AdminController {
 
-    @PostMapping("/create/client/order")
-    public OrderEntity createOrder() {
-        return new OrderEntity();
+    @Autowired
+    private AdminService adminService;
+
+    @PostMapping("/create/order/client")
+    public OrderEntity createOrder(
+            @RequestBody(required = true) OrderEntity order,
+            @RequestParam(name = "id_seller", required = true) Long idSeller,
+            @RequestParam(name = "id_vehicle", required = true) Long idVehicle,
+            @RequestParam(name = "id_client", required = true) Long idClient
+    ) {
+        return adminService.createOrder(order, idSeller, idVehicle, idClient);
     }
 
-    @DeleteMapping("/delete/client/order")
-    public void deleteOrder() {
+    @PutMapping("/update/status/order/client/cancelled/{idOrder}")
+    @ResponseBody
+    public OrderEntity deleteOrder(
+            @PathVariable(name = "idOrder") Long idOrder) {
+        return adminService.updateStatusCancelled(idOrder);
     }
 
-    @PatchMapping("/update/client/order")
-    public OrderEntity updateOrder() {
-        return new OrderEntity();
+    @PatchMapping("/update/order/client/{idOrder}")
+    @ResponseBody
+    public OrderEntity updateOrder(
+            @RequestBody OrderEntity order,
+            @PathVariable(name = "idOrder") Long idOrder) {
+        return adminService.updateOrder(order, idOrder);
     }
 
     @PostMapping("/create/client/rent")
@@ -34,17 +50,31 @@ public class AdminController {
         return new OrderEntity();
     }
 
-    @PostMapping("/create/client/purchase")
-    public void createPurchase() {
+    @PostMapping("/create/purchase/client")
+    @ResponseBody
+    public OrderEntity createPurchase(
+            @RequestBody(required = true) OrderEntity order,
+            @RequestParam(name = "id_seller", required = true) Long idSeller,
+            @RequestParam(name = "id_vehicle", required = true) Long idVehicle,
+            @RequestParam(name = "id_client", required = true) Long idClient) {
+
+        return adminService.createPurchase(order, idSeller, idVehicle, idClient);
     }
 
-    @DeleteMapping("/delete/client/purchase")
-    public void deletePurchase() {
+    @PutMapping("/update/status/purchase/client/cancelled/{idOrder}")
+    @ResponseBody
+    public OrderEntity updateStatusCancelledIdPurchase(
+            @PathVariable(name = "idOrder") Long id
+    ) {
+        return adminService.updateStatusCancelledPurchase(id);
     }
 
-    @PatchMapping("/update/client/purchase")
-    public OrderEntity updatePurchase() {
-        return new OrderEntity();
+    @PatchMapping("/update/purchase/client/{idOrder}")
+    @ResponseBody
+    public OrderEntity updatePurchase(
+            @RequestBody OrderEntity order,
+            @PathVariable(name = "idOrder") Long idOrder) {
+        return adminService.updatePurchase(order, idOrder);
     }
 
     @GetMapping("/show/seller/orders/qty")
@@ -83,42 +113,42 @@ public class AdminController {
     }
 
     @GetMapping("/show/vehicle/notAvaiable")
-    public void showAllVehicleNotAvailable(){
+    public void showAllVehicleNotAvailable() {
 
     }
 
     @DeleteMapping("/delete/user/{id}")
-    public void deleteSingleUser(){
+    public void deleteSingleUser() {
 
     }
 
     @PatchMapping("/update/user/{id}")
-    public void updateSingleUser(){
+    public void updateSingleUser() {
 
     }
 
     @DeleteMapping("/delete/seller/{id}")
-    public void deleteSingleSeller(){
+    public void deleteSingleSeller() {
 
     }
 
     @PatchMapping("/update/seller/{id}")
-    public void updateSingleSeller(){
+    public void updateSingleSeller() {
 
     }
 
     @GetMapping("/show/vehicle/bestSeller/period")
-    public void showVehicleBestSellerInPeriodRange(){
+    public void showVehicleBestSellerInPeriodRange() {
 
     }
 
     @GetMapping("/show/vehicle/maxPrice")
-    public void showVehicleMaxPrice(){
+    public void showVehicleMaxPrice() {
 
     }
 
     @GetMapping("/show/vehicle/maxBuyer")
-    public void showVehicleMaxBuyer(){
+    public void showVehicleMaxBuyer() {
 
     }
 

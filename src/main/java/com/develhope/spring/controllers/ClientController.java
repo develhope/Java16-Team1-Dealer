@@ -4,6 +4,8 @@ import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
+import com.develhope.spring.services.ClientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,27 +13,41 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/client")
 public class ClientController {
+    @Autowired
+    private ClientService clientService;
 
     @PostMapping("/create/order")
-    public @ResponseBody OrderEntity newOrder(@RequestBody VehicleEntity orderableVehicle) {
-        return new OrderEntity();
+    @ResponseBody
+    public OrderEntity newOrder(
+            @RequestBody(required = true) OrderEntity order,
+            @RequestParam(name = "id_seller" , required = true) Long idSeller,
+            @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
+
+        return clientService.newOrder(order, idSeller, idVehicle);
     }
 
     @GetMapping("/show/order/list")
     public @ResponseBody List<OrderEntity> orderEntityList() {
-        return null;
+        return clientService.orderEntityList();
     }
 
-    @DeleteMapping("/delete/order/{id}")
-    public void deleteOrder(@PathVariable Long id) {
+    @PutMapping("/update/status/order/cancelled/{idOrder}")
+    public @ResponseBody OrderEntity updateStatusCancelledId(@PathVariable(name = "idOrder" ) Long id) {
+        return clientService.updateStatusCancelled(id);
     }
 
     @PostMapping("/create/purchase")
-    public void newPurchase(@RequestBody VehicleEntity purchasableVehicle) {
+    @ResponseBody
+    public OrderEntity createPurchase(
+            @RequestBody(required = true) OrderEntity order,
+            @RequestParam(name = "id_seller" , required = true) Long idSeller,
+            @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
+        return clientService.newPurchase(order, idSeller, idVehicle);
     }
 
     @GetMapping("/show/purchase/list")
-    public void showPurchases(@PathVariable Long id) {
+    public @ResponseBody List<OrderEntity> showPurchases() {
+        return clientService.purhcaseList();
     }
 
     @PostMapping("/create/rent")
