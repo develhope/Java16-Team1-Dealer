@@ -1,24 +1,40 @@
 package com.develhope.spring.controllers;
 
 import com.develhope.spring.entities.order.OrderEntity;
+import com.develhope.spring.services.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/admin")
+@RequestMapping("/v1/admin")
 @RestController
 public class AdminController {
 
-    @PostMapping("/create/client/order")
-    public OrderEntity createOrder() {
-        return new OrderEntity();
+    @Autowired
+    private AdminService adminService;
+
+    @PostMapping("/create/order/client")
+    public OrderEntity createOrder(
+            @RequestBody(required = true) OrderEntity order,
+            @RequestParam(name = "id_seller" , required = true) Long idSeller,
+            @RequestParam(name = "id_vehicle", required = true) Long idVehicle,
+            @RequestParam(name = "id_client", required = true) Long idClient
+    ) {
+        return adminService.createOrder(order, idSeller, idVehicle, idClient);
     }
 
-    @DeleteMapping("/delete/client/order")
-    public void deleteOrder() {
+    @PutMapping("/update/status/order/client/cancelled/{idOrder}")
+    @ResponseBody
+    public OrderEntity deleteOrder(
+            @PathVariable(name = "idOrder") Long idOrder) {
+        return adminService.updateStatusCancelled(idOrder);
     }
 
-    @PatchMapping("/update/client/order")
-    public OrderEntity updateOrder() {
-        return new OrderEntity();
+    @PatchMapping("/update/order/client/{idOrder}")
+    @ResponseBody
+    public OrderEntity updateOrder(
+            @RequestBody OrderEntity order,
+            @PathVariable(name = "idOrder") Long idOrder) {
+        return adminService.updateOrder(order, idOrder);
     }
 
     @PostMapping("/create/client/rent")
@@ -34,15 +50,15 @@ public class AdminController {
         return new OrderEntity();
     }
 
-    @PostMapping("/create/client/purchase")
+    @PostMapping("/create/purchase/client")
     public void createPurchase() {
     }
 
-    @DeleteMapping("/delete/client/purchase")
+    @DeleteMapping("/update/purchase/client/{idOrder}")
     public void deletePurchase() {
     }
 
-    @PatchMapping("/update/client/purchase")
+    @PatchMapping("/update/purchase/client/{idOrder}")
     public OrderEntity updatePurchase() {
         return new OrderEntity();
     }
