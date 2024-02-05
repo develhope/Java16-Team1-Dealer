@@ -1,6 +1,8 @@
 package com.develhope.spring.controllers;
 
 import com.develhope.spring.entities.vehicle.VehicleEntity;
+import com.develhope.spring.services.VehicleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,9 +12,12 @@ import java.util.Optional;
 @RequestMapping("/v1/vehicles")
 public class VehicleController {
 
+    @Autowired
+    private VehicleService vehicleService;
+
     @PostMapping("/create/vehicle") // POST CREAZIONE VEICOLO
-    public Optional<VehicleEntity> createVehicle(@RequestBody VehicleEntity vehicle, @RequestParam String type) {
-        return null;
+    public VehicleEntity createVehicle(@RequestBody VehicleEntity vehicle, @RequestParam String type) {
+        return vehicleService.newVehicle(vehicle, type);
     }
 
     @GetMapping("/show/list") // GET TUTTI I VEICOLI
