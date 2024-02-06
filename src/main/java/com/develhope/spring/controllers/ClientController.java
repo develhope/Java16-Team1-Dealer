@@ -51,10 +51,13 @@ public class ClientController {
     }
 
     @PostMapping("/create/rent")
-    public @ResponseBody RentEntity newRent (@RequestBody RentEntity rent) {
-        return new RentEntity();
+    @ResponseBody
+    public RentEntity newRent (@RequestBody(required = true) RentEntity rent,
+                               @RequestParam(name = "id_seller", required = true) Long idSeller,
+                               @RequestParam(name = "id_client", required = true) Long idClient,
+                               @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
+        return clientService.newRent(rent, idSeller, idClient, idVehicle);
     }
-
     @GetMapping("/show/rent/list")
     public void showRents (@PathVariable Long id) {
     }
