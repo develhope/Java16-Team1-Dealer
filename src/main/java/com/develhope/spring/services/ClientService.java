@@ -116,9 +116,17 @@ public class ClientService {
 
     }
 
-    public List<OrderEntity> purhcaseList() {
+    public List<OrderEntity> purchaseList() {
         if(idLogin.getType().equals("CLIENT")){
             return orderRepository.showListPurchase(idLogin.getId());
+        }else{
+            return null;
+        }
+    }
+
+    public List<RentEntity> showRents() {
+        if(idLogin.getType().equals("CLIENT")){
+            return rentRepository.showRentList(idLogin.getId());
         }else{
             return null;
         }
@@ -137,6 +145,9 @@ public class ClientService {
     }
 
 
-
-
+    public void deleteRent(Long id) {
+        if(idLogin.getType().equals("CLIENT")){
+            rentRepository.customDeleteById(idLogin.getId(),id);
+        }
+    }
 }
