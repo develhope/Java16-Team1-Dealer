@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -83,6 +84,14 @@ public class SellerService {
     public List<OrderEntity> checkAllOrdersByStatus(OrderState status) {
             return orderRepository.showListByStatus(status);
 
+    }
+
+    public Optional<VehicleEntity> getVehicleById(long id) {
+        Optional<VehicleEntity> vehicle = vehicleRepository.findById(id);
+        if (vehicle.isPresent()) {
+            return vehicle;
+        }
+        return Optional.empty();
     }
 
 
