@@ -3,6 +3,7 @@ package com.develhope.spring.services;
 import com.develhope.spring.dto.IdLogin;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderType;
+import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
@@ -10,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @Transactional
 @Service
@@ -24,6 +26,9 @@ public class ClientService {
     private VehicleRepository vehicleRepository;
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private RentRepository rentRepository;
 
     public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
         VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
@@ -43,23 +48,18 @@ public class ClientService {
 
     }
     public OrderEntity newOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle) {
-        if(idLogin.getType().equals("CLIENT")){
             OrderEntity order = createOrder(orderEntity, idSeller, idVehicle, idLogin.getId());
             if (order != null) {
                 return orderRepository.save(order);
             } else {
                 return null;
             }
-        }
-        return null;
+
     }
 
     public List<OrderEntity> orderEntityList() {
-        if(idLogin.getType().equals("CLIENT")){
             return orderRepository.showListOrder(idLogin.getId());
-        }else{
-            return null;
-        }
+
     }
 
     public OrderEntity updateStatusCancelled(Long idOrder) {
@@ -85,33 +85,52 @@ public class ClientService {
 
     }
 
+    public RentEntity createRent(RentEntity rentEntity, Long idSeller, Long idClient, Long idVehicle) {
+        RentEntity rent = new RentEntity();
+        rent.setClientId(clientRepository.findById(idClient).get());
+        rent.setSellerId(sellerRepository.findById(idSeller).get());
+        rent.setVehicleId(vehicleRepository.findById(idVehicle).get());
+        rent.setStartingDate(LocalDateTime.now());
+        rent.setEndingDate(rentEntity.getEndingDate());
+        rent.setDailyFee(rentEntity.getDailyFee());
+        rent.setTotalFee(rentEntity.getTotalFee());
+        rent.setIsPaid(rentEntity.getIsPaid());
+        return rent;
+    }
+
     public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle) {
-        if(idLogin.getType().equals("CLIENT")){
+
             OrderEntity purchase = createPurchase(orderEntity, idSeller, idVehicle, idLogin.getId());
             if (purchase != null) {
                 return orderRepository.save(purchase);
             } else {
                 return null;
             }
-        }
-        return null;
+
 
     }
 
-    public List<OrderEntity> purhcaseList() {
-        if(idLogin.getType().equals("CLIENT")){
+    public List<OrderEntity> purchaseList() {
             return orderRepository.showListPurchase(idLogin.getId());
-        }else{
-            return null;
-        }
+
+    }
+
+    public List<RentEntity> showRents() {
+            return rentRepository.showRentList(idLogin.getId());
+    }
+
+    public RentEntity newRent(RentEntity rentEntity, Long idSeller, Long idClient, Long idVehicle) {
+            RentEntity rent = createRent(rentEntity,idSeller,idClient,idVehicle);
+            if(rent != null) {
+                return rentRepository.save(rent);
+            } else {
+                return null;
+            }
+
     }
 
 
-
-
-
-
-
-
-
+    public void deleteRent(Long id) {
+            rentRepository.customDeleteById(idLogin.getId(),id);
+    }
 }
