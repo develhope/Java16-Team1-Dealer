@@ -72,9 +72,10 @@ public class ClientController {
     public void deleteClient(@PathVariable Long id) {
     }
 
-    @PutMapping("/upgrade/myaccount")
-    public @ResponseBody ClientEntity updateClient (@PathVariable Long id, @RequestBody ClientEntity updClient) {
-    return new ClientEntity();
+    @PatchMapping("/upgrade/myaccount")
+    @ResponseBody
+    public ClientEntity updateClient (@RequestBody ClientEntity updClient) {
+    return clientService.updateAccount(updClient);
     }
 
     @GetMapping("/show/list/vehicle/by/filter")
