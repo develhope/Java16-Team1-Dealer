@@ -23,9 +23,9 @@ public class SellerController {
     private SellerService sellerService;
 
 
-    @GetMapping(path = "/show/vehicle/by/{id}")
+    @GetMapping(path = "/show/vehicle/id/{id}")
     public Optional<VehicleEntity> getVehicleById(@PathVariable Long id) {
-        return null;
+        return sellerService.getVehicleById(id);
     }
 
     @PostMapping(path = "/create/order")
