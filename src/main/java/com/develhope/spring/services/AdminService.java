@@ -1,14 +1,19 @@
 package com.develhope.spring.services;
 
 import com.develhope.spring.dto.IdLogin;
+import com.develhope.spring.dto.RentDto;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderType;
+import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -26,6 +31,8 @@ public class AdminService {
     private OrderRepository orderRepository;
     @Autowired
     private AdminRepository adminRepository;
+    @Autowired
+    private RentRepository rentRepository;
 
     public OrderEntity newOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
         VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
@@ -45,7 +52,11 @@ public class AdminService {
     }
 
     public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
+        if (idLogin.getType().equals("ADMIN")) {
             return orderRepository.save(newOrder(orderEntity, idSeller, idVehicle, idClient));
+        } else {
+            return null;
+        }
     }
 
     public OrderEntity updateStatusCancelled(Long idOrder) {
@@ -54,6 +65,7 @@ public class AdminService {
     }
 
     public OrderEntity updateOrder(OrderEntity orderEntity, Long idOrder) {
+        if (idLogin.getType().equals("ADMIN")) {
             OrderEntity order = orderRepository.findById(idOrder).get();
             if (orderEntity.getOrderType() != null) {
                 order.setOrderType(orderEntity.getOrderType());
@@ -65,6 +77,10 @@ public class AdminService {
                 order.setAdvPayment(orderEntity.getAdvPayment());
             }
             return orderRepository.save(order);
+        } else {
+            return null;
+        }
+
     }
 
     public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
@@ -83,10 +99,12 @@ public class AdminService {
             return null;
         }
     }
-
     public OrderEntity createPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        return orderRepository.save(newPurchase(orderEntity, idSeller, idVehicle, idClient));
-
+        if (idLogin.getType().equals("ADMIN")) {
+            return orderRepository.save(newPurchase(orderEntity, idSeller, idVehicle, idClient));
+        } else {
+            return null;
+        }
     }
 
     public OrderEntity updateStatusCancelledPurchase(Long idOrder) {
@@ -95,18 +113,47 @@ public class AdminService {
     }
 
     public OrderEntity updatePurchase(OrderEntity orderEntity, Long idOrder) {
-        OrderEntity order = orderRepository.findById(idOrder).get();
-        if (orderEntity.getOrderType() != null) {
-            order.setOrderType(orderEntity.getOrderType());
+        if (idLogin.getType().equals("ADMIN")) {
+            OrderEntity order = orderRepository.findById(idOrder).get();
+            if (orderEntity.getOrderType() != null) {
+                order.setOrderType(orderEntity.getOrderType());
+            }
+            if (orderEntity.getOrderState() != null) {
+                order.setOrderState(orderEntity.getOrderState());
+            }
+            if (orderEntity.getAdvPayment() != null) {
+                order.setAdvPayment(orderEntity.getAdvPayment());
+            }
+            return orderRepository.save(order);
+        } else {
+            return null;
         }
-        if (orderEntity.getOrderState() != null) {
-            order.setOrderState(orderEntity.getOrderState());
-        }
-        if (orderEntity.getAdvPayment() != null) {
-            order.setAdvPayment(orderEntity.getAdvPayment());
-        }
-        return orderRepository.save(order);
+
     }
+
+    public RentEntity newRent(RentDto rentDto){
+        VehicleEntity vehicle = vehicleRepository.findById(rentDto.getIdVehicle()).get();
+        if(vehicle.getRentable()){
+            RentEntity newRent = new RentEntity();
+            newRent.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
+            newRent.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
+            newRent.setVehicleId(vehicleRepository.findById(rentDto.getIdVehicle()).get());
+            newRent.setStartingDate(rentDto.getStartRent());
+            newRent.setEndingDate(rentDto.getEndRent());
+            newRent.setDailyFee(rentDto.getDailyFee());
+            newRent.setTotalFee(rentDto.getTotalFee());
+            newRent.setIsPaid(true);
+            vehicle.setRentable(false);
+            return newRent;
+        }else {
+            return null;
+        }
+    }
+
+    public RentEntity createRent(RentDto rentDto){
+        return rentRepository.save(newRent(rentDto));
+    }
+
 
 
 }

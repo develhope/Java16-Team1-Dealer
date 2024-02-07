@@ -5,9 +5,7 @@ import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,6 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "rents")
+@Getter
+@Setter
 //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class RentEntity {
 

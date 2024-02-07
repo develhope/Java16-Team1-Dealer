@@ -1,9 +1,14 @@
 package com.develhope.spring.controllers;
 
+import com.develhope.spring.dto.RentDto;
 import com.develhope.spring.entities.order.OrderEntity;
+import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @RequestMapping("/v1/admin")
 @RestController
@@ -38,7 +43,9 @@ public class AdminController {
     }
 
     @PostMapping("/create/client/rent")
-    public void createRent() {
+    @ResponseBody
+    public RentEntity createRent(@RequestBody RentDto rentDto){
+        return adminService.createRent(rentDto);
     }
 
     @DeleteMapping("/delete/client/rent")
