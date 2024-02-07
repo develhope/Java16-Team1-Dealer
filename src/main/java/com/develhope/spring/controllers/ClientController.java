@@ -47,20 +47,25 @@ public class ClientController {
 
     @GetMapping("/show/purchase/list")
     public @ResponseBody List<OrderEntity> showPurchases() {
-        return clientService.purhcaseList();
+        return clientService.purchaseList();
     }
 
     @PostMapping("/create/rent")
-    public @ResponseBody RentEntity newRent (@RequestBody RentEntity rent) {
-        return new RentEntity();
+    @ResponseBody
+    public RentEntity newRent (@RequestBody(required = true) RentEntity rent,
+                               @RequestParam(name = "id_seller", required = true) Long idSeller,
+                               @RequestParam(name = "id_client", required = true) Long idClient,
+                               @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
+        return clientService.newRent(rent, idSeller, idClient, idVehicle);
     }
-
     @GetMapping("/show/rent/list")
-    public void showRents (@PathVariable Long id) {
+    public @ResponseBody List<RentEntity> showRents () {
+        return clientService.showRents();
     }
 
     @DeleteMapping("/delete/rent/{id}")
     public void deleteRent(@PathVariable Long id) {
+        clientService.deleteRent(id);
     }
 
     @DeleteMapping("/delete/myaccount")
@@ -95,19 +100,4 @@ public class ClientController {
     }
 
 }
-/*
 
-    Un cliente potrà:
-
-        Creare un ordine a partire da un veicolo contrassegnato come ordinabile
-        Vedere i propri ordini
-        Cancellare un ordine
-        Creare un acquisto a partire da un veicolo contrassegnato come acquistabile
-        Vedere i propri acquisti
-        Creare un noleggio
-        Vedere i propri noleggi
-        Cancellare un noleggio
-        Cancellare la propria utenza
-        Modificare i dati dell’utente
-        Ricercare un veicolo secondo diversi criteri (prezzo, colore, marca, modello, ecc)
-        Ottenere i dettagli di un veicolo specifico*/
