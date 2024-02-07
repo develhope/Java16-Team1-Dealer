@@ -3,12 +3,16 @@ package com.develhope.spring.services;
 import com.develhope.spring.dto.IdLogin;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderType;
+import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -26,6 +30,8 @@ public class AdminService {
     private OrderRepository orderRepository;
     @Autowired
     private AdminRepository adminRepository;
+    @Autowired
+    private RentRepository rentRepository;
 
     public OrderEntity newOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
         VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
@@ -122,6 +128,29 @@ public class AdminService {
             return null;
         }
 
+    }
+
+    public RentEntity newRent(Long idSeller, Long idClient, Long idVehicle, LocalDateTime startRent, LocalDateTime endRent, BigDecimal dailyFee, BigDecimal totalFee, Boolean isPaid){
+        VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
+        if(vehicle.getRentable()){
+            RentEntity newRent = new RentEntity();
+            newRent.setClientId(clientRepository.findById(idClient).get());
+            newRent.setSellerId(sellerRepository.findById(idSeller).get());
+            newRent.setVehicleId(vehicleRepository.findById(idVehicle).get());
+            newRent.setStartingDate(startRent);
+            newRent.setEndingDate(endRent);
+            newRent.setDailyFee(dailyFee);
+            newRent.setTotalFee(totalFee);
+            newRent.setIsPaid(isPaid);
+            vehicle.setRentable(false);
+            return newRent;
+        }else{
+            return null;
+        }
+    }
+
+    public RentEntity createRent(Long idSeller, Long idClient, Long idVehicle, LocalDateTime startRent, LocalDateTime endRent, BigDecimal dailyFee, BigDecimal totalFee, Boolean isPaid){
+        return rentRepository.save(newRent(idSeller,idClient,idVehicle,startRent,endRent,dailyFee,totalFee,isPaid));
     }
 
 }
