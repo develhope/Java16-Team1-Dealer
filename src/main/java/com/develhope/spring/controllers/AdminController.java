@@ -1,5 +1,6 @@
 package com.develhope.spring.controllers;
 
+import com.develhope.spring.dto.RentDto;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.services.AdminService;
@@ -42,15 +43,9 @@ public class AdminController {
     }
 
     @PostMapping("/create/client/rent")
-    public RentEntity createRent(@RequestParam(name = "id_seller", required = true) Long idAdmin,
-                                 @RequestParam(name = "id_vehicle", required = true) Long idVehicle,
-                                 @RequestParam(name = "id_client", required = true) Long idClient,
-                                 @RequestParam(name = "stating_date", required = true) LocalDateTime startRent,
-                                 @RequestParam(name = "ending_date", required = true) LocalDateTime endRent,
-                                 @RequestParam(name = "daily_fee", required = true) BigDecimal dailyFee,
-                                 @RequestParam(name = "total_fee", required = true) BigDecimal totalFee,
-                                 @RequestParam(name = "is_paid", required = true) Boolean isPaid){
-        return adminService.createRent(idAdmin,idVehicle,idClient,startRent,endRent,dailyFee,totalFee,isPaid);
+    @ResponseBody
+    public RentEntity createRent(@RequestBody RentDto rentDto){
+        return adminService.createRent(rentDto);
     }
 
     @DeleteMapping("/delete/client/rent")
