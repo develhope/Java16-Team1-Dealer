@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -152,6 +153,33 @@ public class AdminService {
 
     public RentEntity createRent(RentDto rentDto){
         return rentRepository.save(newRent(rentDto));
+    }
+
+    public RentEntity updateRent(Long idRent, RentDto rentDto){
+        for(RentEntity r : rentRepository.findAll()){
+            if(Objects.equals(r.getId(), idRent)) {
+                if (rentDto.getIdSeller() != null) {
+                    r.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
+                }
+                if (rentDto.getIdClient() != null) {
+                    r.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
+                }
+                if (rentDto.getIdVehicle() != null) {
+                    r.setVehicleId(vehicleRepository.findById(rentDto.getIdVehicle()).get());
+                }
+                if (rentDto.getEndRent() != null) {
+                    r.setEndingDate(rentDto.getEndRent());
+                }
+                if (rentDto.getDailyFee() != null) {
+                    r.setDailyFee(rentDto.getDailyFee());
+                }
+                if (rentDto.getTotalFee() != null) {
+                    r.setTotalFee(rentDto.getTotalFee());
+                }
+                return rentRepository.save(r);
+            }
+        }
+        return null;
     }
 
 

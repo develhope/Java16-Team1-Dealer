@@ -52,9 +52,9 @@ public class AdminController {
     public void deleteRent() {
     }
 
-    @PatchMapping("/update/client/rent")
-    public OrderEntity updateRent() {
-        return new OrderEntity();
+    @PatchMapping("/update/client/rent/{id}")
+    public RentEntity updateRent(@PathVariable Long id, @RequestBody RentDto rentDto) {
+        return adminService.updateRent(id,rentDto);
     }
 
     @PostMapping("/create/purchase/client")
