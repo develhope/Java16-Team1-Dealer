@@ -4,6 +4,7 @@ import com.develhope.spring.dto.IdLogin;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderType;
 import com.develhope.spring.entities.rent.RentEntity;
+import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
@@ -29,6 +30,29 @@ public class ClientService {
 
     @Autowired
     private RentRepository rentRepository;
+
+
+    public ClientEntity updateAccount(ClientEntity clientEntity) {
+        ClientEntity client = clientRepository.findById(idLogin.getId()).get();
+        if(clientEntity.getName() != null){
+            client.setName(clientEntity.getName());
+        }
+        if(clientEntity.getSurname() != null){
+            client.setSurname(clientEntity.getSurname());
+        }
+        if(clientEntity.getPhone() != null){
+            client.setPhone(clientEntity.getPhone());
+        }
+        if(clientEntity.getPsw() != null){
+            client.setPsw(clientEntity.getPsw());
+        }
+
+        return clientRepository.save(client);
+
+    }
+
+
+
 
     public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
         VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
