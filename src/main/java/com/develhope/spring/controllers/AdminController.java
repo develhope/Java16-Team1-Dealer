@@ -48,8 +48,9 @@ public class AdminController {
         return adminService.createRent(rentDto);
     }
 
-    @DeleteMapping("/delete/client/rent")
-    public void deleteRent() {
+    @DeleteMapping("/delete/client/rent/{id}")
+    public RentEntity deleteRent(@PathVariable Long id) {
+        return adminService.deleteRent(id);
     }
 
     @PatchMapping("/update/client/rent/{id}")

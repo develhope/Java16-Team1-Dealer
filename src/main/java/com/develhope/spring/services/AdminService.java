@@ -182,6 +182,15 @@ public class AdminService {
         return null;
     }
 
+    public RentEntity deleteRent(Long id){
+        for(RentEntity r : rentRepository.findAll()){
+            if(r.getId().equals(id)){
+                rentRepository.deleteById(r.getId());
+                return r;
+            }
+        }
+        return null;
+    }
 
 
 }
