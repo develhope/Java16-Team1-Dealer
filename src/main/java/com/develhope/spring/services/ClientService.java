@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 @Transactional
 @Service
 public class ClientService {
@@ -51,7 +53,14 @@ public class ClientService {
 
     }
 
-
+    public Optional<VehicleEntity> showVehicleID(Long idVehicle) {
+        Optional<VehicleEntity> vehicle = vehicleRepository.findById(idVehicle);
+        if(vehicle.isPresent()){
+            return vehicle;
+        }else{
+            return Optional.empty();
+        }
+    }
 
 
     public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {

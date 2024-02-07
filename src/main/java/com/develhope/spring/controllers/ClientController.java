@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/client")
@@ -20,7 +21,7 @@ public class ClientController {
     @ResponseBody
     public OrderEntity newOrder(
             @RequestBody(required = true) OrderEntity order,
-            @RequestParam(name = "id_seller" , required = true) Long idSeller,
+            @RequestParam(name = "id_seller", required = true) Long idSeller,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
 
         return clientService.newOrder(order, idSeller, idVehicle);
@@ -32,7 +33,7 @@ public class ClientController {
     }
 
     @PutMapping("/update/status/order/cancelled/{idOrder}")
-    public @ResponseBody OrderEntity updateStatusCancelledId(@PathVariable(name = "idOrder" ) Long id) {
+    public @ResponseBody OrderEntity updateStatusCancelledId(@PathVariable(name = "idOrder") Long id) {
         return clientService.updateStatusCancelled(id);
     }
 
@@ -40,7 +41,7 @@ public class ClientController {
     @ResponseBody
     public OrderEntity createPurchase(
             @RequestBody(required = true) OrderEntity order,
-            @RequestParam(name = "id_seller" , required = true) Long idSeller,
+            @RequestParam(name = "id_seller", required = true) Long idSeller,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
         return clientService.newPurchase(order, idSeller, idVehicle);
     }
@@ -52,14 +53,15 @@ public class ClientController {
 
     @PostMapping("/create/rent")
     @ResponseBody
-    public RentEntity newRent (@RequestBody(required = true) RentEntity rent,
-                               @RequestParam(name = "id_seller", required = true) Long idSeller,
-                               @RequestParam(name = "id_client", required = true) Long idClient,
-                               @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
+    public RentEntity newRent(@RequestBody(required = true) RentEntity rent,
+                              @RequestParam(name = "id_seller", required = true) Long idSeller,
+                              @RequestParam(name = "id_client", required = true) Long idClient,
+                              @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
         return clientService.newRent(rent, idSeller, idClient, idVehicle);
     }
+
     @GetMapping("/show/rent/list")
-    public @ResponseBody List<RentEntity> showRents () {
+    public @ResponseBody List<RentEntity> showRents() {
         return clientService.showRents();
     }
 
@@ -74,8 +76,14 @@ public class ClientController {
 
     @PatchMapping("/upgrade/myaccount")
     @ResponseBody
-    public ClientEntity updateClient (@RequestBody ClientEntity updClient) {
-    return clientService.updateAccount(updClient);
+    public ClientEntity updateClient(@RequestBody ClientEntity updClient) {
+        return clientService.updateAccount(updClient);
+    }
+
+    @GetMapping("/show/vehicle/{idVehicle}")
+    @ResponseBody
+    public Optional<VehicleEntity> showVehicleID(@PathVariable(name = "idVehicle") Long idVehicle) {
+        return clientService.showVehicleID(idVehicle);
     }
 
     @GetMapping("/show/list/vehicle/by/filter")
