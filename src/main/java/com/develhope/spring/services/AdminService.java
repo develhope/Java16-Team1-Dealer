@@ -45,11 +45,7 @@ public class AdminService {
     }
 
     public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        if (idLogin.getType().equals("ADMIN")) {
             return orderRepository.save(newOrder(orderEntity, idSeller, idVehicle, idClient));
-        } else {
-            return null;
-        }
     }
 
     public OrderEntity updateStatusCancelled(Long idOrder) {
@@ -58,7 +54,6 @@ public class AdminService {
     }
 
     public OrderEntity updateOrder(OrderEntity orderEntity, Long idOrder) {
-        if (idLogin.getType().equals("ADMIN")) {
             OrderEntity order = orderRepository.findById(idOrder).get();
             if (orderEntity.getOrderType() != null) {
                 order.setOrderType(orderEntity.getOrderType());
@@ -70,10 +65,6 @@ public class AdminService {
                 order.setAdvPayment(orderEntity.getAdvPayment());
             }
             return orderRepository.save(order);
-        } else {
-            return null;
-        }
-
     }
 
     public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
@@ -92,12 +83,10 @@ public class AdminService {
             return null;
         }
     }
+
     public OrderEntity createPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        if (idLogin.getType().equals("ADMIN")) {
-            return orderRepository.save(newPurchase(orderEntity, idSeller, idVehicle, idClient));
-        } else {
-            return null;
-        }
+        return orderRepository.save(newPurchase(orderEntity, idSeller, idVehicle, idClient));
+
     }
 
     public OrderEntity updateStatusCancelledPurchase(Long idOrder) {
@@ -106,22 +95,18 @@ public class AdminService {
     }
 
     public OrderEntity updatePurchase(OrderEntity orderEntity, Long idOrder) {
-        if (idLogin.getType().equals("ADMIN")) {
-            OrderEntity order = orderRepository.findById(idOrder).get();
-            if (orderEntity.getOrderType() != null) {
-                order.setOrderType(orderEntity.getOrderType());
-            }
-            if (orderEntity.getOrderState() != null) {
-                order.setOrderState(orderEntity.getOrderState());
-            }
-            if (orderEntity.getAdvPayment() != null) {
-                order.setAdvPayment(orderEntity.getAdvPayment());
-            }
-            return orderRepository.save(order);
-        } else {
-            return null;
+        OrderEntity order = orderRepository.findById(idOrder).get();
+        if (orderEntity.getOrderType() != null) {
+            order.setOrderType(orderEntity.getOrderType());
         }
-
+        if (orderEntity.getOrderState() != null) {
+            order.setOrderState(orderEntity.getOrderState());
+        }
+        if (orderEntity.getAdvPayment() != null) {
+            order.setAdvPayment(orderEntity.getAdvPayment());
+        }
+        return orderRepository.save(order);
     }
+
 
 }

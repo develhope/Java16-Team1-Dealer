@@ -47,15 +47,12 @@ public class SellerService {
     }
 
     public OrderEntity newOrder(OrderEntity orderEntity, Long idClient, Long idVehicle) {
-        if (idLogin.getType().equals("SELLER")) {
             OrderEntity order = createOrder(orderEntity, idLogin.getId(), idVehicle, idClient);
             if (order != null) {
                 return orderRepository.save(order);
             } else {
                 return null;
             }
-        }
-        return null;
     }
 
 
@@ -65,7 +62,6 @@ public class SellerService {
     }
 
     public OrderEntity updateOrder(OrderEntity orderEntity, Long idOrder) {
-        if (idLogin.getType().equals("SELLER")) {
             OrderEntity order = orderRepository.findById(idOrder).get();
             if (orderEntity.getOrderType() != null) {
                 order.setOrderType(orderEntity.getOrderType());
@@ -77,26 +73,16 @@ public class SellerService {
                 order.setAdvPayment(orderEntity.getAdvPayment());
             }
             return orderRepository.save(order);
-        }else {
-            return null;
-        }
 
     }
 
     public OrderEntity checkOrder(Long id) {
-        if (idLogin.getType().equals("SELLER")) {
             return orderRepository.findById(id).get();
-        } else {
-            return null;
-        }
     }
 
     public List<OrderEntity> checkAllOrdersByStatus(OrderState status) {
-        if(idLogin.getType().equals("SELLER")){
             return orderRepository.showListByStatus(status);
-        }else{
-            return null;
-        }
+
     }
 
 
