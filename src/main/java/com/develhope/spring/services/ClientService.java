@@ -208,10 +208,19 @@ public class ClientService {
         }
     }
 
-    public List<VehicleEntity> filterFindVehicleByRangePrice(BigDecimal minPrice, BigDecimal maxPrice) {
+    public ResponseEntity<ListVehicleFilterResponse> filterFindVehicleByRangePrice(BigDecimal minPrice, BigDecimal maxPrice) {
         BigDecimal[] price = {minPrice, maxPrice};
         Arrays.sort(price);
-        return vehicleRepository.showAllVehiclesByRangePrice(price[0], price[1]);
+        List<VehicleEntity> vehicleListFilterPrice = vehicleRepository.showAllVehiclesByRangePrice(price[0], price[1]);
+        if(vehicleListFilterPrice.size() > 0){
+            String message = "Vehicles found";
+            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(message, vehicleListFilterPrice);
+            return ResponseEntity.status(302).body(listVehicleFilterResponse);
+        }else{
+            String message = "Vehicles not found by range price";
+            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(message, Arrays.asList());
+            return ResponseEntity.status(611).body(listVehicleFilterResponse);
+        }
     }
 
     public ResponseEntity<ListVehicleFilterResponse> showAllVehiclesFilteted(String color, String brand, String model) {
