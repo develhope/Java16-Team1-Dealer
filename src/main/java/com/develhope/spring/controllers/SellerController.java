@@ -70,7 +70,7 @@ public class SellerController {
     }
 
     @DeleteMapping(path = "/delete/rent/{rentId}")
-    public Boolean deleteRent(@PathVariable (name = "rentId") long id) {
+    public Boolean deleteRent(@PathVariable(name = "rentId") long id) {
         return sellerService.deleteRent(id);
     }
 
@@ -84,6 +84,11 @@ public class SellerController {
     @GetMapping(path = "/show/all/vehicles")
     public List<VehicleEntity> getAllVehicles() {
         return sellerService.getAllVehicles();
+    }
+
+    @GetMapping(path = "show/all/vehicles/rfd")
+    public List<VehicleEntity> getAllVehiclesRfd() {
+        return sellerService.getAllVehiclesRfd();
     }
 
 }
