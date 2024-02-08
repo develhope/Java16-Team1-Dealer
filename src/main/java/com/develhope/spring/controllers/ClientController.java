@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,8 +92,10 @@ public class ClientController {
     }
 
     // DA RIVEDERE NON LO GESTIREI IN QUESTO MODO
-    @GetMapping("/findbyprice")
-    public void findVehicleByPrice() {
+    @GetMapping("/show/list/vehicle/by/rangeprice")
+    @ResponseBody
+    public List<VehicleEntity> findVehicleByRangePrice(@RequestParam(name = "minPrice") BigDecimal minPrice, @RequestParam(name = "maxPrice") BigDecimal maxPrice) {
+        return clientService.filterFindVehicleByRangePrice(minPrice, maxPrice);
     }
 
     @GetMapping("/findbycolor")
