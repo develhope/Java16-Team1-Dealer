@@ -2,11 +2,12 @@ package com.develhope.spring.entities.order;
 
 import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-
+import java.time.LocalDateTime;
 
 
 @Data
@@ -39,6 +40,9 @@ public class OrderEntity {
 
     @Column(name = "is_paid", nullable = false)
     private Boolean isPaid;
+
+    @Column(name = "date_purch")
+    private LocalDateTime datePurchase;
 
     @Column(name = "order_stat", nullable = false)
     @Enumerated(EnumType.STRING)

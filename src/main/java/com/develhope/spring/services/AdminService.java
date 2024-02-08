@@ -5,6 +5,8 @@ import com.develhope.spring.dto.RentDto;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderType;
 import com.develhope.spring.entities.rent.RentEntity;
+import com.develhope.spring.entities.user.SellerEntity;
+import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -187,6 +190,15 @@ public class AdminService {
             if(r.getId().equals(id)){
                 rentRepository.deleteById(r.getId());
                 return r;
+            }
+        }
+        return null;
+    }
+
+    public String checkNumberOfSalesSeller(Long idSeller, LocalDate firstDate, LocalDate secondDate){
+        for(SellerEntity s : sellerRepository.findAll()){
+            if(s.getId()==idSeller){
+                return "Number of purchase " + orderRepository.checkNumberOfSalesSeller(s.getId(),firstDate,secondDate);
             }
         }
         return null;

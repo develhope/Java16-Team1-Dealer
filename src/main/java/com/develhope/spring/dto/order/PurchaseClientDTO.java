@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -19,6 +20,8 @@ public class PurchaseClientDTO {
     private Boolean isPaid;
 
     private OrderState orderState;
+
+    private LocalDateTime dateOrder;
 
     private Long idSeller;
 
