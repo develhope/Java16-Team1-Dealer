@@ -4,6 +4,7 @@ import com.develhope.spring.dto.IdLogin;
 import com.develhope.spring.dto.LoginCredentials;
 import com.develhope.spring.entities.user.UserEntity;
 import com.develhope.spring.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/user")
+@Tag(name = "User Controller", description = "User Controller API")
 public class UserController {
 
     @Autowired

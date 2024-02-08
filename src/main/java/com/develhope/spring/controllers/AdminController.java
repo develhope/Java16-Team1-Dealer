@@ -4,6 +4,7 @@ import com.develhope.spring.dto.RentDto;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.services.AdminService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 
 @RequestMapping("/v1/admin")
 @RestController
+@Tag(name = "Admin Controller", description = "Admin Controller API")
 public class AdminController {
 
     @Autowired
