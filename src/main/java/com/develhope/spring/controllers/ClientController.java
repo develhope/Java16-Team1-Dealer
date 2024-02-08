@@ -6,6 +6,7 @@ import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -71,7 +72,8 @@ public class ClientController {
     }
 
     @DeleteMapping("/delete/myaccount")
-    public void deleteClient(@PathVariable Long id) {
+    public ResponseEntity<ClientEntity> deleteClient() {
+        return clientService.deleteAccount();
     }
 
     @PatchMapping("/upgrade/myaccount")

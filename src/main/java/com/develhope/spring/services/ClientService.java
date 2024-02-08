@@ -10,6 +10,7 @@ import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,14 @@ public class ClientService {
 
     @Autowired
     private RentRepository rentRepository;
+
+    public ResponseEntity<ClientEntity> deleteAccount() {
+        ClientEntity client = clientRepository.findById(idLogin.getId()).get();
+        clientRepository.delete(client);
+        return ResponseEntity.ok(client);
+    }
+
+
 
 
     public ClientEntity updateAccount(ClientEntity clientEntity) {
