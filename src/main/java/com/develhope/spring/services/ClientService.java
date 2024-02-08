@@ -11,9 +11,9 @@ import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
-import com.develhope.spring.response.ClientErrorResponse;
+import com.develhope.spring.response.order.ListOrderResponse;
+import com.develhope.spring.response.order.OrderResponse;
 import jakarta.transaction.Transactional;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -76,7 +76,7 @@ public class ClientService {
     }
 
 
-    public ResponseEntity<ClientErrorResponse> createOrder(OrderClientDTO orderClientDTO) {
+    public ResponseEntity<OrderResponse> createOrder(OrderClientDTO orderClientDTO) {
         OrderEntity newOrder = new OrderEntity();
         VehicleEntity vehicle;
         SellerEntity seller;
@@ -86,8 +86,8 @@ public class ClientService {
             seller = sellerRepository.findById(orderClientDTO.getIdSeller()).get();
         } else {
             String message = "Seller with id " + orderClientDTO.getIdSeller() + " does not exist";
-            ClientErrorResponse clientErrorResponse = new ClientErrorResponse(message, newOrder);
-            return ResponseEntity.status(601).body(clientErrorResponse);
+            OrderResponse orderResponse = new OrderResponse(message, newOrder);
+            return ResponseEntity.status(601).body(orderResponse);
         }
 
         if (vehicleRepository.existsById(orderClientDTO.getIdVehicle())) {
@@ -102,22 +102,32 @@ public class ClientService {
                 newOrder.setSellerId(seller);
                 orderRepository.save(newOrder);
                 String message = "Order created";
-                ClientErrorResponse clientErrorResponse = new ClientErrorResponse(message, newOrder);
-                return ResponseEntity.status(201).body(clientErrorResponse);
+                OrderResponse orderResponse = new OrderResponse(message, newOrder);
+                return ResponseEntity.status(201).body(orderResponse);
             } else {
                 String message = "Vehicle with id " + orderClientDTO.getIdVehicle() + " is not orderable";
-                ClientErrorResponse clientErrorResponse = new ClientErrorResponse(message, newOrder);
-                return ResponseEntity.status(602).body(clientErrorResponse);
+                OrderResponse orderResponse = new OrderResponse(message, newOrder);
+                return ResponseEntity.status(602).body(orderResponse);
             }
         }else {
             String message = "Vehicle with id " + orderClientDTO.getIdVehicle() + " does not exist";
-            ClientErrorResponse clientErrorResponse = new ClientErrorResponse(message, newOrder);
-            return ResponseEntity.status(600).body(clientErrorResponse);
+            OrderResponse orderResponse = new OrderResponse(message, newOrder);
+            return ResponseEntity.status(600).body(orderResponse);
         }
     }
 
-    public List<OrderEntity> orderEntityList() {
-        return orderRepository.showListOrder(idLogin.getId());
+    public ResponseEntity<ListOrderResponse> orderEntityList() {
+        List<OrderEntity> listOrder = orderRepository.showListOrder(idLogin.getId());
+        if(listOrder.size() > 0){
+            String message = "Orders found";
+            ListOrderResponse listOrderResponse = new ListOrderResponse(message, listOrder);
+            return ResponseEntity.status(200).body(listOrderResponse);
+        }else {
+            String message = "Orders not found";
+            ListOrderResponse listOrderResponse = new ListOrderResponse(message, Arrays.asList());
+            return ResponseEntity.status(404).body(listOrderResponse);
+        }
+
 
     }
 

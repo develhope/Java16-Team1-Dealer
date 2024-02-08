@@ -1,4 +1,4 @@
-package com.develhope.spring.response;
+package com.develhope.spring.response.order;
 
 import com.develhope.spring.entities.order.OrderEntity;
 import lombok.AllArgsConstructor;
@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class ClientErrorResponse {
+public class OrderResponse {
 
     private String messageError;
     private OrderEntity orderEntity;

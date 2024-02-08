@@ -6,10 +6,10 @@ import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
-import com.develhope.spring.response.ClientErrorResponse;
+import com.develhope.spring.response.order.ListOrderResponse;
+import com.develhope.spring.response.order.OrderResponse;
 import com.develhope.spring.services.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +32,17 @@ public class ClientController {
     @ApiResponse(responseCode = "602", description = "Vehicle is not orderable")
     @PostMapping("/create/order")
     @ResponseBody
-    public ResponseEntity<ClientErrorResponse> newOrder(
+    public ResponseEntity<OrderResponse> newOrder(
             @RequestBody(required = true) OrderClientDTO orderClientDTO) {
         return clientService.createOrder(orderClientDTO);
     }
 
     @Operation(summary = "Get all Orders")
+    @ApiResponse(responseCode = "200", description = "Orders found")
+    @ApiResponse(responseCode = "404", description = "Orders not found")
     @GetMapping("/show/order/list")
-    public @ResponseBody List<OrderEntity> orderEntityList() {
+    @ResponseBody
+    public ResponseEntity<ListOrderResponse> orderEntityList() {
         return clientService.orderEntityList();
     }
 
