@@ -1,10 +1,12 @@
 package com.develhope.spring.services;
 
 import com.develhope.spring.dto.IdLogin;
+import com.develhope.spring.dto.OrderClientDTO;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderType;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.user.ClientEntity;
+import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
@@ -72,25 +74,27 @@ public class ClientService {
     }
 
 
-    public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
-        if (vehicle.getSellType().equals(SellType.ORDERABLE)) {
+    public OrderEntity createOrder(OrderClientDTO orderClientDTO) {
+        VehicleEntity vehicle = vehicleRepository.findById(orderClientDTO.getIdVehicle()).get();
+        ClientEntity client = clientRepository.findById(idLogin.getId()).get();
+        SellerEntity seller = sellerRepository.findById(orderClientDTO.getIdSeller()).get();
+        if (vehicle.getSellType().equals(SellType.ORDERABLE) && vehicle != null) {
             OrderEntity newOrder = new OrderEntity();
             newOrder.setOrderType(OrderType.ORDER);
-            newOrder.setOrderState(orderEntity.getOrderState());
-            newOrder.setAdvPayment(orderEntity.getAdvPayment());
-            newOrder.setIsPaid(orderEntity.getIsPaid());
+            newOrder.setOrderState(orderClientDTO.getOrderState());
+            newOrder.setAdvPayment(orderClientDTO.getAdvPayment());
+            newOrder.setIsPaid(orderClientDTO.getIsPaid());
             newOrder.setVehicleId(vehicle);
-            newOrder.setClientId(clientRepository.findById(idClient).get());
-            newOrder.setSellerId(sellerRepository.findById(idSeller).get());
+            newOrder.setClientId(client);
+            newOrder.setSellerId(seller);
             return newOrder;
         } else {
             return null;
         }
 
     }
-    public OrderEntity newOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle) {
-            OrderEntity order = createOrder(orderEntity, idSeller, idVehicle, idLogin.getId());
+    public OrderEntity newOrder(OrderClientDTO orderClientDTO) {
+            OrderEntity order = createOrder(orderClientDTO);
             if (order != null) {
                 return orderRepository.save(order);
             } else {
