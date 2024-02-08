@@ -143,4 +143,14 @@ public class SellerService {
     }
 
 
+    public Boolean deleteRent (Long rendToDeleteId) {
+        Optional<RentEntity> toDeleteRent = rentRepository.findById(rendToDeleteId);
+        if (toDeleteRent.isPresent()) {
+            rentRepository.deleteById(rendToDeleteId);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
