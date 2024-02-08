@@ -21,8 +21,8 @@ public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
     @Query(value = "SELECT * FROM vehicle AS v WHERE v.price >= :min AND v.price <= :max", nativeQuery = true)
     List<VehicleEntity> showAllVehiclesByRangePrice(@Param("min") BigDecimal minPrice, @Param("max") BigDecimal maxPrice);
 
-
-
+    @Query(value = "SELECT * FROM vehicle AS v WHERE v.brand LIKE %:brand% OR v.colour LIKE %:color% OR v.model LIKE %:model%", nativeQuery = true)
+    List<VehicleEntity> showAllVehiclesFiltered(@Param("color") String color, @Param("brand") String brand, @Param("model") String model);
 
 
 

@@ -87,27 +87,19 @@ public class ClientController {
     }
 
     @GetMapping("/show/list/vehicle/by/filter")
-    public @ResponseBody VehicleEntity showVehicle() {
-        return new VehicleEntity();
+    @ResponseBody
+    public List<VehicleEntity> showVehicle(
+            @RequestParam(name = "brand", required = false) String brand,
+            @RequestParam(name = "model", required = false) String model,
+            @RequestParam(name = "color", required = false) String color) {
+        return clientService.showAllVehiclesFilteted(color, brand, model);
     }
-
-    // DA RIVEDERE NON LO GESTIREI IN QUESTO MODO
     @GetMapping("/show/list/vehicle/by/rangeprice")
     @ResponseBody
-    public List<VehicleEntity> findVehicleByRangePrice(@RequestParam(name = "minPrice") BigDecimal minPrice, @RequestParam(name = "maxPrice") BigDecimal maxPrice) {
+    public List<VehicleEntity> findVehicleByRangePrice(
+            @RequestParam(name = "minPrice", required = true) BigDecimal minPrice,
+            @RequestParam(name = "maxPrice", required = true) BigDecimal maxPrice) {
         return clientService.filterFindVehicleByRangePrice(minPrice, maxPrice);
-    }
-
-    @GetMapping("/findbycolor")
-    public void findVehicleByColor() {
-    }
-
-    @GetMapping("/findbymodel")
-    public void findVehicleByModel() {
-    }
-
-    @GetMapping("/findbybrand")
-    public void findVehicleByBrand() {
     }
 
 }

@@ -155,7 +155,24 @@ public class ClientService {
         return vehicleRepository.showAllVehiclesByRangePrice(price[0], price[1]);
     }
 
+    public List<VehicleEntity> showAllVehiclesFilteted(String color, String brand, String model) {
+        if(color == null){
+            color = " ";
+        }
+        if(brand == null){
+            brand = " ";
+        }
+        if(model == null){
+            model = " ";
+        }
 
+        if(color == " " && brand == " " && model == " ") {
+            return vehicleRepository.findAll();
+        }else {
+            return vehicleRepository.showAllVehiclesFiltered(color,brand,model);
+        }
+
+    }
 
 
 
