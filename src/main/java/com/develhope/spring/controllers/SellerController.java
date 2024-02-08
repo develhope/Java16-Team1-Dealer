@@ -69,9 +69,9 @@ public class SellerController {
         return sellerService.newRent(rent, idClient, idVehicle);
     }
 
-    @DeleteMapping(path = "/delete/rent")
-    public Optional<RentEntity> deleteRent() {
-        return null;
+    @DeleteMapping(path = "/delete/rent/{rentId}")
+    public Boolean deleteRent(@PathVariable (name = "rentId") long id) {
+        return sellerService.deleteRent(id);
     }
 
     @PatchMapping(path = "/update/rent/{rentId}")
