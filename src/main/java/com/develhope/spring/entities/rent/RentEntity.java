@@ -3,7 +3,6 @@ package com.develhope.spring.entities.rent;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -52,4 +51,6 @@ public class RentEntity {
     @Column(name = "is_paid")
     private Boolean isPaid;
 
+    @Enumerated(EnumType.STRING)
+    private RentStatus rentStatus;
 }
