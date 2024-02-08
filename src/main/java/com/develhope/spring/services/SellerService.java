@@ -161,4 +161,8 @@ public class SellerService {
          return vehicleRepository.showAllVehiclesRfd();
     }
 
+    public List<VehicleEntity> getAllRentableVehicles() {
+        return vehicleRepository.showAllRentableVehicles();
+    }
+
 }

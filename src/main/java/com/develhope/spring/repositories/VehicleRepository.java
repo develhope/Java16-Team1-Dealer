@@ -12,4 +12,9 @@ public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
 
     @Query(value = "SELECT * FROM vehicle AS v WHERE v.sell_type = 'RFD'", nativeQuery = true)
     List<VehicleEntity> showAllVehiclesRfd();
+
+    @Query(value = "SELECT * FROM vehicle AS v WHERE v.rentable = TRUE AND v.sell_type IN ('RFD', 'USED')", nativeQuery = true)
+    List<VehicleEntity> showAllRentableVehicles();
+
+
 }
