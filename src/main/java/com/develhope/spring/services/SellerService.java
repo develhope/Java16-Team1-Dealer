@@ -5,6 +5,7 @@ import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderState;
 import com.develhope.spring.entities.order.OrderType;
 import com.develhope.spring.entities.rent.RentEntity;
+import com.develhope.spring.entities.rent.RentStatus;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
@@ -12,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,6 +113,7 @@ public class SellerService {
             newRent.setDailyFee(rent.getDailyFee());
             newRent.setTotalFee(rent.getTotalFee());
             newRent.setIsPaid(rent.getIsPaid());
+            newRent.setRentStatus(RentStatus.INPROGRESS);
             toRentVehicle.setRentable(false);
             return newRent;
         }
@@ -143,10 +146,12 @@ public class SellerService {
     }
 
 
-    public Boolean deleteRent (Long rendToDeleteId) {
-        Optional<RentEntity> toDeleteRent = rentRepository.findById(rendToDeleteId);
-        if (toDeleteRent.isPresent()) {
-            rentRepository.deleteById(rendToDeleteId);
+    public Boolean deleteRent(Long rentToDeleteId) {
+        Optional<RentEntity> toDeleteRent = rentRepository.findById(rentToDeleteId);
+        LocalDateTime actualDate = LocalDateTime.now();
+        if (toDeleteRent.isPresent() && (actualDate.isBefore(toDeleteRent.get().getEndingDate()))) {
+            toDeleteRent.get().setRentStatus(RentStatus.DELETED);
+            rentRepository.save(toDeleteRent.get());
             return true;
         } else {
             return false;
@@ -158,7 +163,7 @@ public class SellerService {
     }
 
     public List<VehicleEntity> getAllVehiclesRfd() {
-         return vehicleRepository.showAllVehiclesRfd();
+        return vehicleRepository.showAllVehiclesRfd();
     }
 
     public List<VehicleEntity> getAllRentableVehicles() {
