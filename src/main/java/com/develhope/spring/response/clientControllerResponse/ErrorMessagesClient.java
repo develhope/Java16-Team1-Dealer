@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-public class ErrorMessages {
+public class ErrorMessagesClient {
 
     public String messageDeleteAccountOK() {
         return "Account deleted successfully";
