@@ -157,4 +157,8 @@ public class SellerService {
         return vehicleRepository.findAll();
     }
 
+    public List<VehicleEntity> getAllVehiclesRfd() {
+         return vehicleRepository.showAllVehiclesRfd();
+    }
+
 }
