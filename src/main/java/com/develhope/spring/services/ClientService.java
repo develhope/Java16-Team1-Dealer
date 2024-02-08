@@ -11,7 +11,9 @@ import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
+import com.develhope.spring.response.ClientErrorResponse;
 import jakarta.transaction.Transactional;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,16 +49,16 @@ public class ClientService {
 
     public ClientEntity updateAccount(ClientEntity clientEntity) {
         ClientEntity client = clientRepository.findById(idLogin.getId()).get();
-        if(clientEntity.getName() != null){
+        if (clientEntity.getName() != null) {
             client.setName(clientEntity.getName());
         }
-        if(clientEntity.getSurname() != null){
+        if (clientEntity.getSurname() != null) {
             client.setSurname(clientEntity.getSurname());
         }
-        if(clientEntity.getPhone() != null){
+        if (clientEntity.getPhone() != null) {
             client.setPhone(clientEntity.getPhone());
         }
-        if(clientEntity.getPsw() != null){
+        if (clientEntity.getPsw() != null) {
             client.setPsw(clientEntity.getPsw());
         }
 
@@ -66,45 +68,56 @@ public class ClientService {
 
     public Optional<VehicleEntity> showVehicleID(Long idVehicle) {
         Optional<VehicleEntity> vehicle = vehicleRepository.findById(idVehicle);
-        if(vehicle.isPresent()){
+        if (vehicle.isPresent()) {
             return vehicle;
-        }else{
+        } else {
             return Optional.empty();
         }
     }
 
 
-    public OrderEntity createOrder(OrderClientDTO orderClientDTO) {
-        VehicleEntity vehicle = vehicleRepository.findById(orderClientDTO.getIdVehicle()).get();
+    public ResponseEntity<ClientErrorResponse> createOrder(OrderClientDTO orderClientDTO) {
+        OrderEntity newOrder = new OrderEntity();
+        VehicleEntity vehicle;
+        SellerEntity seller;
         ClientEntity client = clientRepository.findById(idLogin.getId()).get();
-        SellerEntity seller = sellerRepository.findById(orderClientDTO.getIdSeller()).get();
-        if (vehicle.getSellType().equals(SellType.ORDERABLE) && vehicle != null) {
-            OrderEntity newOrder = new OrderEntity();
-            newOrder.setOrderType(OrderType.ORDER);
-            newOrder.setOrderState(orderClientDTO.getOrderState());
-            newOrder.setAdvPayment(orderClientDTO.getAdvPayment());
-            newOrder.setIsPaid(orderClientDTO.getIsPaid());
-            newOrder.setVehicleId(vehicle);
-            newOrder.setClientId(client);
-            newOrder.setSellerId(seller);
-            return newOrder;
+
+        if (sellerRepository.existsById(orderClientDTO.getIdSeller())) {
+            seller = sellerRepository.findById(orderClientDTO.getIdSeller()).get();
         } else {
-            return null;
+            String message = "Seller with id " + orderClientDTO.getIdSeller() + " does not exist";
+            ClientErrorResponse clientErrorResponse = new ClientErrorResponse(message, newOrder);
+            return ResponseEntity.status(601).body(clientErrorResponse);
         }
 
-    }
-    public OrderEntity newOrder(OrderClientDTO orderClientDTO) {
-            OrderEntity order = createOrder(orderClientDTO);
-            if (order != null) {
-                return orderRepository.save(order);
+        if (vehicleRepository.existsById(orderClientDTO.getIdVehicle())) {
+            vehicle = vehicleRepository.findById(orderClientDTO.getIdVehicle()).get();
+            if (vehicle.getSellType().equals(SellType.ORDERABLE)) {
+                newOrder.setOrderType(OrderType.ORDER);
+                newOrder.setOrderState(orderClientDTO.getOrderState());
+                newOrder.setAdvPayment(orderClientDTO.getAdvPayment());
+                newOrder.setIsPaid(orderClientDTO.getIsPaid());
+                newOrder.setVehicleId(vehicle);
+                newOrder.setClientId(client);
+                newOrder.setSellerId(seller);
+                orderRepository.save(newOrder);
+                String message = "Order created";
+                ClientErrorResponse clientErrorResponse = new ClientErrorResponse(message, newOrder);
+                return ResponseEntity.status(201).body(clientErrorResponse);
             } else {
-                return null;
+                String message = "Vehicle with id " + orderClientDTO.getIdVehicle() + " is not orderable";
+                ClientErrorResponse clientErrorResponse = new ClientErrorResponse(message, newOrder);
+                return ResponseEntity.status(602).body(clientErrorResponse);
             }
-
+        }else {
+            String message = "Vehicle with id " + orderClientDTO.getIdVehicle() + " does not exist";
+            ClientErrorResponse clientErrorResponse = new ClientErrorResponse(message, newOrder);
+            return ResponseEntity.status(600).body(clientErrorResponse);
+        }
     }
 
     public List<OrderEntity> orderEntityList() {
-            return orderRepository.showListOrder(idLogin.getId());
+        return orderRepository.showListOrder(idLogin.getId());
 
     }
 
@@ -145,7 +158,7 @@ public class ClientService {
     }
 
     public List<OrderEntity> purchaseList() {
-            return orderRepository.showListPurchase(idLogin.getId());
+        return orderRepository.showListPurchase(idLogin.getId());
 
     }
 
@@ -156,28 +169,23 @@ public class ClientService {
     }
 
     public List<VehicleEntity> showAllVehiclesFilteted(String color, String brand, String model) {
-        if(color == null){
+        if (color == null) {
             color = " ";
         }
-        if(brand == null){
+        if (brand == null) {
             brand = " ";
         }
-        if(model == null){
+        if (model == null) {
             model = " ";
         }
 
-        if(color == " " && brand == " " && model == " ") {
+        if (color == " " && brand == " " && model == " ") {
             return vehicleRepository.findAll();
-        }else {
-            return vehicleRepository.showAllVehiclesFiltered(color,brand,model);
+        } else {
+            return vehicleRepository.showAllVehiclesFiltered(color, brand, model);
         }
 
     }
-
-
-
-
-
 
 
     public RentEntity createRent(RentEntity rentEntity, Long idSeller, Long idClient, Long idVehicle) {
@@ -194,23 +202,22 @@ public class ClientService {
     }
 
 
-
     public List<RentEntity> showRents() {
-            return rentRepository.showRentList(idLogin.getId());
+        return rentRepository.showRentList(idLogin.getId());
     }
 
     public RentEntity newRent(RentEntity rentEntity, Long idSeller, Long idClient, Long idVehicle) {
-            RentEntity rent = createRent(rentEntity,idSeller,idClient,idVehicle);
-            if(rent != null) {
-                return rentRepository.save(rent);
-            } else {
-                return null;
-            }
+        RentEntity rent = createRent(rentEntity, idSeller, idClient, idVehicle);
+        if (rent != null) {
+            return rentRepository.save(rent);
+        } else {
+            return null;
+        }
 
     }
 
 
     public void deleteRent(Long id) {
-            rentRepository.customDeleteById(idLogin.getId(),id);
+        rentRepository.customDeleteById(idLogin.getId(), id);
     }
 }

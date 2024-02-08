@@ -22,7 +22,7 @@ public class AdminInterceptor implements HandlerInterceptor {
         }
 
         if(!(idLogin.getType().equals("ADMIN"))){
-            response.sendError(418, "You are not authorized");
+            response.sendError(401, "You are not authorized");
             return false;
         }
 

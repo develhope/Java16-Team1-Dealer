@@ -23,7 +23,7 @@ public class ClientInterceptor implements HandlerInterceptor {
 
 
         if(!(idLogin.getType().equals("CLIENT"))){
-            response.sendError(418, "You are not authorized");
+            response.sendError(401, "You are not authorized");
             return false;
         }
 

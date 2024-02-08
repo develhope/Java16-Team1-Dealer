@@ -21,7 +21,7 @@ public class SellerInterceptor implements HandlerInterceptor {
         }
 
         if(!(idLogin.getType().equals("SELLER"))){
-            response.sendError(418, "You are not authorized");
+            response.sendError(401, "You are not authorized");
             return false;
         }
 
