@@ -4,6 +4,7 @@ import com.develhope.spring.dto.IdLogin;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderState;
 import com.develhope.spring.entities.order.OrderType;
+import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
@@ -28,6 +29,9 @@ public class SellerService {
     private VehicleRepository vehicleRepository;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private RentRepository rentRepository;
+
 
     public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
         VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
@@ -48,12 +52,12 @@ public class SellerService {
     }
 
     public OrderEntity newOrder(OrderEntity orderEntity, Long idClient, Long idVehicle) {
-            OrderEntity order = createOrder(orderEntity, idLogin.getId(), idVehicle, idClient);
-            if (order != null) {
-                return orderRepository.save(order);
-            } else {
-                return null;
-            }
+        OrderEntity order = createOrder(orderEntity, idLogin.getId(), idVehicle, idClient);
+        if (order != null) {
+            return orderRepository.save(order);
+        } else {
+            return null;
+        }
     }
 
 
@@ -63,26 +67,26 @@ public class SellerService {
     }
 
     public OrderEntity updateOrder(OrderEntity orderEntity, Long idOrder) {
-            OrderEntity order = orderRepository.findById(idOrder).get();
-            if (orderEntity.getOrderType() != null) {
-                order.setOrderType(orderEntity.getOrderType());
-            }
-            if (orderEntity.getOrderState() != null) {
-                order.setOrderState(orderEntity.getOrderState());
-            }
-            if (orderEntity.getAdvPayment() != null) {
-                order.setAdvPayment(orderEntity.getAdvPayment());
-            }
-            return orderRepository.save(order);
+        OrderEntity order = orderRepository.findById(idOrder).get();
+        if (orderEntity.getOrderType() != null) {
+            order.setOrderType(orderEntity.getOrderType());
+        }
+        if (orderEntity.getOrderState() != null) {
+            order.setOrderState(orderEntity.getOrderState());
+        }
+        if (orderEntity.getAdvPayment() != null) {
+            order.setAdvPayment(orderEntity.getAdvPayment());
+        }
+        return orderRepository.save(order);
 
     }
 
     public OrderEntity checkOrder(Long id) {
-            return orderRepository.findById(id).get();
+        return orderRepository.findById(id).get();
     }
 
     public List<OrderEntity> checkAllOrdersByStatus(OrderState status) {
-            return orderRepository.showListByStatus(status);
+        return orderRepository.showListByStatus(status);
 
     }
 
@@ -94,6 +98,33 @@ public class SellerService {
         return Optional.empty();
     }
 
+    public RentEntity createRent(RentEntity rent, Long sellerId, Long clientId, Long vehicleId) {
+        VehicleEntity toRentVehicle = vehicleRepository.findById(vehicleId).get();
+        if ((toRentVehicle.getRentable().equals(true)) && !(toRentVehicle.getSellType().equals(SellType.ORDERABLE))) {
+            RentEntity newRent = new RentEntity();
+
+            newRent.setSellerId(sellerRepository.findById(sellerId).get());
+            newRent.setClientId(clientRepository.findById(clientId).get());
+            newRent.setVehicleId(toRentVehicle);
+            newRent.setStartingDate(rent.getStartingDate());
+            newRent.setEndingDate(rent.getEndingDate());
+            newRent.setDailyFee(rent.getDailyFee());
+            newRent.setTotalFee(rent.getTotalFee());
+            newRent.setIsPaid(rent.getIsPaid());
+            toRentVehicle.setRentable(false);
+            return newRent;
+        }
+        return null;
+    }
+
+    public RentEntity newRent(RentEntity rentEnt, Long clientId, Long vehicleId) {
+        RentEntity rent = createRent(rentEnt, idLogin.getId(), clientId, vehicleId);
+        if (rent != null) {
+            return rentRepository.save(rent);
+        } else {
+            return null;
+        }
+    }
 
 
 }
