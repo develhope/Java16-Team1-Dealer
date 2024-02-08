@@ -86,9 +86,14 @@ public class SellerController {
         return sellerService.getAllVehicles();
     }
 
-    @GetMapping(path = "show/all/vehicles/rfd")
+    @GetMapping(path = "/show/all/vehicles/rfd")
     public List<VehicleEntity> getAllVehiclesRfd() {
         return sellerService.getAllVehiclesRfd();
+    }
+
+    @GetMapping(path = "/show/all/rentable/vehicles")
+    public List<VehicleEntity> getAllRentableVehicles() {
+        return sellerService.getAllRentableVehicles();
     }
 
 }
