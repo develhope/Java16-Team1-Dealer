@@ -126,5 +126,21 @@ public class SellerService {
         }
     }
 
+    public RentEntity updateRent(RentEntity updatedRent, Long rentId) {
+        Optional<RentEntity> toUpdateRent = rentRepository.findById(rentId);
+        if (toUpdateRent.isPresent()) {
+
+            toUpdateRent.get().setStartingDate(updatedRent.getStartingDate());
+            toUpdateRent.get().setEndingDate(updatedRent.getEndingDate());
+            toUpdateRent.get().setDailyFee(updatedRent.getDailyFee());
+            toUpdateRent.get().setTotalFee(updatedRent.getTotalFee());
+            toUpdateRent.get().setIsPaid(updatedRent.getIsPaid());
+
+            return rentRepository.saveAndFlush(toUpdateRent.get());
+        } else {
+            return null;
+        }
+    }
+
 
 }

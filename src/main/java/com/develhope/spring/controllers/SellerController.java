@@ -1,7 +1,6 @@
 package com.develhope.spring.controllers;
 
 
-import com.develhope.spring.dto.SellerRent;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderState;
 import com.develhope.spring.entities.rent.RentEntity;
@@ -75,8 +74,10 @@ public class SellerController {
         return null;
     }
 
-    @PatchMapping(path = "/update/rent/{id}")
-    public Optional<RentEntity> editRent() {
-        return null;
+    @PatchMapping(path = "/update/rent/{rentId}")
+    public RentEntity editRent(
+            @PathVariable(name = "rentId") long id,
+            @RequestBody RentEntity updatedRent) {
+        return sellerService.updateRent(updatedRent, id);
     }
 }
