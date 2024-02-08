@@ -72,12 +72,17 @@ public class ClientService {
 
     }
 
-    public Optional<VehicleEntity> showVehicleID(Long idVehicle) {
-        Optional<VehicleEntity> vehicle = vehicleRepository.findById(idVehicle);
-        if (vehicle.isPresent()) {
-            return vehicle;
+    public ResponseEntity<ShowVehicleIDResponse> showVehicleID(Long idVehicle) {
+        VehicleEntity vehicle = new VehicleEntity();
+        if (vehicleRepository.existsById(idVehicle)) {
+            vehicle = vehicleRepository.findById(idVehicle).get();
+            String message = "Vehicle found";
+            ShowVehicleIDResponse showVehicleIDResponse = new ShowVehicleIDResponse(message, vehicle);
+            return ResponseEntity.status(302).body(showVehicleIDResponse);
         } else {
-            return Optional.empty();
+            String message = "Vehicle not found";
+            ShowVehicleIDResponse showVehicleIDResponse = new ShowVehicleIDResponse(message, vehicle);
+            return ResponseEntity.status(404).body(showVehicleIDResponse);
         }
     }
 
@@ -209,7 +214,7 @@ public class ClientService {
         return vehicleRepository.showAllVehiclesByRangePrice(price[0], price[1]);
     }
 
-    public List<VehicleEntity> showAllVehiclesFilteted(String color, String brand, String model) {
+    public ResponseEntity<ListVehicleFilterResponse> showAllVehiclesFilteted(String color, String brand, String model) {
         if (color == null) {
             color = " ";
         }
@@ -221,9 +226,13 @@ public class ClientService {
         }
 
         if (color == " " && brand == " " && model == " ") {
-            return vehicleRepository.findAll();
+            String message = "No filter applied, showing all vehicles";
+            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(message, vehicleRepository.findAll());
+            return ResponseEntity.status(610).body(listVehicleFilterResponse);
         } else {
-            return vehicleRepository.showAllVehiclesFiltered(color, brand, model);
+            String message = "Vehicles filtered";
+            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(message, vehicleRepository.showAllVehiclesFiltered(color, brand, model));
+            return ResponseEntity.status(302).body(listVehicleFilterResponse);
         }
 
     }

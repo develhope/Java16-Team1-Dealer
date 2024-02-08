@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateAccountResponse {
 
-    private String messageError;
+    private String message;
     private ClientEntity clientEntity;
 
 }

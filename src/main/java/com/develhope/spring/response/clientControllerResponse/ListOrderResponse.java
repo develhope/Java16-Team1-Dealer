@@ -11,6 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 public class ListOrderResponse {
 
-    private String messageError;
+    private String message;
     private List<OrderEntity> orderEntityList;
 }

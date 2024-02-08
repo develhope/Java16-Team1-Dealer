@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StatusCancelledResponse {
 
-    private String messageError;
+    private String message;
     private OrderEntity orderEntity;
 
 }

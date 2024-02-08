@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderResponse {
 
-    private String messageError;
+    private String message;
     private OrderEntity orderEntity;
 }

@@ -50,7 +50,8 @@ public class ClientController {
     @ApiResponse(responseCode = "404", description = "Order not found")
     @PutMapping("/update/status/order/cancelled/{idOrder}")
     @ResponseBody
-    public ResponseEntity<StatusCancelledResponse> updateStatusCancelledId(@Parameter(description = "Order ID", example = "1",required = true,name = "idOrder") @PathVariable(name = "idOrder") Long id) {
+    public ResponseEntity<StatusCancelledResponse> updateStatusCancelledId(
+            @Parameter(description = "Order ID", example = "1",required = true,name = "idOrder") @PathVariable(name = "idOrder") Long id) {
         return clientService.updateStatusCancelled(id);
     }
 
@@ -104,19 +105,25 @@ public class ClientController {
     @ApiResponse(responseCode = "406", description = "Please enter details to update account")
     @PatchMapping("/upgrade/myaccount")
     @ResponseBody
-    public ResponseEntity<UpdateAccountResponse> updateClient(@RequestBody ClientEntity updClient) {
+    public ResponseEntity<UpdateAccountResponse> updateClient(
+            @RequestBody ClientEntity updClient) {
         return clientService.updateAccount(updClient);
     }
     @Operation(summary = "Show Vehicle by ID")
+    @ApiResponse(responseCode = "302", description = "Vehicle found")
+    @ApiResponse(responseCode = "404", description = "Vehicle not found")
     @GetMapping("/show/vehicle/{idVehicle}")
     @ResponseBody
-    public Optional<VehicleEntity> showVehicleID(@PathVariable(name = "idVehicle") Long idVehicle) {
+    public ResponseEntity<ShowVehicleIDResponse> showVehicleID(
+            @Parameter(description = "Vehicle ID", example = "1",required = true,name = "idVehicle")@PathVariable(name = "idVehicle") Long idVehicle) {
         return clientService.showVehicleID(idVehicle);
     }
     @Operation(summary = "Show Vehicle by Filter")
+    @ApiResponse(responseCode = "302", description = "Vehicles found")
+    @ApiResponse(responseCode = "610", description = "No filter applied, showing all vehicles")
     @GetMapping("/show/list/vehicle/by/filter")
     @ResponseBody
-    public List<VehicleEntity> showVehicle(
+    public ResponseEntity<ListVehicleFilterResponse> showVehicle(
             @RequestParam(name = "brand", required = false) String brand,
             @RequestParam(name = "model", required = false) String model,
             @RequestParam(name = "color", required = false) String color) {
