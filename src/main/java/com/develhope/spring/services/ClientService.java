@@ -1,15 +1,19 @@
 package com.develhope.spring.services;
 
 import com.develhope.spring.dto.IdLogin;
+import com.develhope.spring.dto.order.OrderClientDTO;
+import com.develhope.spring.dto.order.PurchaseClientDTO;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderType;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.user.ClientEntity;
+import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,6 +37,11 @@ public class ClientService {
     @Autowired
     private RentRepository rentRepository;
 
+    public ResponseEntity<ClientEntity> deleteAccount() {
+        ClientEntity client = clientRepository.findById(idLogin.getId()).get();
+        clientRepository.delete(client);
+        return ResponseEntity.ok(client);
+    }
 
     public ClientEntity updateAccount(ClientEntity clientEntity) {
         ClientEntity client = clientRepository.findById(idLogin.getId()).get();
@@ -63,25 +72,27 @@ public class ClientService {
     }
 
 
-    public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
-        if (vehicle.getSellType().equals(SellType.ORDERABLE)) {
+    public OrderEntity createOrder(OrderClientDTO orderClientDTO) {
+        VehicleEntity vehicle = vehicleRepository.findById(orderClientDTO.getIdVehicle()).get();
+        ClientEntity client = clientRepository.findById(idLogin.getId()).get();
+        SellerEntity seller = sellerRepository.findById(orderClientDTO.getIdSeller()).get();
+        if (vehicle.getSellType().equals(SellType.ORDERABLE) && vehicle != null) {
             OrderEntity newOrder = new OrderEntity();
             newOrder.setOrderType(OrderType.ORDER);
-            newOrder.setOrderState(orderEntity.getOrderState());
-            newOrder.setAdvPayment(orderEntity.getAdvPayment());
-            newOrder.setIsPaid(orderEntity.getIsPaid());
+            newOrder.setOrderState(orderClientDTO.getOrderState());
+            newOrder.setAdvPayment(orderClientDTO.getAdvPayment());
+            newOrder.setIsPaid(orderClientDTO.getIsPaid());
             newOrder.setVehicleId(vehicle);
-            newOrder.setClientId(clientRepository.findById(idClient).get());
-            newOrder.setSellerId(sellerRepository.findById(idSeller).get());
+            newOrder.setClientId(client);
+            newOrder.setSellerId(seller);
             return newOrder;
         } else {
             return null;
         }
 
     }
-    public OrderEntity newOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle) {
-            OrderEntity order = createOrder(orderEntity, idSeller, idVehicle, idLogin.getId());
+    public OrderEntity newOrder(OrderClientDTO orderClientDTO) {
+            OrderEntity order = createOrder(orderClientDTO);
             if (order != null) {
                 return orderRepository.save(order);
             } else {
@@ -100,23 +111,46 @@ public class ClientService {
         return orderRepository.findById(idOrder).get();
     }
 
-    public OrderEntity createPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
-        if (vehicle.getSellType().equals(SellType.RFD)) {
+    public OrderEntity createPurchase(PurchaseClientDTO purchaseClientDTO) {
+        VehicleEntity vehicle = vehicleRepository.findById(purchaseClientDTO.getIdVehicle()).get();
+        ClientEntity client = clientRepository.findById(idLogin.getId()).get();
+        SellerEntity seller = sellerRepository.findById(purchaseClientDTO.getIdSeller()).get();
+        if (vehicle.getSellType().equals(SellType.RFD) && vehicle != null) {
             OrderEntity newOrder = new OrderEntity();
             newOrder.setOrderType(OrderType.PURCHASE);
-            newOrder.setOrderState(orderEntity.getOrderState());
-            newOrder.setAdvPayment(orderEntity.getAdvPayment());
-            newOrder.setIsPaid(orderEntity.getIsPaid());
+            newOrder.setOrderState(purchaseClientDTO.getOrderState());
+            newOrder.setAdvPayment(purchaseClientDTO.getAdvPayment());
+            newOrder.setIsPaid(purchaseClientDTO.getIsPaid());
             newOrder.setVehicleId(vehicle);
-            newOrder.setClientId(clientRepository.findById(idClient).get());
-            newOrder.setSellerId(sellerRepository.findById(idSeller).get());
+            newOrder.setClientId(client);
+            newOrder.setSellerId(seller);
             return newOrder;
         } else {
             return null;
         }
 
     }
+
+    public OrderEntity newPurchase(PurchaseClientDTO purchaseClientDTO) {
+        OrderEntity purchase = createPurchase(purchaseClientDTO);
+        if (purchase != null) {
+            return orderRepository.save(purchase);
+        } else {
+            return null;
+        }
+
+
+    }
+
+    public List<OrderEntity> purchaseList() {
+            return orderRepository.showListPurchase(idLogin.getId());
+
+    }
+
+
+
+
+
 
     public RentEntity createRent(RentEntity rentEntity, Long idSeller, Long idClient, Long idVehicle) {
         RentEntity rent = new RentEntity();
@@ -131,22 +165,7 @@ public class ClientService {
         return rent;
     }
 
-    public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle) {
 
-            OrderEntity purchase = createPurchase(orderEntity, idSeller, idVehicle, idLogin.getId());
-            if (purchase != null) {
-                return orderRepository.save(purchase);
-            } else {
-                return null;
-            }
-
-
-    }
-
-    public List<OrderEntity> purchaseList() {
-            return orderRepository.showListPurchase(idLogin.getId());
-
-    }
 
     public List<RentEntity> showRents() {
             return rentRepository.showRentList(idLogin.getId());

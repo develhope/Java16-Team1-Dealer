@@ -1,11 +1,14 @@
 package com.develhope.spring.controllers;
 
+import com.develhope.spring.dto.order.OrderClientDTO;
+import com.develhope.spring.dto.order.PurchaseClientDTO;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,11 +23,8 @@ public class ClientController {
     @PostMapping("/create/order")
     @ResponseBody
     public OrderEntity newOrder(
-            @RequestBody(required = true) OrderEntity order,
-            @RequestParam(name = "id_seller", required = true) Long idSeller,
-            @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
-
-        return clientService.newOrder(order, idSeller, idVehicle);
+            @RequestBody(required = true) OrderClientDTO orderClientDTO) {
+        return clientService.newOrder(orderClientDTO);
     }
 
     @GetMapping("/show/order/list")
@@ -40,10 +40,8 @@ public class ClientController {
     @PostMapping("/create/purchase")
     @ResponseBody
     public OrderEntity createPurchase(
-            @RequestBody(required = true) OrderEntity order,
-            @RequestParam(name = "id_seller", required = true) Long idSeller,
-            @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
-        return clientService.newPurchase(order, idSeller, idVehicle);
+            @RequestBody(required = true)PurchaseClientDTO purchaseClientDTO) {
+        return clientService.newPurchase(purchaseClientDTO);
     }
 
     @GetMapping("/show/purchase/list")
@@ -71,7 +69,8 @@ public class ClientController {
     }
 
     @DeleteMapping("/delete/myaccount")
-    public void deleteClient(@PathVariable Long id) {
+    public ResponseEntity<ClientEntity> deleteClient() {
+        return clientService.deleteAccount();
     }
 
     @PatchMapping("/upgrade/myaccount")
