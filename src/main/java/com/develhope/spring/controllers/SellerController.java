@@ -80,4 +80,10 @@ public class SellerController {
             @RequestBody RentEntity updatedRent) {
         return sellerService.updateRent(updatedRent, id);
     }
+
+    @GetMapping(path = "/show/all/vehicles")
+    public List<VehicleEntity> getAllVehicles() {
+        return sellerService.getAllVehicles();
+    }
+
 }
