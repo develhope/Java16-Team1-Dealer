@@ -8,6 +8,8 @@ import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.response.order.ListOrderResponse;
 import com.develhope.spring.response.order.OrderResponse;
+import com.develhope.spring.response.order.StatusCancelledResponse;
+import com.develhope.spring.response.purchase.ListPurchaseResponse;
 import com.develhope.spring.response.purchase.PurchaseResponse;
 import com.develhope.spring.services.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,9 +50,11 @@ public class ClientController {
     }
 
     @Operation(summary = "Update Order Status To Cancelled")
+    @ApiResponse(responseCode = "200", description = "Order status cancelled")
+    @ApiResponse(responseCode = "404", description = "Order not found")
     @PutMapping("/update/status/order/cancelled/{idOrder}")
     @ResponseBody
-    public OrderEntity updateStatusCancelledId(@PathVariable(name = "idOrder") Long id) {
+    public ResponseEntity<StatusCancelledResponse> updateStatusCancelledId(@PathVariable(name = "idOrder") Long id) {
         return clientService.updateStatusCancelled(id);
     }
 
@@ -67,8 +71,11 @@ public class ClientController {
     }
 
     @Operation(summary = "Get all Purchases")
+    @ApiResponse(responseCode = "200", description = "Purchases found")
+    @ApiResponse(responseCode = "404", description = "Purchases not found")
     @GetMapping("/show/purchase/list")
-    public @ResponseBody List<OrderEntity> showPurchases() {
+    @ResponseBody
+    public ResponseEntity<ListPurchaseResponse> showPurchases() {
         return clientService.purchaseList();
     }
 

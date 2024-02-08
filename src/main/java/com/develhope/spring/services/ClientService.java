@@ -13,6 +13,8 @@ import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
 import com.develhope.spring.response.order.ListOrderResponse;
 import com.develhope.spring.response.order.OrderResponse;
+import com.develhope.spring.response.order.StatusCancelledResponse;
+import com.develhope.spring.response.purchase.ListPurchaseResponse;
 import com.develhope.spring.response.purchase.PurchaseResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,13 +130,21 @@ public class ClientService {
             ListOrderResponse listOrderResponse = new ListOrderResponse(message, Arrays.asList());
             return ResponseEntity.status(404).body(listOrderResponse);
         }
-
-
     }
 
-    public OrderEntity updateStatusCancelled(Long idOrder) {
-        orderRepository.updateStatusCancelledOrderWithId(idOrder);
-        return orderRepository.findById(idOrder).get();
+    public ResponseEntity<StatusCancelledResponse> updateStatusCancelled(Long idOrder) {
+        OrderEntity order = new OrderEntity();
+        if(!orderRepository.existsById(idOrder)) {
+            String message = "Order with id " + idOrder + " does not exist";
+            StatusCancelledResponse statusCancelledResponse = new StatusCancelledResponse(message, order);
+            return ResponseEntity.status(404).body(statusCancelledResponse);
+        }else {
+            orderRepository.updateStatusCancelledOrderWithId(idOrder);
+            order = orderRepository.findById(idOrder).get();
+            String message = "Order with id " + idOrder + " cancelled";
+            StatusCancelledResponse statusCancelledResponse = new StatusCancelledResponse(message, order);
+            return ResponseEntity.status(200).body(statusCancelledResponse);
+        }
     }
 
     public ResponseEntity<PurchaseResponse> createPurchase(PurchaseClientDTO purchaseClientDTO) {
@@ -177,10 +187,17 @@ public class ClientService {
         }
     }
 
-
-    public List<OrderEntity> purchaseList() {
-        return orderRepository.showListPurchase(idLogin.getId());
-
+    public ResponseEntity<ListPurchaseResponse> purchaseList() {
+        List<OrderEntity> listOrder = orderRepository.showListPurchase(idLogin.getId());;
+        if (listOrder.size() > 0) {
+            String message = "Purchases found";
+            ListPurchaseResponse listPurchaseResponse = new ListPurchaseResponse(message, listOrder);
+            return ResponseEntity.status(200).body(listPurchaseResponse);
+        } else {
+            String message = "Purchases not found";
+            ListPurchaseResponse listPurchaseResponse = new ListPurchaseResponse(message, Arrays.asList());
+            return ResponseEntity.status(404).body(listPurchaseResponse);
+        }
     }
 
     public List<VehicleEntity> filterFindVehicleByRangePrice(BigDecimal minPrice, BigDecimal maxPrice) {
