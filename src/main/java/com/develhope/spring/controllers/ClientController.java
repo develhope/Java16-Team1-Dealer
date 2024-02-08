@@ -2,17 +2,13 @@ package com.develhope.spring.controllers;
 
 import com.develhope.spring.dto.order.OrderClientDTO;
 import com.develhope.spring.dto.order.PurchaseClientDTO;
-import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
-import com.develhope.spring.response.order.ListOrderResponse;
-import com.develhope.spring.response.order.OrderResponse;
-import com.develhope.spring.response.order.StatusCancelledResponse;
-import com.develhope.spring.response.purchase.ListPurchaseResponse;
-import com.develhope.spring.response.purchase.PurchaseResponse;
+import com.develhope.spring.response.clientControllerResponse.*;
 import com.develhope.spring.services.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +50,7 @@ public class ClientController {
     @ApiResponse(responseCode = "404", description = "Order not found")
     @PutMapping("/update/status/order/cancelled/{idOrder}")
     @ResponseBody
-    public ResponseEntity<StatusCancelledResponse> updateStatusCancelledId(@PathVariable(name = "idOrder") Long id) {
+    public ResponseEntity<StatusCancelledResponse> updateStatusCancelledId(@Parameter(description = "Order ID", example = "1",required = true,name = "idOrder") @PathVariable(name = "idOrder") Long id) {
         return clientService.updateStatusCancelled(id);
     }
 
@@ -98,14 +94,17 @@ public class ClientController {
         clientService.deleteRent(id);
     }
     @Operation(summary = "Delete My Account")
+    @ApiResponse(responseCode = "200", description = "Account deleted")
     @DeleteMapping("/delete/myaccount")
-    public ResponseEntity<ClientEntity> deleteClient() {
+    public ResponseEntity<String> deleteClient() {
         return clientService.deleteAccount();
     }
     @Operation(summary = "Update My Account")
+    @ApiResponse(responseCode = "607", description = "Account updated")
+    @ApiResponse(responseCode = "406", description = "Please enter details to update account")
     @PatchMapping("/upgrade/myaccount")
     @ResponseBody
-    public ClientEntity updateClient(@RequestBody ClientEntity updClient) {
+    public ResponseEntity<UpdateAccountResponse> updateClient(@RequestBody ClientEntity updClient) {
         return clientService.updateAccount(updClient);
     }
     @Operation(summary = "Show Vehicle by ID")

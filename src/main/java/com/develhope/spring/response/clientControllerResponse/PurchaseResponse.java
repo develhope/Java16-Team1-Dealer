@@ -1,17 +1,15 @@
-package com.develhope.spring.response.purchase;
+package com.develhope.spring.response.clientControllerResponse;
 
 import com.develhope.spring.entities.order.OrderEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListPurchaseResponse {
+public class PurchaseResponse {
 
     private String messageError;
-    private List<OrderEntity> orderEntityList;
+    private OrderEntity orderEntity;
 }

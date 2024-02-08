@@ -11,11 +11,7 @@ import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.vehicle.SellType;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
-import com.develhope.spring.response.order.ListOrderResponse;
-import com.develhope.spring.response.order.OrderResponse;
-import com.develhope.spring.response.order.StatusCancelledResponse;
-import com.develhope.spring.response.purchase.ListPurchaseResponse;
-import com.develhope.spring.response.purchase.PurchaseResponse;
+import com.develhope.spring.response.clientControllerResponse.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,28 +40,35 @@ public class ClientService {
     @Autowired
     private RentRepository rentRepository;
 
-    public ResponseEntity<ClientEntity> deleteAccount() {
-        ClientEntity client = clientRepository.findById(idLogin.getId()).get();
-        clientRepository.delete(client);
-        return ResponseEntity.ok(client);
+    public ResponseEntity<String> deleteAccount() {
+        clientRepository.delete(clientRepository.findById(idLogin.getId()).get());
+        return ResponseEntity.status(200).body("Account deleted successfully");
     }
 
-    public ClientEntity updateAccount(ClientEntity clientEntity) {
-        ClientEntity client = clientRepository.findById(idLogin.getId()).get();
-        if (clientEntity.getName() != null) {
-            client.setName(clientEntity.getName());
-        }
-        if (clientEntity.getSurname() != null) {
-            client.setSurname(clientEntity.getSurname());
-        }
-        if (clientEntity.getPhone() != null) {
-            client.setPhone(clientEntity.getPhone());
-        }
-        if (clientEntity.getPsw() != null) {
-            client.setPsw(clientEntity.getPsw());
+    public ResponseEntity<UpdateAccountResponse> updateAccount(ClientEntity clientEntity) {
+        if(clientEntity != null) {
+            ClientEntity client = clientRepository.findById(idLogin.getId()).get();
+            if (clientEntity.getName() != null) {
+                client.setName(clientEntity.getName());
+            }
+            if (clientEntity.getSurname() != null) {
+                client.setSurname(clientEntity.getSurname());
+            }
+            if (clientEntity.getPhone() != null) {
+                client.setPhone(clientEntity.getPhone());
+            }
+            if (clientEntity.getPsw() != null) {
+                client.setPsw(clientEntity.getPsw());
+            }
+            String message = "Account updated successfully";
+            UpdateAccountResponse updateAccountResponse = new UpdateAccountResponse(message,clientRepository.findById(idLogin.getId()).get());
+            return ResponseEntity.status(607).body(updateAccountResponse);
+        }else{
+            String message = "Please enter details to update account";
+            UpdateAccountResponse updateAccountResponse = new UpdateAccountResponse(message,clientRepository.findById(idLogin.getId()).get());
+            return ResponseEntity.status(406).body(updateAccountResponse);
         }
 
-        return clientRepository.save(client);
 
     }
 
