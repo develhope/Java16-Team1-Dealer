@@ -1,4 +1,4 @@
-package com.develhope.spring.dto;
+package com.develhope.spring.dto.order;
 
 import com.develhope.spring.entities.order.OrderState;
 import jakarta.persistence.Column;

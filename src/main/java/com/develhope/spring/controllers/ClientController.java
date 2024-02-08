@@ -1,6 +1,7 @@
 package com.develhope.spring.controllers;
 
-import com.develhope.spring.dto.OrderClientDTO;
+import com.develhope.spring.dto.order.OrderClientDTO;
+import com.develhope.spring.dto.order.PurchaseClientDTO;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.user.ClientEntity;
@@ -23,7 +24,6 @@ public class ClientController {
     @ResponseBody
     public OrderEntity newOrder(
             @RequestBody(required = true) OrderClientDTO orderClientDTO) {
-
         return clientService.newOrder(orderClientDTO);
     }
 
@@ -40,10 +40,8 @@ public class ClientController {
     @PostMapping("/create/purchase")
     @ResponseBody
     public OrderEntity createPurchase(
-            @RequestBody(required = true) OrderEntity order,
-            @RequestParam(name = "id_seller", required = true) Long idSeller,
-            @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
-        return clientService.newPurchase(order, idSeller, idVehicle);
+            @RequestBody(required = true)PurchaseClientDTO purchaseClientDTO) {
+        return clientService.newPurchase(purchaseClientDTO);
     }
 
     @GetMapping("/show/purchase/list")
