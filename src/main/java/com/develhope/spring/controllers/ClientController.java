@@ -8,6 +8,7 @@ import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.response.order.ListOrderResponse;
 import com.develhope.spring.response.order.OrderResponse;
+import com.develhope.spring.response.purchase.PurchaseResponse;
 import com.develhope.spring.services.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -48,16 +49,21 @@ public class ClientController {
 
     @Operation(summary = "Update Order Status To Cancelled")
     @PutMapping("/update/status/order/cancelled/{idOrder}")
-    public @ResponseBody OrderEntity updateStatusCancelledId(@PathVariable(name = "idOrder") Long id) {
+    @ResponseBody
+    public OrderEntity updateStatusCancelledId(@PathVariable(name = "idOrder") Long id) {
         return clientService.updateStatusCancelled(id);
     }
 
     @Operation(summary = "Create a new Purchase")
+    @ApiResponse(responseCode = "201", description = "Purchase created")
+    @ApiResponse(responseCode = "600", description = "Vehicle does not exist")
+    @ApiResponse(responseCode = "601", description = "Seller does not exist")
+    @ApiResponse(responseCode = "602", description = "Vehicle is not orderable")
     @PostMapping("/create/purchase")
     @ResponseBody
-    public OrderEntity createPurchase(
+    public ResponseEntity<PurchaseResponse> createPurchase(
             @RequestBody(required = true) PurchaseClientDTO purchaseClientDTO) {
-        return clientService.newPurchase(purchaseClientDTO);
+        return clientService.createPurchase(purchaseClientDTO);
     }
 
     @Operation(summary = "Get all Purchases")

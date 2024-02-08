@@ -13,6 +13,7 @@ import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.repositories.*;
 import com.develhope.spring.response.order.ListOrderResponse;
 import com.develhope.spring.response.order.OrderResponse;
+import com.develhope.spring.response.purchase.PurchaseResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -109,7 +110,7 @@ public class ClientService {
                 OrderResponse orderResponse = new OrderResponse(message, newOrder);
                 return ResponseEntity.status(602).body(orderResponse);
             }
-        }else {
+        } else {
             String message = "Vehicle with id " + orderClientDTO.getIdVehicle() + " does not exist";
             OrderResponse orderResponse = new OrderResponse(message, newOrder);
             return ResponseEntity.status(600).body(orderResponse);
@@ -118,11 +119,11 @@ public class ClientService {
 
     public ResponseEntity<ListOrderResponse> orderEntityList() {
         List<OrderEntity> listOrder = orderRepository.showListOrder(idLogin.getId());
-        if(listOrder.size() > 0){
+        if (listOrder.size() > 0) {
             String message = "Orders found";
             ListOrderResponse listOrderResponse = new ListOrderResponse(message, listOrder);
             return ResponseEntity.status(200).body(listOrderResponse);
-        }else {
+        } else {
             String message = "Orders not found";
             ListOrderResponse listOrderResponse = new ListOrderResponse(message, Arrays.asList());
             return ResponseEntity.status(404).body(listOrderResponse);
@@ -136,36 +137,46 @@ public class ClientService {
         return orderRepository.findById(idOrder).get();
     }
 
-    public OrderEntity createPurchase(PurchaseClientDTO purchaseClientDTO) {
-        VehicleEntity vehicle = vehicleRepository.findById(purchaseClientDTO.getIdVehicle()).get();
+    public ResponseEntity<PurchaseResponse> createPurchase(PurchaseClientDTO purchaseClientDTO) {
+        OrderEntity newOrder = new OrderEntity();
+        VehicleEntity vehicle;
+        SellerEntity seller;
         ClientEntity client = clientRepository.findById(idLogin.getId()).get();
-        SellerEntity seller = sellerRepository.findById(purchaseClientDTO.getIdSeller()).get();
-        if (vehicle.getSellType().equals(SellType.RFD) && vehicle != null) {
-            OrderEntity newOrder = new OrderEntity();
-            newOrder.setOrderType(OrderType.PURCHASE);
-            newOrder.setOrderState(purchaseClientDTO.getOrderState());
-            newOrder.setAdvPayment(purchaseClientDTO.getAdvPayment());
-            newOrder.setIsPaid(purchaseClientDTO.getIsPaid());
-            newOrder.setVehicleId(vehicle);
-            newOrder.setClientId(client);
-            newOrder.setSellerId(seller);
-            return newOrder;
+
+        if (sellerRepository.existsById(purchaseClientDTO.getIdSeller())) {
+            seller = sellerRepository.findById(purchaseClientDTO.getIdSeller()).get();
         } else {
-            return null;
+            String message = "Seller with id " + purchaseClientDTO.getIdSeller() + " does not exist";
+            PurchaseResponse purchaseResponse = new PurchaseResponse(message, newOrder);
+            return ResponseEntity.status(601).body(purchaseResponse);
         }
 
-    }
-
-    public OrderEntity newPurchase(PurchaseClientDTO purchaseClientDTO) {
-        OrderEntity purchase = createPurchase(purchaseClientDTO);
-        if (purchase != null) {
-            return orderRepository.save(purchase);
+        if (vehicleRepository.existsById(purchaseClientDTO.getIdVehicle())) {
+            vehicle = vehicleRepository.findById(purchaseClientDTO.getIdVehicle()).get();
+            if (vehicle.getSellType().equals(SellType.RFD)) {
+                newOrder.setOrderType(OrderType.PURCHASE);
+                newOrder.setOrderState(purchaseClientDTO.getOrderState());
+                newOrder.setAdvPayment(purchaseClientDTO.getAdvPayment());
+                newOrder.setIsPaid(purchaseClientDTO.getIsPaid());
+                newOrder.setVehicleId(vehicle);
+                newOrder.setClientId(client);
+                newOrder.setSellerId(seller);
+                orderRepository.save(newOrder);
+                String message = "Purchase created";
+                PurchaseResponse purchaseResponse = new PurchaseResponse(message, newOrder);
+                return ResponseEntity.status(201).body(purchaseResponse);
+            } else {
+                String message = "Vehicle with id " + purchaseClientDTO.getIdVehicle() + " is not purchasable";
+                PurchaseResponse purchaseResponse = new PurchaseResponse(message, newOrder);
+                return ResponseEntity.status(602).body(purchaseResponse);
+            }
         } else {
-            return null;
+            String message = "Vehicle with id " + purchaseClientDTO.getIdVehicle() + " does not exist";
+            PurchaseResponse purchaseResponse = new PurchaseResponse(message, newOrder);
+            return ResponseEntity.status(600).body(purchaseResponse);
         }
-
-
     }
+
 
     public List<OrderEntity> purchaseList() {
         return orderRepository.showListPurchase(idLogin.getId());
