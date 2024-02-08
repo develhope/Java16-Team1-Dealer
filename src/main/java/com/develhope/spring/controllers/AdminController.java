@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RequestMapping("/v1/admin")
@@ -92,9 +93,9 @@ public class AdminController {
 
     }
 
-    @GetMapping("/show/sellers/sales/period")
-    public void showSellerSalesInPeriodRange() {
-
+    @GetMapping("/show/sellers/sales/period/{idSeller}")
+    public String showSellerSalesInPeriodRange(@PathVariable Long idSeller, @RequestParam LocalDate first, @RequestParam LocalDate second) {
+        return adminService.checkNumberOfSalesSeller(idSeller,first,second);
     }
 
     @GetMapping("/show/allSales/period")

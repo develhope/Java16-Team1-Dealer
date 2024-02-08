@@ -100,6 +100,7 @@ public class ClientService {
             vehicle = vehicleRepository.findById(orderClientDTO.getIdVehicle()).get();
             if (vehicle.getSellType().equals(SellType.ORDERABLE)) {
                 newOrder.setOrderType(OrderType.ORDER);
+                newOrder.setDatePurchase(LocalDateTime.now());
                 newOrder.setOrderState(orderClientDTO.getOrderState());
                 newOrder.setAdvPayment(orderClientDTO.getAdvPayment());
                 newOrder.setIsPaid(orderClientDTO.getIsPaid());
@@ -160,6 +161,7 @@ public class ClientService {
             vehicle = vehicleRepository.findById(purchaseClientDTO.getIdVehicle()).get();
             if (vehicle.getSellType().equals(SellType.RFD)) {
                 newOrder.setOrderType(OrderType.PURCHASE);
+                newOrder.setDatePurchase(LocalDateTime.now());
                 newOrder.setOrderState(purchaseClientDTO.getOrderState());
                 newOrder.setAdvPayment(purchaseClientDTO.getAdvPayment());
                 newOrder.setIsPaid(purchaseClientDTO.getIsPaid());
