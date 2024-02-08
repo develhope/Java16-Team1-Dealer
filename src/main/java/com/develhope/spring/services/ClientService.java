@@ -36,17 +36,18 @@ public class ClientService {
     private VehicleRepository vehicleRepository;
     @Autowired
     private OrderRepository orderRepository;
-
     @Autowired
     private RentRepository rentRepository;
+    @Autowired
+    private ErrorMessages errorMessages;
 
     public ResponseEntity<String> deleteAccount() {
         clientRepository.delete(clientRepository.findById(idLogin.getId()).get());
-        return ResponseEntity.status(200).body("Account deleted successfully");
+        return ResponseEntity.status(200).body(errorMessages.messageDeleteAccountOK());
     }
 
     public ResponseEntity<UpdateAccountResponse> updateAccount(ClientEntity clientEntity) {
-        if(clientEntity != null) {
+        if (clientEntity != null) {
             ClientEntity client = clientRepository.findById(idLogin.getId()).get();
             if (clientEntity.getName() != null) {
                 client.setName(clientEntity.getName());
@@ -60,12 +61,10 @@ public class ClientService {
             if (clientEntity.getPsw() != null) {
                 client.setPsw(clientEntity.getPsw());
             }
-            String message = "Account updated successfully";
-            UpdateAccountResponse updateAccountResponse = new UpdateAccountResponse(message,clientRepository.findById(idLogin.getId()).get());
+            UpdateAccountResponse updateAccountResponse = new UpdateAccountResponse(errorMessages.messageUpdateAccountOK(), clientRepository.findById(idLogin.getId()).get());
             return ResponseEntity.status(607).body(updateAccountResponse);
-        }else{
-            String message = "Please enter details to update account";
-            UpdateAccountResponse updateAccountResponse = new UpdateAccountResponse(message,clientRepository.findById(idLogin.getId()).get());
+        } else {
+            UpdateAccountResponse updateAccountResponse = new UpdateAccountResponse(errorMessages.noDetailsUpdateAccount(), clientRepository.findById(idLogin.getId()).get());
             return ResponseEntity.status(406).body(updateAccountResponse);
         }
 
@@ -76,12 +75,10 @@ public class ClientService {
         VehicleEntity vehicle = new VehicleEntity();
         if (vehicleRepository.existsById(idVehicle)) {
             vehicle = vehicleRepository.findById(idVehicle).get();
-            String message = "Vehicle found";
-            ShowVehicleIDResponse showVehicleIDResponse = new ShowVehicleIDResponse(message, vehicle);
+            ShowVehicleIDResponse showVehicleIDResponse = new ShowVehicleIDResponse(errorMessages.vehicleFound(), vehicle);
             return ResponseEntity.status(302).body(showVehicleIDResponse);
         } else {
-            String message = "Vehicle not found";
-            ShowVehicleIDResponse showVehicleIDResponse = new ShowVehicleIDResponse(message, vehicle);
+            ShowVehicleIDResponse showVehicleIDResponse = new ShowVehicleIDResponse(errorMessages.vehicleNotFound(), vehicle);
             return ResponseEntity.status(404).body(showVehicleIDResponse);
         }
     }
@@ -96,8 +93,7 @@ public class ClientService {
         if (sellerRepository.existsById(orderClientDTO.getIdSeller())) {
             seller = sellerRepository.findById(orderClientDTO.getIdSeller()).get();
         } else {
-            String message = "Seller with id " + orderClientDTO.getIdSeller() + " does not exist";
-            OrderResponse orderResponse = new OrderResponse(message, newOrder);
+            OrderResponse orderResponse = new OrderResponse(errorMessages.sellerNotFound(orderClientDTO.getIdSeller()), newOrder);
             return ResponseEntity.status(601).body(orderResponse);
         }
 
@@ -112,17 +108,14 @@ public class ClientService {
                 newOrder.setClientId(client);
                 newOrder.setSellerId(seller);
                 orderRepository.save(newOrder);
-                String message = "Order created";
-                OrderResponse orderResponse = new OrderResponse(message, newOrder);
+                OrderResponse orderResponse = new OrderResponse(errorMessages.orderCreated(), newOrder);
                 return ResponseEntity.status(201).body(orderResponse);
             } else {
-                String message = "Vehicle with id " + orderClientDTO.getIdVehicle() + " is not orderable";
-                OrderResponse orderResponse = new OrderResponse(message, newOrder);
+                OrderResponse orderResponse = new OrderResponse(errorMessages.vehicleNotOrderable(orderClientDTO.getIdVehicle()), newOrder);
                 return ResponseEntity.status(602).body(orderResponse);
             }
         } else {
-            String message = "Vehicle with id " + orderClientDTO.getIdVehicle() + " does not exist";
-            OrderResponse orderResponse = new OrderResponse(message, newOrder);
+            OrderResponse orderResponse = new OrderResponse(errorMessages.vehicleNotExist(orderClientDTO.getIdVehicle()), newOrder);
             return ResponseEntity.status(600).body(orderResponse);
         }
     }
@@ -130,27 +123,23 @@ public class ClientService {
     public ResponseEntity<ListOrderResponse> orderEntityList() {
         List<OrderEntity> listOrder = orderRepository.showListOrder(idLogin.getId());
         if (listOrder.size() > 0) {
-            String message = "Orders found";
-            ListOrderResponse listOrderResponse = new ListOrderResponse(message, listOrder);
+            ListOrderResponse listOrderResponse = new ListOrderResponse(errorMessages.ordersFound(), listOrder);
             return ResponseEntity.status(200).body(listOrderResponse);
         } else {
-            String message = "Orders not found";
-            ListOrderResponse listOrderResponse = new ListOrderResponse(message, Arrays.asList());
+            ListOrderResponse listOrderResponse = new ListOrderResponse(errorMessages.ordersNotFound(), Arrays.asList());
             return ResponseEntity.status(404).body(listOrderResponse);
         }
     }
 
     public ResponseEntity<StatusCancelledResponse> updateStatusCancelled(Long idOrder) {
         OrderEntity order = new OrderEntity();
-        if(!orderRepository.existsById(idOrder)) {
-            String message = "Order with id " + idOrder + " does not exist";
-            StatusCancelledResponse statusCancelledResponse = new StatusCancelledResponse(message, order);
+        if (!orderRepository.existsById(idOrder)) {
+            StatusCancelledResponse statusCancelledResponse = new StatusCancelledResponse(errorMessages.orderNotExist(idOrder), order);
             return ResponseEntity.status(404).body(statusCancelledResponse);
-        }else {
+        } else {
             orderRepository.updateStatusCancelledOrderWithId(idOrder);
             order = orderRepository.findById(idOrder).get();
-            String message = "Order with id " + idOrder + " cancelled";
-            StatusCancelledResponse statusCancelledResponse = new StatusCancelledResponse(message, order);
+            StatusCancelledResponse statusCancelledResponse = new StatusCancelledResponse(errorMessages.orderStatusCancelledOk(idOrder), order);
             return ResponseEntity.status(200).body(statusCancelledResponse);
         }
     }
@@ -164,8 +153,7 @@ public class ClientService {
         if (sellerRepository.existsById(purchaseClientDTO.getIdSeller())) {
             seller = sellerRepository.findById(purchaseClientDTO.getIdSeller()).get();
         } else {
-            String message = "Seller with id " + purchaseClientDTO.getIdSeller() + " does not exist";
-            PurchaseResponse purchaseResponse = new PurchaseResponse(message, newOrder);
+            PurchaseResponse purchaseResponse = new PurchaseResponse(errorMessages.sellerNotFound(purchaseClientDTO.getIdSeller()), newOrder);
             return ResponseEntity.status(601).body(purchaseResponse);
         }
 
@@ -180,30 +168,26 @@ public class ClientService {
                 newOrder.setClientId(client);
                 newOrder.setSellerId(seller);
                 orderRepository.save(newOrder);
-                String message = "Purchase created";
-                PurchaseResponse purchaseResponse = new PurchaseResponse(message, newOrder);
+                PurchaseResponse purchaseResponse = new PurchaseResponse(errorMessages.purchaseCreated(), newOrder);
                 return ResponseEntity.status(201).body(purchaseResponse);
             } else {
-                String message = "Vehicle with id " + purchaseClientDTO.getIdVehicle() + " is not purchasable";
-                PurchaseResponse purchaseResponse = new PurchaseResponse(message, newOrder);
+                PurchaseResponse purchaseResponse = new PurchaseResponse(errorMessages.vehicleNotPurchasable(purchaseClientDTO.getIdVehicle()), newOrder);
                 return ResponseEntity.status(602).body(purchaseResponse);
             }
         } else {
-            String message = "Vehicle with id " + purchaseClientDTO.getIdVehicle() + " does not exist";
-            PurchaseResponse purchaseResponse = new PurchaseResponse(message, newOrder);
+            PurchaseResponse purchaseResponse = new PurchaseResponse(errorMessages.vehicleNotExist(purchaseClientDTO.getIdVehicle()), newOrder);
             return ResponseEntity.status(600).body(purchaseResponse);
         }
     }
 
     public ResponseEntity<ListPurchaseResponse> purchaseList() {
-        List<OrderEntity> listOrder = orderRepository.showListPurchase(idLogin.getId());;
+        List<OrderEntity> listOrder = orderRepository.showListPurchase(idLogin.getId());
+        ;
         if (listOrder.size() > 0) {
-            String message = "Purchases found";
-            ListPurchaseResponse listPurchaseResponse = new ListPurchaseResponse(message, listOrder);
+            ListPurchaseResponse listPurchaseResponse = new ListPurchaseResponse(errorMessages.purchasesFound(), listOrder);
             return ResponseEntity.status(200).body(listPurchaseResponse);
         } else {
-            String message = "Purchases not found";
-            ListPurchaseResponse listPurchaseResponse = new ListPurchaseResponse(message, Arrays.asList());
+            ListPurchaseResponse listPurchaseResponse = new ListPurchaseResponse(errorMessages.purchasesNotFound(), Arrays.asList());
             return ResponseEntity.status(404).body(listPurchaseResponse);
         }
     }
@@ -212,13 +196,11 @@ public class ClientService {
         BigDecimal[] price = {minPrice, maxPrice};
         Arrays.sort(price);
         List<VehicleEntity> vehicleListFilterPrice = vehicleRepository.showAllVehiclesByRangePrice(price[0], price[1]);
-        if(vehicleListFilterPrice.size() > 0){
-            String message = "Vehicles found";
-            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(message, vehicleListFilterPrice);
+        if (vehicleListFilterPrice.size() > 0) {
+            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(errorMessages.vehiclesFound(), vehicleListFilterPrice);
             return ResponseEntity.status(302).body(listVehicleFilterResponse);
-        }else{
-            String message = "Vehicles not found by range price";
-            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(message, Arrays.asList());
+        } else {
+            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(errorMessages.vehiclesNotFoundByRangePrice(), Arrays.asList());
             return ResponseEntity.status(611).body(listVehicleFilterResponse);
         }
     }
@@ -235,12 +217,10 @@ public class ClientService {
         }
 
         if (color == " " && brand == " " && model == " ") {
-            String message = "No filter applied, showing all vehicles";
-            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(message, vehicleRepository.findAll());
+            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(errorMessages.noFilterApplied(), vehicleRepository.findAll());
             return ResponseEntity.status(610).body(listVehicleFilterResponse);
         } else {
-            String message = "Vehicles filtered";
-            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(message, vehicleRepository.showAllVehiclesFiltered(color, brand, model));
+            ListVehicleFilterResponse listVehicleFilterResponse = new ListVehicleFilterResponse(errorMessages.listVehiclesFiltered(), vehicleRepository.showAllVehiclesFiltered(color, brand, model));
             return ResponseEntity.status(302).body(listVehicleFilterResponse);
         }
 
