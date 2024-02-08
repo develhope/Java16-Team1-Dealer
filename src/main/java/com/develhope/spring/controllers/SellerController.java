@@ -1,12 +1,12 @@
 package com.develhope.spring.controllers;
 
 
+import com.develhope.spring.dto.SellerRent;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderState;
 import com.develhope.spring.entities.rent.RentEntity;
 import com.develhope.spring.entities.vehicle.VehicleEntity;
 import com.develhope.spring.services.SellerService;
-import com.develhope.spring.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,19 +32,21 @@ public class SellerController {
     @ResponseBody
     public OrderEntity newOrder(
             @RequestBody(required = true) OrderEntity order,
-            @RequestParam(name = "id_client" , required = true) Long idClient,
+            @RequestParam(name = "id_client", required = true) Long idClient,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
         return sellerService.newOrder(order, idClient, idVehicle);
     }
+
     @PutMapping(path = "/update/status/order/cancelled/{idOrder}")
     @ResponseBody
     public OrderEntity deleteOrder(
-            @PathVariable(name = "idOrder" ) Long id) {
+            @PathVariable(name = "idOrder") Long id) {
         return sellerService.updateStatusCancelled(id);
     }
+
     @PatchMapping(path = "/update/order/{idOrder}")
     public OrderEntity editOrder(
-            @PathVariable(name = "idOrder" ) Long idOrder,
+            @PathVariable(name = "idOrder") Long idOrder,
             @RequestBody OrderEntity order) {
 
         return sellerService.updateOrder(order, idOrder);
@@ -56,13 +58,16 @@ public class SellerController {
     }
 
     @GetMapping(path = "/show/order/list/by/status")
-    public List<OrderEntity> checkAllOrdersByStatus(@RequestParam(name = "status")OrderState status) {
+    public List<OrderEntity> checkAllOrdersByStatus(@RequestParam(name = "status") OrderState status) {
         return sellerService.checkAllOrdersByStatus(status);
     }
 
     @PostMapping(path = "/create/rent")
-    public Optional<RentEntity> createRent() {
-        return null;
+    public RentEntity createRent(
+            @RequestBody(required = true) RentEntity rent,
+            @RequestParam(name = "client_id", required = true) long idClient,
+            @RequestParam(name = "vehicle_id", required = true) long idVehicle) {
+        return sellerService.newRent(rent, idClient, idVehicle);
     }
 
     @DeleteMapping(path = "/delete/rent")
