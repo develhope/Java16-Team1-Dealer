@@ -14,11 +14,14 @@ import java.util.List;
 @Repository
 public interface RentRepository extends JpaRepository<RentEntity, Long> {
 
-    @Query(value = "SELECT * FROM rents AS r WHERE o.id_client = :idClient", nativeQuery = true)
+    @Query(value = "SELECT * FROM rents AS r WHERE r.id_client = :idClient AND r.rent_status = 'INPROGRESS'", nativeQuery = true)
     List<RentEntity> showRentList(@Param("idClient") Long idClient);
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM rents AS r WHERE r.id_client = :idClient AND r.id = :id", nativeQuery = true)
-    void customDeleteById(@Param("idClient") Long idClient, @Param("id") Long idRent);
+    @Query(value = "UPDATE rents AS r " +
+            "SET r.rent_status = 'DELETED' " +
+            "WHERE r.id_client = :idclient " +
+            "AND r.id = :idrent", nativeQuery = true)
+    void customDeleteById(@Param("idclient") Long idClient, @Param("idrent") Long idRent);
 }
