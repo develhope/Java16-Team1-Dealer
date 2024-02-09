@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -197,12 +198,26 @@ public class AdminService {
 
     public String checkNumberOfSalesSeller(Long idSeller, LocalDate firstDate, LocalDate secondDate){
         for(SellerEntity s : sellerRepository.findAll()){
-            if(s.getId()==idSeller){
-                return "Number of purchase " + orderRepository.checkNumberOfSalesSeller(s.getId(),firstDate,secondDate);
+            if(s.getId().equals(idSeller)){
+                return "Number of sales from " + firstDate.toString() + " to " + secondDate.toString() + " : " + orderRepository.checkNumberOfSalesSeller(s.getId(),firstDate,secondDate);
             }
         }
         return null;
     }
 
+    public List<SellerEntity> salesOfSellerInRangePrice(Integer firstRange, Integer secondRange){
+        if(firstRange != null && secondRange != null ){
+            return orderRepository.salesOfSellerInRangePrice(firstRange,secondRange);
+        }
+        return null;
+    }
 
+    public String showProfitInPerioRange(Long idSeller, LocalDate firstDate, LocalDate secondDate){
+        for(SellerEntity s : sellerRepository.findAll()){
+            if(s.getId().equals(idSeller)){
+                return "Total profit in period from : " + firstDate.toString() + " to : " + secondDate.toString() + " = " + orderRepository.showProfitInPerioRange(idSeller,firstDate,secondDate);
+            }
+        }
+        return null;
+    }
 }

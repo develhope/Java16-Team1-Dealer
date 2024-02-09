@@ -3,6 +3,7 @@ package com.develhope.spring.controllers;
 import com.develhope.spring.dto.RentDto;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.rent.RentEntity;
+import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.services.AdminService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequestMapping("/v1/admin")
 @RestController
@@ -98,9 +100,16 @@ public class AdminController {
         return adminService.checkNumberOfSalesSeller(idSeller,first,second);
     }
 
-    @GetMapping("/show/allSales/period")
-    public void showAllSalesInPerioRange() {
+    @GetMapping("/show/allSales/period/{idSeller}")
+    public String showProfitInPerioRange(@PathVariable Long idSeller,
+                                           @RequestParam LocalDate firstDate,
+                                           @RequestParam LocalDate secondDate) {
+        return adminService.showProfitInPerioRange(idSeller,firstDate,secondDate);
+    }
 
+    @GetMapping("/show/sellers/inRangePrice")
+    public List<SellerEntity> salesOfSellerInRangePrice(@RequestParam Integer firstRange, Integer secondRange) {
+        return adminService.salesOfSellerInRangePrice(firstRange,secondRange);
     }
 
     @GetMapping("/show/vehicle/orderable")
