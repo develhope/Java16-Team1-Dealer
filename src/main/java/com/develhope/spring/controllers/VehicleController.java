@@ -1,7 +1,7 @@
 package com.develhope.spring.controllers;
 
-import com.develhope.spring.entities.vehicle.VehicleEntity;
-import com.develhope.spring.services.VehicleService;
+import com.develhope.spring.vehicle.VehicleEntity;
+import com.develhope.spring.vehicle.VehicleService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

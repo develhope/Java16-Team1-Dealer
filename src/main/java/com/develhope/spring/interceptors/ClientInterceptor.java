@@ -1,6 +1,6 @@
 package com.develhope.spring.interceptors;
 
-import com.develhope.spring.dto.IdLogin;
+import com.develhope.spring.loginSignup.IdLogin;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

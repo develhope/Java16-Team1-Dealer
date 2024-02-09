@@ -3,7 +3,6 @@ package com.develhope.spring.configurations;
 import com.develhope.spring.interceptors.AdminInterceptor;
 import com.develhope.spring.interceptors.ClientInterceptor;
 import com.develhope.spring.interceptors.SellerInterceptor;
-import com.develhope.spring.repositories.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

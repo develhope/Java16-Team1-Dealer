@@ -1,8 +1,8 @@
 package com.develhope.spring.controllers;
 
-import com.develhope.spring.dto.IdLogin;
-import com.develhope.spring.dto.LoginCredentials;
-import com.develhope.spring.entities.user.UserEntity;
+import com.develhope.spring.loginSignup.IdLogin;
+import com.develhope.spring.loginSignup.LoginCredentials;
+import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
