@@ -1,5 +1,6 @@
 package com.develhope.spring.controllers;
 
+import com.develhope.spring.dto.RentDto;
 import com.develhope.spring.dto.order.OrderClientDTO;
 import com.develhope.spring.dto.order.PurchaseClientDTO;
 import com.develhope.spring.entities.rent.RentEntity;
@@ -78,13 +79,11 @@ public class ClientController {
         return clientService.purchaseList();
     }
 
+
     @PostMapping("/create/rent")
     @ResponseBody
-    public RentEntity newRent(@RequestBody(required = true) RentEntity rent,
-                              @RequestParam(name = "id_seller", required = true) Long idSeller,
-                              @RequestParam(name = "id_client", required = true) Long idClient,
-                              @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
-        return clientService.newRent(rent, idSeller, idClient, idVehicle);
+    public RentEntity newRent(@RequestBody RentDto rentDto) {
+        return clientService.newRent(rentDto);
     }
 
     @GetMapping("/show/rent/list")

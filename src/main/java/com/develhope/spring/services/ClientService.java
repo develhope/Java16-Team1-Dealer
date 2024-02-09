@@ -1,11 +1,13 @@
 package com.develhope.spring.services;
 
 import com.develhope.spring.dto.IdLogin;
+import com.develhope.spring.dto.RentDto;
 import com.develhope.spring.dto.order.OrderClientDTO;
 import com.develhope.spring.dto.order.PurchaseClientDTO;
 import com.develhope.spring.entities.order.OrderEntity;
 import com.develhope.spring.entities.order.OrderType;
 import com.develhope.spring.entities.rent.RentEntity;
+import com.develhope.spring.entities.rent.RentStatus;
 import com.develhope.spring.entities.user.ClientEntity;
 import com.develhope.spring.entities.user.SellerEntity;
 import com.develhope.spring.entities.vehicle.SellType;
@@ -228,17 +230,24 @@ public class ClientService {
     }
 
 
-    public RentEntity createRent(RentEntity rentEntity, Long idSeller, Long idClient, Long idVehicle) {
-        RentEntity rent = new RentEntity();
-        rent.setClientId(clientRepository.findById(idClient).get());
-        rent.setSellerId(sellerRepository.findById(idSeller).get());
-        rent.setVehicleId(vehicleRepository.findById(idVehicle).get());
-        rent.setStartingDate(LocalDateTime.now());
-        rent.setEndingDate(rentEntity.getEndingDate());
-        rent.setDailyFee(rentEntity.getDailyFee());
-        rent.setTotalFee(rentEntity.getTotalFee());
-        rent.setIsPaid(rentEntity.getIsPaid());
-        return rent;
+
+    public RentEntity createRent(RentDto rentDto) {
+        VehicleEntity vehicle = vehicleRepository.findById(rentDto.getIdVehicle()).get();
+        if (vehicle.getRentable()) {
+            RentEntity rent = new RentEntity();
+            rent.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
+            rent.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
+            rent.setVehicleId(vehicle);
+            rent.setStartingDate(rentDto.getStartRent());
+            rent.setEndingDate(rentDto.getEndRent());
+            rent.setDailyFee(rentDto.getDailyFee());
+            rent.setIsPaid(true);
+            rent.setRentStatus(RentStatus.INPROGRESS);
+            vehicleRepository.updateVehicleRentability(vehicle.getId());
+            return rent;
+        } else {
+            return null;
+        }
     }
 
 
@@ -246,8 +255,8 @@ public class ClientService {
         return rentRepository.showRentList(idLogin.getId());
     }
 
-    public RentEntity newRent(RentEntity rentEntity, Long idSeller, Long idClient, Long idVehicle) {
-        RentEntity rent = createRent(rentEntity, idSeller, idClient, idVehicle);
+    public RentEntity newRent(RentDto rentDto) {
+        RentEntity rent = createRent(rentDto);
         if (rent != null) {
             return rentRepository.save(rent);
         } else {
@@ -259,5 +268,4 @@ public class ClientService {
 
     public void deleteRent(Long id) {
         rentRepository.customDeleteById(idLogin.getId(), id);
-    }
-}
+    }}
