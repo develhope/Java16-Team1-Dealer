@@ -50,9 +50,16 @@ public class ErrorMessagesAdmin {
     public String vehicleNotExist(){
         return "Vehicle does not exist";
     }
-
     public String vehicleExist(){
         return "Vehicle exists";
+    }
+
+    public String updateVehicleAdminOK(){
+        return "Vehicle updated";
+    }
+
+    public String deleteVehicleAdminOK(){
+        return "Vehicle deleted";
     }
 
 }

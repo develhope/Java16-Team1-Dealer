@@ -200,13 +200,20 @@ public class AdminController {
         return adminService.showVehiclebyId(idVehicle);
     }
     @Operation(summary = "Update Vehicle by ID")
-    @PutMapping("/update/vehicle/{id}") // PUT MODIFICA VEICOLO
-    public Optional<VehicleEntity> updateVehicle(@PathVariable Long id, @RequestBody VehicleEntity vehicle) {
-        return null;
+    @ApiResponse(responseCode = "200", description = "Vehicle updated")
+    @ApiResponse(responseCode = "404", description = "Vehicle not found")
+    @PatchMapping("/update/vehicle/{id}") // PATCH MODIFICA VEICOLO
+    public ResponseEntity<UpdateVehicleAdminResponse> updateVehicle (
+            @Parameter (description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long idVehicle,
+            @Parameter (description = "Vehicle", required = true, name = "vehicle") @RequestBody VehicleEntity vehicle) {
+        return adminService.updateVehicle(vehicle, idVehicle);
     }
     @Operation(summary = "Delete Vehicle by ID")
+    @ApiResponse(responseCode = "200", description = "Vehicle deleted")
+    @ApiResponse(responseCode = "404", description = "Vehicle not found")
     @DeleteMapping("/delete/vehicle/{id}") // DELETE VEICOLO
-    public ResponseEntity deleteVehicle(@PathVariable Long id) {
+    public ResponseEntity<String> deleteVehicle(
+            @Parameter (description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long id) {
         return null;
     }
 

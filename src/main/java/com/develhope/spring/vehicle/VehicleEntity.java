@@ -30,11 +30,11 @@ public class VehicleEntity {
     @Column(nullable = false)
     private String model;
     @Column(nullable = false)
-    private int engineCapacity;
+    private Integer engineCapacity;
     @Column(nullable = false)
     private String colour;
     @Column(nullable = false)
-    private int hp;
+    private Integer hp;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private GearType gearType;
@@ -45,7 +45,7 @@ public class VehicleEntity {
     @Column(nullable = false)
     private BigDecimal price;
     @Column(nullable = false)
-    private int priceDscnt;
+    private Integer priceDscnt;
     @Column(nullable = false)
     private String accessories;
     @Column(nullable = false)
