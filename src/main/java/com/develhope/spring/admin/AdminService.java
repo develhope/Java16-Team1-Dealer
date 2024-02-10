@@ -1,13 +1,17 @@
 package com.develhope.spring.admin;
 
+import com.develhope.spring.admin.adminControllerResponse.ErrorMessagesAdmin;
+import com.develhope.spring.admin.adminControllerResponse.UpdateClientbyAdminResponse;
 import com.develhope.spring.client.*;
 import com.develhope.spring.loginSignup.*;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
 import com.develhope.spring.seller.*;
+import com.develhope.spring.user.UserType;
 import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,6 +35,8 @@ public class AdminService {
     private AdminRepository adminRepository;
     @Autowired
     private RentRepository rentRepository;
+    @Autowired
+    private ErrorMessagesAdmin errorMessagesAdmin;
 
     public OrderEntity newOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
         VehicleEntity vehicle = vehicleRepository.findById(idVehicle).get();
@@ -97,6 +103,7 @@ public class AdminService {
             return null;
         }
     }
+
     public OrderEntity createPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
         if (idLogin.getType().equals("ADMIN")) {
             return orderRepository.save(newPurchase(orderEntity, idSeller, idVehicle, idClient));
@@ -129,9 +136,54 @@ public class AdminService {
 
     }
 
-    public RentEntity newRent(RentDto rentDto){
+    public ResponseEntity<UpdateClientbyAdminResponse> updateClientbyAdmin(ClientEntity clientEntity, Long idClient) {
+        ClientEntity client = new ClientEntity();
+        if (clientRepository.existsById(idClient)) {
+             client = clientRepository.findById(idClient).get();
+            if (client.getType() == UserType.CLIENT) {
+                if (clientEntity.getName() != null) {
+                    client.setName(clientEntity.getName());
+                }
+                if (clientEntity.getSurname() != null) {
+                    client.setSurname(clientEntity.getSurname());
+                }
+                if (clientEntity.getEmail() != null) {
+                    boolean equals = false;
+                    for(ClientEntity c : clientRepository.findAll()) {
+                        if(c.getEmail().equals(clientEntity.getEmail())){
+                            equals = true;
+                        }
+                    }
+                    if(!equals){
+                        client.setEmail(clientEntity.getEmail());
+                    }else {
+                        UpdateClientbyAdminResponse updateClientbyAdminResponse = new UpdateClientbyAdminResponse(errorMessagesAdmin.updateClientbyAdminEmailExist(clientEntity.getEmail()), new ClientEntity());
+                        return ResponseEntity.status(514).body(updateClientbyAdminResponse);
+                    }
+                }
+                if (clientEntity.getPhone() != null) {
+                    client.setPhone(clientEntity.getPhone());
+                }
+                if (clientEntity.getPsw() != null) {
+                    client.setPsw(clientEntity.getPsw());
+                }
+                clientRepository.save(client);
+                UpdateClientbyAdminResponse updateClientbyAdminResponse = new UpdateClientbyAdminResponse(errorMessagesAdmin.updateClientbyAdminOK(idClient), client);
+                return ResponseEntity.status(513).body(updateClientbyAdminResponse);
+            }else {
+                UpdateClientbyAdminResponse updateClientbyAdminResponse = new UpdateClientbyAdminResponse(errorMessagesAdmin.updateClientbyAdminNotFoundClient(idClient), client);
+                return ResponseEntity.status(512).body(updateClientbyAdminResponse);
+            }
+        }else {
+            UpdateClientbyAdminResponse updateClientbyAdminResponse = new UpdateClientbyAdminResponse(errorMessagesAdmin.updateClientbyAdminNotFoundClient(idClient), client);
+            return ResponseEntity.status(404).body(updateClientbyAdminResponse);
+        }
+    }
+
+
+    public RentEntity newRent(RentDto rentDto) {
         VehicleEntity vehicle = vehicleRepository.findById(rentDto.getIdVehicle()).get();
-        if(vehicle.getRentable()){
+        if (vehicle.getRentable()) {
             RentEntity newRent = new RentEntity();
             newRent.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
             newRent.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
@@ -143,18 +195,18 @@ public class AdminService {
             newRent.setIsPaid(true);
             vehicle.setRentable(false);
             return newRent;
-        }else {
+        } else {
             return null;
         }
     }
 
-    public RentEntity createRent(RentDto rentDto){
+    public RentEntity createRent(RentDto rentDto) {
         return rentRepository.save(newRent(rentDto));
     }
 
-    public RentEntity updateRent(Long idRent, RentDto rentDto){
-        for(RentEntity r : rentRepository.findAll()){
-            if(Objects.equals(r.getId(), idRent)) {
+    public RentEntity updateRent(Long idRent, RentDto rentDto) {
+        for (RentEntity r : rentRepository.findAll()) {
+            if (Objects.equals(r.getId(), idRent)) {
                 if (rentDto.getIdSeller() != null) {
                     r.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
                 }
@@ -179,9 +231,9 @@ public class AdminService {
         return null;
     }
 
-    public RentEntity deleteRent(Long id){
-        for(RentEntity r : rentRepository.findAll()){
-            if(r.getId().equals(id)){
+    public RentEntity deleteRent(Long id) {
+        for (RentEntity r : rentRepository.findAll()) {
+            if (r.getId().equals(id)) {
                 rentRepository.deleteById(r.getId());
                 return r;
             }
@@ -189,10 +241,10 @@ public class AdminService {
         return null;
     }
 
-    public String checkNumberOfSalesSeller(Long idSeller, LocalDate firstDate, LocalDate secondDate){
-        for(SellerEntity s : sellerRepository.findAll()){
-            if(s.getId()==idSeller){
-                return "Number of purchase " + orderRepository.checkNumberOfSalesSeller(s.getId(),firstDate,secondDate);
+    public String checkNumberOfSalesSeller(Long idSeller, LocalDate firstDate, LocalDate secondDate) {
+        for (SellerEntity s : sellerRepository.findAll()) {
+            if (s.getId() == idSeller) {
+                return "Number of purchase " + orderRepository.checkNumberOfSalesSeller(s.getId(), firstDate, secondDate);
             }
         }
         return null;

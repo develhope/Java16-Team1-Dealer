@@ -1,9 +1,15 @@
 package com.develhope.spring.admin;
 
+import com.develhope.spring.admin.adminControllerResponse.UpdateClientbyAdminResponse;
+import com.develhope.spring.client.ClientEntity;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -128,10 +134,17 @@ public class AdminController {
     public void deleteSingleUser() {
 
     }
-
+    @Operation(summary = "Update Client Account by Admin")
+    @ApiResponse(responseCode = "201", description = "Order created")
+    @ApiResponse(responseCode = "600", description = "Vehicle does not exist")
+    @ApiResponse(responseCode = "601", description = "Seller does not exist")
+    @ApiResponse(responseCode = "602", description = "Vehicle is not orderable")
     @PatchMapping("/update/user/{id}")
-    public void updateSingleUser() {
-
+    public ResponseEntity<UpdateClientbyAdminResponse> updateSingleUser(
+            @Parameter(description = "Client ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long idClient,
+            @RequestBody ClientEntity clientEntity
+    ) {
+        return adminService.updateClientbyAdmin(clientEntity, idClient);
     }
 
     @DeleteMapping("/delete/seller/{id}")
