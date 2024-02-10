@@ -17,29 +17,7 @@ public class VehicleController {
     @Autowired
     private VehicleService vehicleService;
 
-    @PostMapping("/create/vehicle") // POST CREAZIONE VEICOLO
-    public VehicleEntity createVehicle(@RequestBody VehicleEntity vehicle, @RequestParam String type) {
-        return vehicleService.newVehicle(vehicle, type);
-    }
 
-    @GetMapping("/show/list") // GET TUTTI I VEICOLI
-    public Optional<VehicleEntity> getVehicleById() {
-        return null;
-    }
-
-    @GetMapping("/show/vehicle/{id}") // GET VEICOLO TRAMITE ID
-    public Optional<VehicleEntity> getVehicleById(@PathVariable Long id) {
-        return null;
-    }
-    @PutMapping("/update/vehicle/{id}") // PUT MODIFICA VEICOLO
-    public Optional<VehicleEntity> updateVehicle(@PathVariable Long id, @RequestBody VehicleEntity vehicle) {
-        return null;
-    }
-
-    @DeleteMapping("/delete/vehicle/{id}") // DELETE VEICOLO
-    public ResponseEntity deleteVehicle(@PathVariable Long id) {
-        return null;
-    }
 
 
 

@@ -1,7 +1,6 @@
 package com.develhope.spring.admin;
 
-import com.develhope.spring.admin.adminControllerResponse.ErrorMessagesAdmin;
-import com.develhope.spring.admin.adminControllerResponse.UpdateClientbyAdminResponse;
+import com.develhope.spring.admin.adminControllerResponse.*;
 import com.develhope.spring.client.*;
 import com.develhope.spring.loginSignup.*;
 import com.develhope.spring.order.*;
@@ -15,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -179,6 +180,129 @@ public class AdminService {
             return ResponseEntity.status(404).body(updateClientbyAdminResponse);
         }
     }
+
+    public TruckEntity createTruck(VehicleEntity vehicle) {
+        TruckEntity truck = new TruckEntity();
+        truck.setBrand(vehicle.getBrand());
+        truck.setModel(vehicle.getModel());
+        truck.setEngineCapacity(vehicle.getEngineCapacity());
+        truck.setColour(vehicle.getColour());
+        truck.setHp(vehicle.getHp());
+        truck.setGearType(vehicle.getGearType());
+        truck.setRegisterYear(vehicle.getRegisterYear());
+        truck.setFuelType(vehicle.getFuelType());
+        truck.setPrice(vehicle.getPrice());
+        truck.setPriceDscnt(vehicle.getPriceDscnt());
+        truck.setAccessories(vehicle.getAccessories());
+        truck.setRentable(vehicle.getRentable());
+        truck.setSellType(vehicle.getSellType());
+        return truck;
+    }
+
+    public AutoEntity createAuto(VehicleEntity vehicle) {
+        AutoEntity auto = new AutoEntity();
+        auto.setBrand(vehicle.getBrand());
+        auto.setModel(vehicle.getModel());
+        auto.setEngineCapacity(vehicle.getEngineCapacity());
+        auto.setColour(vehicle.getColour());
+        auto.setHp(vehicle.getHp());
+        auto.setGearType(vehicle.getGearType());
+        auto.setRegisterYear(vehicle.getRegisterYear());
+        auto.setFuelType(vehicle.getFuelType());
+        auto.setPrice(vehicle.getPrice());
+        auto.setPriceDscnt(vehicle.getPriceDscnt());
+        auto.setAccessories(vehicle.getAccessories());
+        auto.setRentable(vehicle.getRentable());
+        auto.setSellType(vehicle.getSellType());
+        return auto;
+    }
+
+    public ScooterEntity createScooter(VehicleEntity vehicle) {
+        ScooterEntity scooter = new ScooterEntity();
+        scooter.setBrand(vehicle.getBrand());
+        scooter.setModel(vehicle.getModel());
+        scooter.setEngineCapacity(vehicle.getEngineCapacity());
+        scooter.setColour(vehicle.getColour());
+        scooter.setHp(vehicle.getHp());
+        scooter.setGearType(vehicle.getGearType());
+        scooter.setRegisterYear(vehicle.getRegisterYear());
+        scooter.setFuelType(vehicle.getFuelType());
+        scooter.setPrice(vehicle.getPrice());
+        scooter.setPriceDscnt(vehicle.getPriceDscnt());
+        scooter.setAccessories(vehicle.getAccessories());
+        scooter.setRentable(vehicle.getRentable());
+        scooter.setSellType(vehicle.getSellType());
+        return scooter;
+    }
+
+    public MotoEntity createMoto(VehicleEntity vehicle) {
+        MotoEntity moto = new MotoEntity();
+        moto.setBrand(vehicle.getBrand());
+        moto.setModel(vehicle.getModel());
+        moto.setEngineCapacity(vehicle.getEngineCapacity());
+        moto.setColour(vehicle.getColour());
+        moto.setHp(vehicle.getHp());
+        moto.setGearType(vehicle.getGearType());
+        moto.setRegisterYear(vehicle.getRegisterYear());
+        moto.setFuelType(vehicle.getFuelType());
+        moto.setPrice(vehicle.getPrice());
+        moto.setPriceDscnt(vehicle.getPriceDscnt());
+        moto.setAccessories(vehicle.getAccessories());
+        moto.setRentable(vehicle.getRentable());
+        moto.setSellType(vehicle.getSellType());
+        return moto;
+    }
+
+
+
+
+    public ResponseEntity<CreateVehicleAdminResponse> newVehicle(VehicleEntity vehicle, String type) {
+        switch (type.toLowerCase()) {
+            case "truck":
+                CreateVehicleAdminResponse createTruck = new CreateVehicleAdminResponse(errorMessagesAdmin.createTruckAdminOK(), vehicleRepository.save(createTruck(vehicle)));
+                return ResponseEntity.status(201).body(createTruck);
+            case "moto":
+                CreateVehicleAdminResponse createMoto = new CreateVehicleAdminResponse(errorMessagesAdmin.createMotoAdminOK(), vehicleRepository.save(createMoto(vehicle)));
+                return ResponseEntity.status(201).body(createMoto);
+            case "auto":
+                CreateVehicleAdminResponse createCar = new CreateVehicleAdminResponse(errorMessagesAdmin.createCarAdminOK(), vehicleRepository.save(createAuto(vehicle)));
+                return ResponseEntity.status(201).body(createCar);
+            case "scooter":
+                CreateVehicleAdminResponse createScooter = new CreateVehicleAdminResponse(errorMessagesAdmin.createScooterAdminOK(), vehicleRepository.save(createScooter(vehicle)));
+                return ResponseEntity.status(201).body(createScooter);
+            default:
+                return null;
+        }
+
+    }
+
+    public ResponseEntity<ShowListVehicleAdminResponse> showVehicles() {
+        if(vehicleRepository.findAll().size() > 0){
+            List<VehicleEntity> vehicles = vehicleRepository.findAll();
+            ShowListVehicleAdminResponse showListVehicleAdminResponse = new ShowListVehicleAdminResponse(errorMessagesAdmin.listVehiclesAdminOK(vehicles.size()), vehicles);
+            return ResponseEntity.status(200).body(showListVehicleAdminResponse);
+        }else{
+            ShowListVehicleAdminResponse showListVehicleAdminResponse = new ShowListVehicleAdminResponse(errorMessagesAdmin.listVehiclesAdminEmpty(), Arrays.asList());
+            return ResponseEntity.status(404).body(showListVehicleAdminResponse);
+        }
+
+    }
+
+    public ResponseEntity<ShowVehicleAdminResponse> showVehiclebyId(Long idVehicle) {
+        VehicleEntity vehicle = new VehicleEntity();
+        if(vehicleRepository.existsById(idVehicle)){
+            vehicle = vehicleRepository.findById(idVehicle).get();
+            ShowVehicleAdminResponse vehicleExist = new ShowVehicleAdminResponse(errorMessagesAdmin.vehicleExist(), vehicle);
+           return  ResponseEntity.status(200).body(vehicleExist);
+        }else{
+            ShowVehicleAdminResponse vehicleNotExist = new ShowVehicleAdminResponse(errorMessagesAdmin.vehicleNotExist(), vehicle);
+            return ResponseEntity.status(404).body(vehicleNotExist);
+        }
+    }
+
+
+
+
 
 
     public RentEntity newRent(RentDto rentDto) {
