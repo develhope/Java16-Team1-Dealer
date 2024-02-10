@@ -350,12 +350,12 @@ public class AdminService {
             }
         }
 
-        public ResponseEntity<String> deleteVehicle (Long idVehicle){
+        public ResponseEntity<DeleteVehicleResponse> deleteVehicle (Long idVehicle){
             if (vehicleRepository.existsById(idVehicle)) {
                 vehicleRepository.deleteById(idVehicle);
-                return ResponseEntity.status(200).body(errorMessagesAdmin.deleteVehicleAdminOK());
+                return ResponseEntity.status(200).body(new DeleteVehicleResponse(errorMessagesAdmin.deleteVehicleAdminOK()));
             } else {
-                return ResponseEntity.status(404).body(errorMessagesAdmin.vehicleNotExist());
+                return ResponseEntity.status(404).body(new DeleteVehicleResponse(errorMessagesAdmin.vehicleNotExist()));
             }
         }
 

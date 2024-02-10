@@ -212,9 +212,9 @@ public class AdminController {
     @ApiResponse(responseCode = "200", description = "Vehicle deleted")
     @ApiResponse(responseCode = "404", description = "Vehicle not found")
     @DeleteMapping("/delete/vehicle/{id}") // DELETE VEICOLO
-    public ResponseEntity<String> deleteVehicle(
+    public ResponseEntity<DeleteVehicleResponse> deleteVehicle(
             @Parameter (description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long id) {
-        return null;
+        return adminService.deleteVehicle(id);
     }
 
 
