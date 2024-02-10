@@ -1,11 +1,11 @@
 package com.develhope.spring.services;
 
-import com.develhope.spring.dto.LoginCredentials;
-import com.develhope.spring.entities.user.AdminEntity;
-import com.develhope.spring.entities.user.ClientEntity;
-import com.develhope.spring.entities.user.SellerEntity;
-import com.develhope.spring.entities.user.UserEntity;
-import com.develhope.spring.repositories.UserRepository;
+import com.develhope.spring.loginSignup.LoginCredentials;
+import com.develhope.spring.admin.AdminEntity;
+import com.develhope.spring.client.ClientEntity;
+import com.develhope.spring.seller.SellerEntity;
+import com.develhope.spring.user.UserEntity;
+import com.develhope.spring.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
