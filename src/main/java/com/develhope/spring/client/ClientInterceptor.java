@@ -1,4 +1,4 @@
-package com.develhope.spring.interceptors;
+package com.develhope.spring.client;
 
 import com.develhope.spring.loginSignup.IdLogin;
 import jakarta.servlet.http.HttpServletRequest;
