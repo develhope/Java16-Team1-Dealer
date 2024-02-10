@@ -2,16 +2,9 @@ package com.develhope.spring.seller;
 
 import com.develhope.spring.client.ClientRepository;
 import com.develhope.spring.loginSignup.IdLogin;
-import com.develhope.spring.order.OrderEntity;
-import com.develhope.spring.order.OrderState;
-import com.develhope.spring.order.OrderType;
+import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
-import com.develhope.spring.rent.RentStatus;
-import com.develhope.spring.vehicle.SellType;
-import com.develhope.spring.vehicle.VehicleEntity;
-import com.develhope.spring.order.OrderRepository;
-import com.develhope.spring.rent.RentRepository;
-import com.develhope.spring.vehicle.VehicleRepository;
+import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

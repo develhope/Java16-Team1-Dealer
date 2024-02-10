@@ -1,18 +1,11 @@
 package com.develhope.spring.admin;
 
-import com.develhope.spring.client.ClientRepository;
-import com.develhope.spring.loginSignup.IdLogin;
-import com.develhope.spring.order.OrderRepository;
-import com.develhope.spring.rent.RentDto;
-import com.develhope.spring.order.OrderEntity;
-import com.develhope.spring.order.OrderType;
+import com.develhope.spring.client.*;
+import com.develhope.spring.loginSignup.*;
+import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
-import com.develhope.spring.seller.SellerEntity;
-import com.develhope.spring.vehicle.SellType;
-import com.develhope.spring.vehicle.VehicleEntity;
-import com.develhope.spring.rent.RentRepository;
-import com.develhope.spring.seller.SellerRepository;
-import com.develhope.spring.vehicle.VehicleRepository;
+import com.develhope.spring.seller.*;
+import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

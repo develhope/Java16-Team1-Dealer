@@ -1,11 +1,9 @@
-package com.develhope.spring.controllers;
+package com.develhope.spring.seller;
 
 
-import com.develhope.spring.order.OrderEntity;
-import com.develhope.spring.order.OrderState;
+import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
-import com.develhope.spring.vehicle.VehicleEntity;
-import com.develhope.spring.seller.SellerService;
+import com.develhope.spring.vehicle.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

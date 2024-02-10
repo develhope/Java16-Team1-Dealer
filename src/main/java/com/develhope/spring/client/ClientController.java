@@ -1,11 +1,8 @@
 package com.develhope.spring.client;
 
 import com.develhope.spring.client.clientControllerResponse.*;
-import com.develhope.spring.rent.RentDto;
-import com.develhope.spring.order.dto.OrderClientDTO;
-import com.develhope.spring.order.dto.PurchaseClientDTO;
 import com.develhope.spring.rent.*;
-import com.develhope.spring.client.clientControllerResponse.*;
+import com.develhope.spring.order.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

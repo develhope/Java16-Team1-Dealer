@@ -1,7 +1,6 @@
 package com.develhope.spring.admin;
 
-import com.develhope.spring.rent.RentDto;
-import com.develhope.spring.order.OrderEntity;
+import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

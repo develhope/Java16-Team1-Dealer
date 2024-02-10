@@ -1,4 +1,4 @@
-package com.develhope.spring.controllers;
+package com.develhope.spring.vehicle;
 
 import com.develhope.spring.vehicle.VehicleEntity;
 import com.develhope.spring.vehicle.VehicleService;

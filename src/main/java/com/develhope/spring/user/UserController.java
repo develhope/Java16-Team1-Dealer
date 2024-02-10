@@ -1,9 +1,7 @@
-package com.develhope.spring.controllers;
+package com.develhope.spring.user;
 
 import com.develhope.spring.loginSignup.IdLogin;
 import com.develhope.spring.loginSignup.LoginCredentials;
-import com.develhope.spring.user.UserEntity;
-import com.develhope.spring.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
