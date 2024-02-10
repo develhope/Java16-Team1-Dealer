@@ -1,12 +1,20 @@
 package com.develhope.spring.admin;
 
+import com.develhope.spring.admin.adminControllerResponse.*;
+import com.develhope.spring.client.ClientEntity;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
+import com.develhope.spring.vehicle.VehicleEntity;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @RequestMapping("/v1/admin")
 @RestController
@@ -43,7 +51,7 @@ public class AdminController {
 
     @PostMapping("/create/client/rent")
     @ResponseBody
-    public RentEntity createRent(@RequestBody RentDto rentDto){
+    public RentEntity createRent(@RequestBody RentDto rentDto) {
         return adminService.createRent(rentDto);
     }
 
@@ -54,7 +62,7 @@ public class AdminController {
 
     @PatchMapping("/update/client/rent/{id}")
     public RentEntity updateRent(@PathVariable Long id, @RequestBody RentDto rentDto) {
-        return adminService.updateRent(id,rentDto);
+        return adminService.updateRent(id, rentDto);
     }
 
     @PostMapping("/create/purchase/client")
@@ -91,7 +99,7 @@ public class AdminController {
 
     @GetMapping("/show/sellers/sales/period/{idSeller}")
     public String showSellerSalesInPeriodRange(@PathVariable Long idSeller, @RequestParam LocalDate first, @RequestParam LocalDate second) {
-        return adminService.checkNumberOfSalesSeller(idSeller,first,second);
+        return adminService.checkNumberOfSalesSeller(idSeller, first, second);
     }
 
     @GetMapping("/show/allSales/period")
@@ -129,9 +137,17 @@ public class AdminController {
 
     }
 
+    @Operation(summary = "Update Client Account by Admin")
+    @ApiResponse(responseCode = "201", description = "Order created")
+    @ApiResponse(responseCode = "600", description = "Vehicle does not exist")
+    @ApiResponse(responseCode = "601", description = "Seller does not exist")
+    @ApiResponse(responseCode = "602", description = "Vehicle is not orderable")
     @PatchMapping("/update/user/{id}")
-    public void updateSingleUser() {
-
+    public ResponseEntity<UpdateClientbyAdminResponse> updateSingleUser(
+            @Parameter(description = "Client ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long idClient,
+            @RequestBody ClientEntity clientEntity
+    ) {
+        return adminService.updateClientbyAdmin(clientEntity, idClient);
     }
 
     @DeleteMapping("/delete/seller/{id}")
@@ -158,5 +174,48 @@ public class AdminController {
     public void showVehicleMaxBuyer() {
 
     }
+
+    @Operation(summary = "Create a new Vehicle")
+    @ApiResponse(responseCode = "201", description = "Vehicle created")
+    @PostMapping("/create/vehicle") // POST CREAZIONE VEICOLO
+    public ResponseEntity<CreateVehicleAdminResponse> createVehicle(
+            @RequestBody VehicleEntity vehicle,
+            @Parameter (description = "Vehicle type", example = "Truck", required = true, name = "type") @RequestParam String type) {
+        return adminService.newVehicle(vehicle, type);
+    }
+    @Operation(summary = "Show Vehicles")
+    @ApiResponse(responseCode = "200", description = "Show All Vehicles")
+    @ApiResponse(responseCode = "404", description = "Vehicles not found")
+    @GetMapping("/show/list/vehicle") // GET TUTTI I VEICOLI
+    public ResponseEntity<ShowListVehicleAdminResponse> getVehicleById() {
+        return adminService.showVehicles();
+    }
+    @Operation(summary = "Show Vehicle by ID")
+    @ApiResponse(responseCode = "200", description = "Vehicle found by ID")
+    @ApiResponse(responseCode = "404", description = "Vehicle not found")
+    @GetMapping("/show/vehicle/{id}") // GET VEICOLO TRAMITE ID
+    public ResponseEntity<ShowVehicleAdminResponse> getVehicleById(
+            @Parameter (description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long idVehicle) {
+
+        return adminService.showVehiclebyId(idVehicle);
+    }
+    @Operation(summary = "Update Vehicle by ID")
+    @ApiResponse(responseCode = "200", description = "Vehicle updated")
+    @ApiResponse(responseCode = "404", description = "Vehicle not found")
+    @PatchMapping("/update/vehicle/{id}") // PATCH MODIFICA VEICOLO
+    public ResponseEntity<UpdateVehicleAdminResponse> updateVehicle (
+            @Parameter (description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long idVehicle,
+            @Parameter (description = "Vehicle", required = true, name = "vehicle") @RequestBody VehicleEntity vehicle) {
+        return adminService.updateVehicle(vehicle, idVehicle);
+    }
+    @Operation(summary = "Delete Vehicle by ID")
+    @ApiResponse(responseCode = "200", description = "Vehicle deleted")
+    @ApiResponse(responseCode = "404", description = "Vehicle not found")
+    @DeleteMapping("/delete/vehicle/{id}") // DELETE VEICOLO
+    public ResponseEntity<DeleteVehicleResponse> deleteVehicle(
+            @Parameter (description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long id) {
+        return adminService.deleteVehicle(id);
+    }
+
 
 }
