@@ -131,10 +131,14 @@ public class AdminController {
     public void showAllVehicleNotAvailable() {
 
     }
-
-    @DeleteMapping("/delete/user/{id}")
-    public void deleteSingleUser() {
-
+    @Operation(summary = "Delete Client Account by Admin")
+    @ApiResponse(responseCode = "200", description = "Client deleted")
+    @ApiResponse(responseCode = "404", description = "Client not found")
+    @DeleteMapping("/delete/client/{id}")
+    public ResponseEntity<String> deleteSingleUser(
+            @Parameter(description = "Client ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long idClient
+    ) {
+        return adminService.deleteClientbyAdmin(idClient);
     }
 
     @Operation(summary = "Update Client Account by Admin")
