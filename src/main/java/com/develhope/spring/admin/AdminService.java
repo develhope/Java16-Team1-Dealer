@@ -360,9 +360,24 @@ public class AdminService {
         }
 
 
+        public ResponseEntity<String> deleteSellerbyAdmin (Long idSeller){
+            if (sellerRepository.existsById(idSeller)) {
+                    sellerRepository.deleteById(idSeller);
+                    return ResponseEntity.status(200).body(errorMessagesAdmin.deleteSellerAdminOK(idSeller));
+            } else {
+                return ResponseEntity.status(404).body(errorMessagesAdmin.sellerNotExist(idSeller));
+            }
+        }
 
 
-
+    public ResponseEntity<String> deleteClientbyAdmin (Long idClient){
+        if (clientRepository.existsById(idClient)) {
+            clientRepository.deleteById(idClient);
+            return ResponseEntity.status(200).body(errorMessagesAdmin.deleteClientAdminOK(idClient));
+        } else {
+            return ResponseEntity.status(404).body(errorMessagesAdmin.clientNotExist(idClient));
+        }
+    }
 
 
 

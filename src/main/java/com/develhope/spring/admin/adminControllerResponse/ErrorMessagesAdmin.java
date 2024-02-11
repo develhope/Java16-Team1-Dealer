@@ -62,4 +62,20 @@ public class ErrorMessagesAdmin {
         return "Vehicle deleted";
     }
 
+    public String deleteSellerAdminOK(Long idSeller){
+        return "Seller with id " + idSeller + " deleted";
+    }
+
+    public String sellerNotExist(Long idSeller){
+        return "Seller with id " + idSeller + " does not exist";
+    }
+
+    public String deleteClientAdminOK(Long idClient){
+        return "Client with id " + idClient + " deleted";
+    }
+
+    public String clientNotExist(Long idClient){
+        return "Client with id " + idClient + " does not exist";
+    }
+
 }
