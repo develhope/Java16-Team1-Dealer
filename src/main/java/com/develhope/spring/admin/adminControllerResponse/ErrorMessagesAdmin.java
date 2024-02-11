@@ -62,4 +62,12 @@ public class ErrorMessagesAdmin {
         return "Vehicle deleted";
     }
 
+    public String deleteSellerAdminOK(){
+        return "Seller deleted";
+    }
+
+    public String sellerNotExist(Long idSeller){
+        return "Seller with id " + idSeller + " does not exist";
+    }
+
 }

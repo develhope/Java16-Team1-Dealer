@@ -360,7 +360,15 @@ public class AdminService {
         }
 
 
-
+        public ResponseEntity<String> deleteSellerbyAdmin (Long idSeller){
+            if (sellerRepository.existsById(idSeller)) {
+                SellerEntity seller = sellerRepository.findById(idSeller).get();
+                    sellerRepository.deleteById(idSeller);
+                    return ResponseEntity.status(200).body(errorMessagesAdmin.deleteSellerAdminOK());
+            } else {
+                return ResponseEntity.status(404).body(errorMessagesAdmin.sellerNotExist(idSeller));
+            }
+        }
 
 
 
