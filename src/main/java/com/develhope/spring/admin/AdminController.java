@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequestMapping("/v1/admin")
@@ -106,6 +107,17 @@ public class AdminController {
     public void showAllSalesInPerioRange() {
 
     }
+
+    @GetMapping("/show/mostsold/period")
+    public @ResponseBody VehicleEntity showMostSoldCarInPeriodRange(@RequestParam LocalDateTime firstDate, @RequestParam LocalDateTime secondDate) {
+      return adminService.showMostSoldCarInPeriodRange(firstDate, secondDate);
+    }
+
+    @GetMapping("/show/mostexpensivesold/period")
+    public @ResponseBody VehicleEntity showMostExpensiveCarInPeriodRange(@RequestParam LocalDateTime firstDate, @RequestParam LocalDateTime secondDate) {
+        return adminService.showMostExpensiveCarInPeriodRange(firstDate, secondDate);
+    }
+
 
     @GetMapping("/show/vehicle/orderable")
     public void showAvailableVehicleOrderable() {
