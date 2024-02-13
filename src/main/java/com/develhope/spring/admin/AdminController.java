@@ -118,6 +118,11 @@ public class AdminController {
         return adminService.showMostExpensiveCarInPeriodRange(firstDate, secondDate);
     }
 
+    @GetMapping("/show/mostsoldever")
+    public @ResponseBody VehicleEntity showMostSoldCarEver() {
+        return adminService.showMostSoldCarEver();
+    }
+
 
     @GetMapping("/show/vehicle/orderable")
     public void showAvailableVehicleOrderable() {

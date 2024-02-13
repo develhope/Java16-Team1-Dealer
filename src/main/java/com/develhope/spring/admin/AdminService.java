@@ -456,12 +456,12 @@ public class AdminService {
         rangeDates.add(secondDate);
         Collections.sort(rangeDates);
 
-        List<CarSalesInfoDto> totalSales = vehicleRepository.showMostSoldCarInPeriodRange(rangeDates.get(0).toString(), rangeDates.get(1).toString());
+        List<VehicleSalesInfoDto> totalSales = vehicleRepository.showMostSoldCarInPeriodRange(rangeDates.get(0).toString(), rangeDates.get(1).toString());
         VehicleEntity mostSoldCar = new VehicleEntity();
         Long myVar = Long.valueOf(0);
 
         for(int i = 0; i < totalSales.size(); i++) {
-            if(totalSales.get(i).getTotalSales() > 0) {
+            if(totalSales.get(i).getTotalSales() > myVar) {
                 myVar = totalSales.get(i).getTotalSales();
                 mostSoldCar = totalSales.get(i).getVehicle();
             }
@@ -489,5 +489,22 @@ public class AdminService {
         }
 
         return mostExpensiveCar;
+    }
+
+    public VehicleEntity showMostSoldCarEver() {
+        List<VehicleSalesInfoDto> carSales = vehicleRepository.showMostSoldCarEver();
+        VehicleEntity mostSoldCar = new VehicleEntity();
+        Long myVar = Long.valueOf(0);
+
+        for(int i = 0; i < carSales.size(); i++) {
+            if(carSales.get(i).getTotalSales() > myVar) {
+                myVar = carSales.get(i).getTotalSales();
+                mostSoldCar = carSales.get(i).getVehicle();
+            }
+        }
+
+
+
+        return mostSoldCar;
     }
 }

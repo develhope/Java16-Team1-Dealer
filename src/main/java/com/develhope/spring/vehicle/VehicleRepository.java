@@ -36,18 +36,30 @@ public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
             "FROM vehicle AS v " +
             "LEFT JOIN orders AS o ON o.id_vehicle = v.id " +
             "WHERE :firstdate <= o.date_purch AND o.date_purch <= :seconddate " +
-            "GROUP BY v.id", nativeQuery = true)
-    List<CarSalesInfoDto> showMostSoldCarInPeriodRange(@Param(value = "firstdate") String firstDate,
-                                                       @Param(value = "seconddate") String secondDate);
+            "AND o.order_stat != 'CANCELED' " +
+            "GROUP BY v.id;", nativeQuery = true)
+    List<VehicleSalesInfoDto> showMostSoldCarInPeriodRange(@Param(value = "firstdate") String firstDate,
+                                                           @Param(value = "seconddate") String secondDate);
 
 
     @Transactional
     @Modifying
     @Query(value = "SELECT * FROM vehicle AS v " +
             "LEFT JOIN orders AS o ON o.id_vehicle = v.id " +
-            "WHERE :firstdate <= o.date_purch AND o.date_purch <= :seconddate;", nativeQuery = true)
+            "WHERE :firstdate <= o.date_purch AND o.date_purch <= :seconddate " +
+            "AND o.order_stat != 'CANCELED' " +
+            "GROUP BY v.id;" , nativeQuery = true)
     List<VehicleEntity> showMostExpensiveCarInPeriodRange(@Param(value = "firstdate") String firstDate,
                                                          @Param(value = "seconddate") String secondDate);
+
+    @Transactional
+    @Modifying
+    @Query(value = "SELECT v.*, COUNT(o.id_vehicle) AS total_sales " +
+            "FROM vehicle AS v " +
+            "LEFT JOIN orders AS o ON o.id_vehicle = v.id " +
+            "AND o.order_stat != 'CANCELED' " +
+            "GROUP BY v.id;", nativeQuery = true)
+    List<VehicleSalesInfoDto> showMostSoldCarEver();
 }
 
 

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CarSalesInfoDto {
+public class VehicleSalesInfoDto {
     private VehicleEntity vehicle;
     private Long totalSales;
 }
