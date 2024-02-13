@@ -339,38 +339,38 @@ public class AdminService {
     }
 
 
-        public ResponseEntity<UpdateVehicleAdminResponse> updateVehicle (VehicleEntity vehicleEntity, Long idVehicle){
-            VehicleEntity vehicle = new VehicleEntity();
-            if (vehicleRepository.existsById(idVehicle)) {
-                vehicle = vehicleRepository.findById(idVehicle).get();
-                return checkPropertiesVehicle(vehicleEntity, vehicle);
-            } else {
-                UpdateVehicleAdminResponse vehicleNotExist = new UpdateVehicleAdminResponse(errorMessagesAdmin.vehicleNotExist(), vehicle);
-                return ResponseEntity.status(404).body(vehicleNotExist);
-            }
+    public ResponseEntity<UpdateVehicleAdminResponse> updateVehicle(VehicleEntity vehicleEntity, Long idVehicle) {
+        VehicleEntity vehicle = new VehicleEntity();
+        if (vehicleRepository.existsById(idVehicle)) {
+            vehicle = vehicleRepository.findById(idVehicle).get();
+            return checkPropertiesVehicle(vehicleEntity, vehicle);
+        } else {
+            UpdateVehicleAdminResponse vehicleNotExist = new UpdateVehicleAdminResponse(errorMessagesAdmin.vehicleNotExist(), vehicle);
+            return ResponseEntity.status(404).body(vehicleNotExist);
         }
+    }
 
-        public ResponseEntity<DeleteVehicleResponse> deleteVehicle (Long idVehicle){
-            if (vehicleRepository.existsById(idVehicle)) {
-                vehicleRepository.deleteById(idVehicle);
-                return ResponseEntity.status(200).body(new DeleteVehicleResponse(errorMessagesAdmin.deleteVehicleAdminOK()));
-            } else {
-                return ResponseEntity.status(404).body(new DeleteVehicleResponse(errorMessagesAdmin.vehicleNotExist()));
-            }
+    public ResponseEntity<DeleteVehicleResponse> deleteVehicle(Long idVehicle) {
+        if (vehicleRepository.existsById(idVehicle)) {
+            vehicleRepository.deleteById(idVehicle);
+            return ResponseEntity.status(200).body(new DeleteVehicleResponse(errorMessagesAdmin.deleteVehicleAdminOK()));
+        } else {
+            return ResponseEntity.status(404).body(new DeleteVehicleResponse(errorMessagesAdmin.vehicleNotExist()));
         }
+    }
 
 
-        public ResponseEntity<String> deleteSellerbyAdmin (Long idSeller){
-            if (sellerRepository.existsById(idSeller)) {
-                    sellerRepository.deleteById(idSeller);
-                    return ResponseEntity.status(200).body(errorMessagesAdmin.deleteSellerAdminOK(idSeller));
-            } else {
-                return ResponseEntity.status(404).body(errorMessagesAdmin.sellerNotExist(idSeller));
-            }
+    public ResponseEntity<String> deleteSellerbyAdmin(Long idSeller) {
+        if (sellerRepository.existsById(idSeller)) {
+            sellerRepository.deleteById(idSeller);
+            return ResponseEntity.status(200).body(errorMessagesAdmin.deleteSellerAdminOK(idSeller));
+        } else {
+            return ResponseEntity.status(404).body(errorMessagesAdmin.sellerNotExist(idSeller));
         }
+    }
 
 
-    public ResponseEntity<String> deleteClientbyAdmin (Long idClient){
+    public ResponseEntity<String> deleteClientbyAdmin(Long idClient) {
         if (clientRepository.existsById(idClient)) {
             clientRepository.deleteById(idClient);
             return ResponseEntity.status(200).body(errorMessagesAdmin.deleteClientAdminOK(idClient));
@@ -380,86 +380,72 @@ public class AdminService {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-        public RentEntity newRent (RentDto rentDto){
-            VehicleEntity vehicle = vehicleRepository.findById(rentDto.getIdVehicle()).get();
-            if (vehicle.getRentable()) {
-                RentEntity newRent = new RentEntity();
-                newRent.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
-                newRent.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
-                newRent.setVehicleId(vehicleRepository.findById(rentDto.getIdVehicle()).get());
-                newRent.setStartingDate(rentDto.getStartRent());
-                newRent.setEndingDate(rentDto.getEndRent());
-                newRent.setDailyFee(rentDto.getDailyFee());
-                newRent.setTotalFee(rentDto.getTotalFee());
-                newRent.setIsPaid(true);
-                vehicle.setRentable(false);
-                return newRent;
-            } else {
-                return null;
-            }
-        }
-
-        public RentEntity createRent (RentDto rentDto){
-            return rentRepository.save(newRent(rentDto));
-        }
-
-        public RentEntity updateRent (Long idRent, RentDto rentDto){
-            for (RentEntity r : rentRepository.findAll()) {
-                if (Objects.equals(r.getId(), idRent)) {
-                    if (rentDto.getIdSeller() != null) {
-                        r.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
-                    }
-                    if (rentDto.getIdClient() != null) {
-                        r.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
-                    }
-                    if (rentDto.getIdVehicle() != null) {
-                        r.setVehicleId(vehicleRepository.findById(rentDto.getIdVehicle()).get());
-                    }
-                    if (rentDto.getEndRent() != null) {
-                        r.setEndingDate(rentDto.getEndRent());
-                    }
-                    if (rentDto.getDailyFee() != null) {
-                        r.setDailyFee(rentDto.getDailyFee());
-                    }
-                    if (rentDto.getTotalFee() != null) {
-                        r.setTotalFee(rentDto.getTotalFee());
-                    }
-                    return rentRepository.save(r);
-                }
-            }
+    public RentEntity newRent(RentDto rentDto) {
+        VehicleEntity vehicle = vehicleRepository.findById(rentDto.getIdVehicle()).get();
+        if (vehicle.getRentable()) {
+            RentEntity newRent = new RentEntity();
+            newRent.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
+            newRent.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
+            newRent.setVehicleId(vehicleRepository.findById(rentDto.getIdVehicle()).get());
+            newRent.setStartingDate(rentDto.getStartRent());
+            newRent.setEndingDate(rentDto.getEndRent());
+            newRent.setDailyFee(rentDto.getDailyFee());
+            newRent.setTotalFee(rentDto.getTotalFee());
+            newRent.setIsPaid(true);
+            vehicle.setRentable(false);
+            return newRent;
+        } else {
             return null;
         }
-
-        public RentEntity deleteRent (Long id){
-            for (RentEntity r : rentRepository.findAll()) {
-                if (r.getId().equals(id)) {
-                    rentRepository.deleteById(r.getId());
-                    return r;
-                }
-            }
-            return null;
-        }
-
-        public String checkNumberOfSalesSeller (Long idSeller, LocalDate firstDate, LocalDate secondDate){
-            for (SellerEntity s : sellerRepository.findAll()) {
-                if (s.getId() == idSeller) {
-                    return "Number of purchase " + orderRepository.checkNumberOfSalesSeller(s.getId(), firstDate, secondDate);
-                }
-            }
-            return null;
-        }
-
-
     }
+
+    public RentEntity createRent(RentDto rentDto) {
+        return rentRepository.save(newRent(rentDto));
+    }
+
+    public RentEntity updateRent(Long idRent, RentDto rentDto) {
+        for (RentEntity r : rentRepository.findAll()) {
+            if (Objects.equals(r.getId(), idRent)) {
+                if (rentDto.getIdSeller() != null) {
+                    r.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
+                }
+                if (rentDto.getIdClient() != null) {
+                    r.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
+                }
+                if (rentDto.getIdVehicle() != null) {
+                    r.setVehicleId(vehicleRepository.findById(rentDto.getIdVehicle()).get());
+                }
+                if (rentDto.getEndRent() != null) {
+                    r.setEndingDate(rentDto.getEndRent());
+                }
+                if (rentDto.getDailyFee() != null) {
+                    r.setDailyFee(rentDto.getDailyFee());
+                }
+                if (rentDto.getTotalFee() != null) {
+                    r.setTotalFee(rentDto.getTotalFee());
+                }
+                return rentRepository.save(r);
+            }
+        }
+        return null;
+    }
+
+    public RentEntity deleteRent(Long id) {
+        for (RentEntity r : rentRepository.findAll()) {
+            if (r.getId().equals(id)) {
+                rentRepository.deleteById(r.getId());
+                return r;
+            }
+        }
+        return null;
+    }
+
+    public String checkNumberOfSalesSeller(Long idSeller, LocalDate firstDate, LocalDate secondDate) {
+        for (SellerEntity s : sellerRepository.findAll()) {
+            if (s.getId() == idSeller) {
+                return "Number of purchase " + orderRepository.checkNumberOfSalesSeller(s.getId(), firstDate, secondDate);
+            }
+        }
+        return null;
+    }
+}
