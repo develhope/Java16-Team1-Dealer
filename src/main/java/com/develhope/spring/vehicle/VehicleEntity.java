@@ -14,6 +14,61 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "showMostSoldCarInPeriodRange",
+                query = "SELECT v.brand, v.model, v.colour, v.accessories, v.engine_capacity, v.fuel_type, v.gear_type, v.hp, v.price, COUNT(v.model) AS total_sales " +
+                        "FROM vehicle AS v " +
+                        "INNER JOIN orders AS o ON o.id_vehicle = v.id " +
+                        "WHERE :firstdate <= o.date_purch AND o.date_purch <= :seconddate " +
+                        "AND o.order_stat != 'CANCELED' " +
+                        "GROUP BY v.brand, v.model, v.colour, v.accessories, v.engine_capacity, v.fuel_type, v.gear_type, v.hp, v.price " +
+                        "ORDER BY total_sales DESC " +
+                        "LIMIT 1;",
+                resultSetMapping = "vehicle_sales_info_dto"
+        ),
+        @NamedNativeQuery(
+                name = "showMostExpensiveCarInPeriodRange",
+                query = "SELECT v.brand, v.model, v.colour, v.accessories, v.engine_capacity, v.fuel_type, v.gear_type, v.hp, v.price, COUNT(v.model) AS total_sales " +
+                        "FROM vehicle AS v " +
+                        "INNER JOIN orders AS o ON o.id_vehicle = v.id " +
+                        "WHERE :firstdate <= o.date_purch AND o.date_purch <= :seconddate " +
+                        "AND o.order_stat != 'CANCELED' " +
+                        "GROUP BY v.brand, v.model, v.colour, v.accessories, v.engine_capacity, v.fuel_type, v.gear_type, v.hp, v.price " +
+                        "ORDER BY v.price DESC " +
+                        "LIMIT 1;",
+                resultSetMapping = "vehicle_sales_info_dto"
+        ),
+        @NamedNativeQuery(
+                name = "showMostSoldCarEver",
+                query = "SELECT v.brand, v.model, v.colour, v.accessories, v.engine_capacity, v.fuel_type, v.gear_type, v.hp, v.price, COUNT(v.model) AS total_sales " +
+                        "FROM vehicle AS v " +
+                        "INNER JOIN orders AS o ON o.id_vehicle = v.id " +
+                        "AND o.order_stat != 'CANCELED' " +
+                        "GROUP BY v.brand, v.model, v.colour, v.accessories, v.engine_capacity, v.fuel_type, v.gear_type, v.hp, v.price " +
+                        "ORDER BY total_sales DESC " +
+                        "LIMIT 1;",
+                resultSetMapping = "vehicle_sales_info_dto"
+        )
+})
+@SqlResultSetMapping(
+        name = "vehicle_sales_info_dto",
+        classes = @ConstructorResult(
+                targetClass = VehicleSalesInfoDto.class,
+                columns = {
+                        @ColumnResult(name = "brand", type = String.class),
+                        @ColumnResult(name = "model", type = String.class),
+                        @ColumnResult(name = "colour", type = String.class),
+                        @ColumnResult(name = "accessories", type = String.class),
+                        @ColumnResult(name = "engine_capacity", type = Integer.class),
+                        @ColumnResult(name = "fuel_type", type = String.class),
+                        @ColumnResult(name = "gear_type", type = GearType.class),
+                        @ColumnResult(name = "hp", type = Integer.class),
+                        @ColumnResult(name = "price", type = BigDecimal.class),
+                        @ColumnResult(name = "total_sales", type = Integer.class),
+                }
+        )
+)
 @Table(name = "vehicle")
 @Data
 @NoArgsConstructor

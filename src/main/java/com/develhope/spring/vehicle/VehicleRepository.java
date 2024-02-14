@@ -1,5 +1,8 @@
 package com.develhope.spring.vehicle;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.SqlResultSetMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,36 +33,14 @@ public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
     @Query(value = "UPDATE vehicle AS v SET v.rentable = false WHERE v.id = :vehicleid", nativeQuery = true)
     void updateVehicleRentability(@Param("vehicleid") Long vehicleId);
 
-    @Transactional
-    @Modifying
-    @Query(value = "SELECT v.*, COUNT(o.id_vehicle) AS total_sales " +
-            "FROM vehicle AS v " +
-            "LEFT JOIN orders AS o ON o.id_vehicle = v.id " +
-            "WHERE :firstdate <= o.date_purch AND o.date_purch <= :seconddate " +
-            "AND o.order_stat != 'CANCELED' " +
-            "GROUP BY v.id;", nativeQuery = true)
-    List<VehicleSalesInfoDto> showMostSoldCarInPeriodRange(@Param(value = "firstdate") String firstDate,
-                                                           @Param(value = "seconddate") String secondDate);
-
-
-    @Transactional
-    @Modifying
-    @Query(value = "SELECT * FROM vehicle AS v " +
-            "LEFT JOIN orders AS o ON o.id_vehicle = v.id " +
-            "WHERE :firstdate <= o.date_purch AND o.date_purch <= :seconddate " +
-            "AND o.order_stat != 'CANCELED' " +
-            "GROUP BY v.id;" , nativeQuery = true)
-    List<VehicleEntity> showMostExpensiveCarInPeriodRange(@Param(value = "firstdate") String firstDate,
-                                                         @Param(value = "seconddate") String secondDate);
-
-    @Transactional
-    @Modifying
-    @Query(value = "SELECT v.*, COUNT(o.id_vehicle) AS total_sales " +
-            "FROM vehicle AS v " +
-            "LEFT JOIN orders AS o ON o.id_vehicle = v.id " +
-            "AND o.order_stat != 'CANCELED' " +
-            "GROUP BY v.id;", nativeQuery = true)
-    List<VehicleSalesInfoDto> showMostSoldCarEver();
+    @Query(name = "showMostSoldCarInPeriodRange", nativeQuery = true)
+    VehicleSalesInfoDto showMostSoldCarInPeriodRange(@Param(value = "firstdate") String firstDate,
+                                                     @Param(value = "seconddate") String secondDate);
+    @Query(name = "showMostExpensiveCarInPeriodRange", nativeQuery = true)
+    VehicleSalesInfoDto showMostExpensiveCarInPeriodRange(@Param(value = "firstdate") String firstDate,
+                                                          @Param(value = "seconddate") String secondDate);
+    @Query(name = "showMostSoldCarEver", nativeQuery = true)
+    VehicleSalesInfoDto showMostSoldCarEver();
 }
 
 

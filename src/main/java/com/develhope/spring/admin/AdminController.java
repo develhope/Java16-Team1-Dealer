@@ -5,6 +5,7 @@ import com.develhope.spring.client.ClientEntity;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
 import com.develhope.spring.vehicle.VehicleEntity;
+import com.develhope.spring.vehicle.VehicleSalesInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -109,17 +110,17 @@ public class AdminController {
     }
 
     @GetMapping("/show/mostsold/period")
-    public @ResponseBody VehicleEntity showMostSoldCarInPeriodRange(@RequestParam LocalDateTime firstDate, @RequestParam LocalDateTime secondDate) {
+    public @ResponseBody VehicleSalesInfoDto showMostSoldCarInPeriodRange(@RequestParam LocalDateTime firstDate, @RequestParam LocalDateTime secondDate) {
       return adminService.showMostSoldCarInPeriodRange(firstDate, secondDate);
     }
 
     @GetMapping("/show/mostexpensivesold/period")
-    public @ResponseBody VehicleEntity showMostExpensiveCarInPeriodRange(@RequestParam LocalDateTime firstDate, @RequestParam LocalDateTime secondDate) {
+    public @ResponseBody VehicleSalesInfoDto showMostExpensiveCarInPeriodRange(@RequestParam LocalDateTime firstDate, @RequestParam LocalDateTime secondDate) {
         return adminService.showMostExpensiveCarInPeriodRange(firstDate, secondDate);
     }
 
     @GetMapping("/show/mostsoldever")
-    public @ResponseBody VehicleEntity showMostSoldCarEver() {
+    public @ResponseBody VehicleSalesInfoDto showMostSoldCarEver() {
         return adminService.showMostSoldCarEver();
     }
 
