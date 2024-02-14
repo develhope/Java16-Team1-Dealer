@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 @Transactional
@@ -447,5 +447,27 @@ public class AdminService {
             }
         }
         return null;
+    }
+
+    public VehicleSalesInfoDto showMostSoldCarInPeriodRange(LocalDateTime firstDate, LocalDateTime secondDate) {
+        List<LocalDateTime> rangeDates = new ArrayList<>();
+        rangeDates.add(firstDate);
+        rangeDates.add(secondDate);
+        Collections.sort(rangeDates);
+
+        return vehicleRepository.showMostSoldCarInPeriodRange(rangeDates.get(0).toString(),rangeDates.get(1).toString());
+    }
+
+    public VehicleSalesInfoDto showMostExpensiveCarInPeriodRange(LocalDateTime firstDate, LocalDateTime secondDate) {
+        List<LocalDateTime> rangeDates = new ArrayList<>();
+        rangeDates.add(firstDate);
+        rangeDates.add(secondDate);
+        Collections.sort(rangeDates);
+
+        return vehicleRepository.showMostExpensiveCarInPeriodRange(rangeDates.get(0).toString(),rangeDates.get(1).toString());
+    }
+
+    public VehicleSalesInfoDto showMostSoldCarEver() {
+        return vehicleRepository.showMostSoldCarEver();
     }
 }

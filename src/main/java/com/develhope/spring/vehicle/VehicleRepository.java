@@ -1,5 +1,8 @@
 package com.develhope.spring.vehicle;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.SqlResultSetMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,8 +33,15 @@ public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
     @Query(value = "UPDATE vehicle AS v SET v.rentable = false WHERE v.id = :vehicleid", nativeQuery = true)
     void updateVehicleRentability(@Param("vehicleid") Long vehicleId);
 
-
-
-
-
+    @Query(name = "showMostSoldCarInPeriodRange", nativeQuery = true)
+    VehicleSalesInfoDto showMostSoldCarInPeriodRange(@Param(value = "firstdate") String firstDate,
+                                                     @Param(value = "seconddate") String secondDate);
+    @Query(name = "showMostExpensiveCarInPeriodRange", nativeQuery = true)
+    VehicleSalesInfoDto showMostExpensiveCarInPeriodRange(@Param(value = "firstdate") String firstDate,
+                                                          @Param(value = "seconddate") String secondDate);
+    @Query(name = "showMostSoldCarEver", nativeQuery = true)
+    VehicleSalesInfoDto showMostSoldCarEver();
 }
+
+
+
