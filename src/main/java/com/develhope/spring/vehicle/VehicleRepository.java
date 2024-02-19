@@ -41,6 +41,19 @@ public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
                                                           @Param(value = "seconddate") String secondDate);
     @Query(name = "showMostSoldCarEver", nativeQuery = true)
     VehicleSalesInfoDto showMostSoldCarEver();
+
+    @Query(value = "SELECT SUM(v.price - v.price_dscnt) AS earnings " +
+            "FROM vehicle AS v " +
+            "INNER JOIN orders AS o " +
+            "ON v.id = o.id_vehicle " +
+            "WHERE o.order_stat != 'CANCELED' " +
+            "AND o.date_purch >= :firstDate " +
+            "AND o.date_purch <= :secondDate ;", nativeQuery = true)
+    Integer showEarningsInPeriodRange(@Param("firstDate") String firstDate,@Param("secondDate") String secondDate);
+
+
+    @Query(value = "SELECT * FROM vehicle WHERE sell_type = :selltype ;\n", nativeQuery = true)
+    List<VehicleEntity> showFilteredVehicles(@Param("selltype") String sellType);
 }
 
 

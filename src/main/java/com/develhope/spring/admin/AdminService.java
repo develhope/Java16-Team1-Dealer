@@ -470,4 +470,19 @@ public class AdminService {
     public VehicleSalesInfoDto showMostSoldCarEver() {
         return vehicleRepository.showMostSoldCarEver();
     }
+
+
+    public String showEarningsInPeriodRange(LocalDateTime firstDate, LocalDateTime secondDate) {
+        List<LocalDateTime> rangeDates = new ArrayList<>();
+        rangeDates.add(firstDate);
+        rangeDates.add(secondDate);
+        Collections.sort(rangeDates);
+
+        Integer totalEarnings = vehicleRepository.showEarningsInPeriodRange(firstDate.toString(),secondDate.toString());
+        return "The total earnings between " + firstDate.toLocalDate() + " and " + secondDate.toLocalDate() + " amount to " + totalEarnings;
+    }
+
+    public List<VehicleEntity> showFilteredVehicles(String sellType) {
+        return vehicleRepository.showFilteredVehicles(sellType);
+    }
 }
