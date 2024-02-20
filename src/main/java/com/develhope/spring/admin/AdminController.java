@@ -2,6 +2,7 @@ package com.develhope.spring.admin;
 
 import com.develhope.spring.admin.adminControllerResponse.*;
 import com.develhope.spring.client.ClientEntity;
+import com.develhope.spring.client.clientControllerResponse.ListVehicleFilterResponse;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
 import com.develhope.spring.vehicle.VehicleEntity;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/v1/admin")
@@ -111,7 +114,7 @@ public class AdminController {
 
     @GetMapping("/show/mostsold/period")
     public @ResponseBody VehicleSalesInfoDto showMostSoldCarInPeriodRange(@RequestParam LocalDateTime firstDate, @RequestParam LocalDateTime secondDate) {
-      return adminService.showMostSoldCarInPeriodRange(firstDate, secondDate);
+        return adminService.showMostSoldCarInPeriodRange(firstDate, secondDate);
     }
 
     @GetMapping("/show/mostexpensivesold/period")
@@ -149,6 +152,7 @@ public class AdminController {
     public void showAllVehicleNotAvailable() {
 
     }
+
     @Operation(summary = "Delete Client Account by Admin")
     @ApiResponse(responseCode = "200", description = "Client deleted")
     @ApiResponse(responseCode = "404", description = "Client not found")
@@ -171,6 +175,7 @@ public class AdminController {
     ) {
         return adminService.updateClientbyAdmin(clientEntity, idClient);
     }
+
     @Operation(summary = "Delete Seller Account by Admin")
     @ApiResponse(responseCode = "200", description = "Seller deleted")
     @ApiResponse(responseCode = "404", description = "Seller not found")
@@ -206,9 +211,10 @@ public class AdminController {
     @PostMapping("/create/vehicle") // POST CREAZIONE VEICOLO
     public ResponseEntity<CreateVehicleAdminResponse> createVehicle(
             @RequestBody VehicleEntity vehicle,
-            @Parameter (description = "Vehicle type", example = "Truck", required = true, name = "type") @RequestParam String type) {
+            @Parameter(description = "Vehicle type", example = "Truck", required = true, name = "type") @RequestParam String type) {
         return adminService.newVehicle(vehicle, type);
     }
+
     @Operation(summary = "Show Vehicles")
     @ApiResponse(responseCode = "200", description = "Show All Vehicles")
     @ApiResponse(responseCode = "404", description = "Vehicles not found")
@@ -216,32 +222,51 @@ public class AdminController {
     public ResponseEntity<ShowListVehicleAdminResponse> getVehicleById() {
         return adminService.showVehicles();
     }
+
     @Operation(summary = "Show Vehicle by ID")
     @ApiResponse(responseCode = "200", description = "Vehicle found by ID")
     @ApiResponse(responseCode = "404", description = "Vehicle not found")
     @GetMapping("/show/vehicle/{id}") // GET VEICOLO TRAMITE ID
     public ResponseEntity<ShowVehicleAdminResponse> getVehicleById(
-            @Parameter (description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long idVehicle) {
+            @Parameter(description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long idVehicle) {
 
         return adminService.showVehiclebyId(idVehicle);
     }
+
     @Operation(summary = "Update Vehicle by ID")
     @ApiResponse(responseCode = "200", description = "Vehicle updated")
     @ApiResponse(responseCode = "404", description = "Vehicle not found")
     @PatchMapping("/update/vehicle/{id}") // PATCH MODIFICA VEICOLO
-    public ResponseEntity<UpdateVehicleAdminResponse> updateVehicle (
-            @Parameter (description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long idVehicle,
-            @Parameter (description = "Vehicle", required = true, name = "vehicle") @RequestBody VehicleEntity vehicle) {
+    public ResponseEntity<UpdateVehicleAdminResponse> updateVehicle(
+            @Parameter(description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long idVehicle,
+            @Parameter(description = "Vehicle", required = true, name = "vehicle") @RequestBody VehicleEntity vehicle) {
         return adminService.updateVehicle(vehicle, idVehicle);
     }
+
     @Operation(summary = "Delete Vehicle by ID")
     @ApiResponse(responseCode = "200", description = "Vehicle deleted")
     @ApiResponse(responseCode = "404", description = "Vehicle not found")
     @DeleteMapping("/delete/vehicle/{id}") // DELETE VEICOLO
     public ResponseEntity<DeleteVehicleResponse> deleteVehicle(
-            @Parameter (description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long id) {
+            @Parameter(description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long id) {
         return adminService.deleteVehicle(id);
     }
+
+
+    @GetMapping("/show/earnings/period")
+    public @ResponseBody String showEarningsInPeriodRange(@RequestParam LocalDateTime firstDate,
+                                                          @RequestParam LocalDateTime secondDate) {
+        return adminService.showEarningsInPeriodRange(firstDate, secondDate);
+    }
+
+
+    @GetMapping("/show/list/vehicle/byfilter")
+    public @ResponseBody List<VehicleEntity> showFilteredVehicles(
+            @RequestParam(name = "selltype", required = true) String sellType) {
+
+        return adminService.showFilteredVehicles(sellType);
+    }
+
 
 
 }
