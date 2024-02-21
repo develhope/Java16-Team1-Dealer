@@ -53,7 +53,7 @@ public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
 
 
     @Query(value = "SELECT * FROM vehicle WHERE sell_type = :selltype ;\n", nativeQuery = true)
-    List<VehicleEntity> showFilteredVehicles(@Param("selltype") String sellType);
+    List<VehicleDTO> showFilteredVehicles(@Param("selltype") String sellType);
 }
 
 
