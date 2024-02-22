@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -383,17 +382,17 @@ public class AdminService {
     }
 
 
-    public RentEntity newRent(RentDto rentDto) {
-        VehicleEntity vehicle = vehicleRepository.findById(rentDto.getIdVehicle()).get();
+    public RentEntity newRent(RentDtoInput rentDtoInput) {
+        VehicleEntity vehicle = vehicleRepository.findById(rentDtoInput.getIdVehicle()).get();
         if (vehicle.getRentable()) {
             RentEntity newRent = new RentEntity();
-            newRent.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
-            newRent.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
-            newRent.setVehicleId(vehicleRepository.findById(rentDto.getIdVehicle()).get());
-            newRent.setStartingDate(rentDto.getStartRent());
-            newRent.setEndingDate(rentDto.getEndRent());
-            newRent.setDailyFee(rentDto.getDailyFee());
-            newRent.setTotalFee(rentDto.getTotalFee());
+            newRent.setSellerId(sellerRepository.findById(rentDtoInput.getIdSeller()).get());
+            newRent.setClientId(clientRepository.findById(rentDtoInput.getIdClient()).get());
+            newRent.setVehicleId(vehicleRepository.findById(rentDtoInput.getIdVehicle()).get());
+            newRent.setStartingDate(rentDtoInput.getStartRent());
+            newRent.setEndingDate(rentDtoInput.getEndRent());
+            newRent.setDailyFee(rentDtoInput.getDailyFee());
+            newRent.setTotalFee(rentDtoInput.getTotalFee());
             newRent.setIsPaid(true);
             vehicle.setRentable(false);
             return newRent;
@@ -402,30 +401,30 @@ public class AdminService {
         }
     }
 
-    public RentEntity createRent(RentDto rentDto) {
-        return rentRepository.save(newRent(rentDto));
+    public RentEntity createRent(RentDtoInput rentDtoInput) {
+        return rentRepository.save(newRent(rentDtoInput));
     }
 
-    public RentEntity updateRent(Long idRent, RentDto rentDto) {
+    public RentEntity updateRent(Long idRent, RentDtoInput rentDtoInput) {
         for (RentEntity r : rentRepository.findAll()) {
             if (Objects.equals(r.getId(), idRent)) {
-                if (rentDto.getIdSeller() != null) {
-                    r.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
+                if (rentDtoInput.getIdSeller() != null) {
+                    r.setSellerId(sellerRepository.findById(rentDtoInput.getIdSeller()).get());
                 }
-                if (rentDto.getIdClient() != null) {
-                    r.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
+                if (rentDtoInput.getIdClient() != null) {
+                    r.setClientId(clientRepository.findById(rentDtoInput.getIdClient()).get());
                 }
-                if (rentDto.getIdVehicle() != null) {
-                    r.setVehicleId(vehicleRepository.findById(rentDto.getIdVehicle()).get());
+                if (rentDtoInput.getIdVehicle() != null) {
+                    r.setVehicleId(vehicleRepository.findById(rentDtoInput.getIdVehicle()).get());
                 }
-                if (rentDto.getEndRent() != null) {
-                    r.setEndingDate(rentDto.getEndRent());
+                if (rentDtoInput.getEndRent() != null) {
+                    r.setEndingDate(rentDtoInput.getEndRent());
                 }
-                if (rentDto.getDailyFee() != null) {
-                    r.setDailyFee(rentDto.getDailyFee());
+                if (rentDtoInput.getDailyFee() != null) {
+                    r.setDailyFee(rentDtoInput.getDailyFee());
                 }
-                if (rentDto.getTotalFee() != null) {
-                    r.setTotalFee(rentDto.getTotalFee());
+                if (rentDtoInput.getTotalFee() != null) {
+                    r.setTotalFee(rentDtoInput.getTotalFee());
                 }
                 return rentRepository.save(r);
             }

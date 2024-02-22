@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RentDto {
+public class RentDtoInput {
 
-
+    private Long id;
     private Long idSeller;
     private Long idClient;
     private Long idVehicle;

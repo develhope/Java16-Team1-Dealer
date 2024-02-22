@@ -1,5 +1,6 @@
 package com.develhope.spring.client;
 
+import com.develhope.spring.admin.adminControllerResponse.ShowListVehicleAdminResponse;
 import com.develhope.spring.client.clientControllerResponse.*;
 import com.develhope.spring.loginSignup.IdLogin;
 import com.develhope.spring.order.*;
@@ -8,14 +9,17 @@ import com.develhope.spring.order.dto.*;
 import com.develhope.spring.seller.*;
 import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -201,7 +205,7 @@ public class ClientService {
         }
     }
 
-    public ResponseEntity<ListVehicleFilterResponse> showAllVehiclesFilteted(String color, String brand, String model) {
+    public ResponseEntity<ListVehicleFilterResponse> showAllVehiclesFiltered(String color, String brand, String model) {
         if (color == null) {
             color = " ";
         }
@@ -223,42 +227,97 @@ public class ClientService {
     }
 
 
+    public RentEntity createRent(RentDtoInput rentDtoInput, VehicleEntity vehicle, SellerEntity seller) {
+        RentEntity rent = new RentEntity();
+        rent.setSellerId(seller);
+        rent.setClientId(clientRepository.findById(idLogin.getId()).get());
+        rent.setVehicleId(vehicle);
+        rent.setStartingDate(rentDtoInput.getStartRent());
+        rent.setEndingDate(rentDtoInput.getEndRent());
+        rent.setDailyFee(rentDtoInput.getDailyFee());
+        rent.setIsPaid(true);
+        rent.setRentStatus(RentStatus.INPROGRESS);
+        vehicleRepository.updateVehicleRentability(vehicle.getId());
+        return rent;
+    }
 
-    public RentEntity createRent(RentDto rentDto) {
-        VehicleEntity vehicle = vehicleRepository.findById(rentDto.getIdVehicle()).get();
-        if (vehicle.getRentable()) {
-            RentEntity rent = new RentEntity();
-            rent.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
-            rent.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
-            rent.setVehicleId(vehicle);
-            rent.setStartingDate(rentDto.getStartRent());
-            rent.setEndingDate(rentDto.getEndRent());
-            rent.setDailyFee(rentDto.getDailyFee());
-            rent.setIsPaid(true);
-            rent.setRentStatus(RentStatus.INPROGRESS);
-            vehicleRepository.updateVehicleRentability(vehicle.getId());
-            return rent;
+
+    public ResponseEntity<ShowRentListClientResponse> showRents() {
+        if (!rentRepository.showRentList(idLogin.getId()).isEmpty()) {
+            List<RentEntity> rentEntities = rentRepository.showRentList(idLogin.getId());
+            List<RentDtoOutput> rentDtos = rentEntitiesConverter(rentEntities);
+            ShowRentListClientResponse showRentListClientResponse = new ShowRentListClientResponse(errorMessagesClient.rentListClientOK(rentDtos.size()), rentDtos);
+            return ResponseEntity.status(200).body(showRentListClientResponse);
         } else {
-            return null;
+            ShowRentListClientResponse showRentListClientResponse = new ShowRentListClientResponse(errorMessagesClient.rentListClientEmpty(), Arrays.asList());
+            return ResponseEntity.status(404).body(showRentListClientResponse);
+        }
+    }
+
+    public ResponseEntity<NewRentResponse> newRent(RentDtoInput rentDtoInput) {
+        SellerEntity seller;
+
+        if (sellerRepository.existsById(rentDtoInput.getIdSeller())) {
+            seller = sellerRepository.findById(rentDtoInput.getIdSeller()).get();
+        } else {
+            NewRentResponse newRentResponse = new NewRentResponse(errorMessagesClient.sellerNotFound(rentDtoInput.getIdSeller()), new RentDtoOutput());
+            return ResponseEntity.status(601).body(newRentResponse);
+        }
+
+        if (vehicleRepository.existsById(rentDtoInput.getIdVehicle())) {
+            VehicleEntity vehicle = vehicleRepository.findById(rentDtoInput.getIdVehicle()).get();
+
+            if (vehicle.getRentable()) {
+                RentEntity rentEntity = rentRepository.save(createRent(rentDtoInput, vehicle, seller));
+                RentDtoOutput newRent = rentEntityConverter(rentEntity);
+
+                NewRentResponse newRentResponse = new NewRentResponse(errorMessagesClient.rentCreated(), newRent);
+                return ResponseEntity.status(201).body(newRentResponse);
+            } else {
+                NewRentResponse newRentResponse = new NewRentResponse(errorMessagesClient.vehicleNotRentable(vehicle.getId()), new RentDtoOutput());
+                return ResponseEntity.status(602).body(newRentResponse);
+            }
+        } else {
+            NewRentResponse newRentResponse = new NewRentResponse(errorMessagesClient.vehicleNotExist(rentDtoInput.getIdVehicle()), new RentDtoOutput());
+            return ResponseEntity.status(600).body(newRentResponse);
         }
     }
 
 
-    public List<RentEntity> showRents() {
-        return rentRepository.showRentList(idLogin.getId());
-    }
-
-    public RentEntity newRent(RentDto rentDto) {
-        RentEntity rent = createRent(rentDto);
-        if (rent != null) {
-            return rentRepository.save(rent);
+    public ResponseEntity<RentDeletionClientResponse> deleteRent(Long id) {
+        if (rentRepository.existsById(id)) {
+            vehicleRepository.resetVehicleRentability(id);
+            rentRepository.customDeleteById(idLogin.getId(), id);
+            RentDeletionClientResponse rentDeletionClientResponse = new RentDeletionClientResponse(errorMessagesClient.messageDeleteRentOK());
+            return ResponseEntity.status(200).body(rentDeletionClientResponse);
         } else {
-            return null;
+            RentDeletionClientResponse rentDeletionClientResponse = new RentDeletionClientResponse(errorMessagesClient.rentNotFound(id));
+            return ResponseEntity.status(404).body(rentDeletionClientResponse);
         }
+    }
+
+    public RentDtoOutput rentEntityConverter(RentEntity entity) {
+        RentDtoOutput rentDto = new RentDtoOutput();
+        rentDto.setId(entity.getId());
+        rentDto.setSellerId(entity.getSellerId());
+        rentDto.setClientId(entity.getClientId());
+        rentDto.setVehicleId(entity.getVehicleId());
+        rentDto.setStartingDate(entity.getStartingDate());
+        rentDto.setEndingDate(entity.getEndingDate());
+        rentDto.setDailyFee(entity.getDailyFee());
+        rentDto.setTotalFee(entity.getTotalFee());
+        rentDto.setIsPaid(entity.getIsPaid());
+        rentDto.setRentStatus(entity.getRentStatus());
+        return rentDto;
+    }
+
+    public List<RentDtoOutput> rentEntitiesConverter(List<RentEntity> entityList) {
+        ArrayList<RentDtoOutput> rentDtos = new ArrayList<>();
+        for (int i = 0; i < entityList.size(); i++) {
+            rentDtos.add(rentEntityConverter(entityList.get(i)));
+        }
+        return rentDtos;
 
     }
 
-
-    public void deleteRent(Long id) {
-        rentRepository.customDeleteById(idLogin.getId(), id);
-    }}
+}
