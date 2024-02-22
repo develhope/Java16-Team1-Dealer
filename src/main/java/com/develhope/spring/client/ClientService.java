@@ -297,18 +297,8 @@ public class ClientService {
     }
 
     public RentDtoOutput rentEntityConverter(RentEntity entity) {
-        RentDtoOutput rentDto = new RentDtoOutput();
-        rentDto.setId(entity.getId());
-        rentDto.setSellerId(entity.getSellerId());
-        rentDto.setClientId(entity.getClientId());
-        rentDto.setVehicleId(entity.getVehicleId());
-        rentDto.setStartingDate(entity.getStartingDate());
-        rentDto.setEndingDate(entity.getEndingDate());
-        rentDto.setDailyFee(entity.getDailyFee());
-        rentDto.setTotalFee(entity.getTotalFee());
-        rentDto.setIsPaid(entity.getIsPaid());
-        rentDto.setRentStatus(entity.getRentStatus());
-        return rentDto;
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(entity, RentDtoOutput.class);
     }
 
     public List<RentDtoOutput> rentEntitiesConverter(List<RentEntity> entityList) {

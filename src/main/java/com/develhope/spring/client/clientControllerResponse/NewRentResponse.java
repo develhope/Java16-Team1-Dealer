@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NewRentResponse {
     private String message;
-    private RentDtoOutput rentDtoInput;
+    private RentDtoOutput rentDtoOnput;
 }
