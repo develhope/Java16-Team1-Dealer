@@ -1,7 +1,10 @@
 package com.develhope.spring.client.clientControllerResponse;
 
+import com.develhope.spring.rent.RentDtoOutput;
 import lombok.Data;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Data
 @Component
@@ -92,4 +95,26 @@ public class ErrorMessagesClient {
     }
 
 
+    public String rentCreated() { return "Rent created successfully";
+    }
+
+    public String vehicleNotRentable(Long idVehicle) {
+        return "Vehicle with id " + idVehicle + " is not rentable";
+    }
+
+    public String rentListClientOK(int size) {
+        return "Your rents: " + size;
+    }
+
+    public String rentListClientEmpty() {
+        return "You have no active rents";
+    }
+
+    public String messageDeleteRentOK() {
+        return "Rent deleted successfully";
+    }
+
+    public String rentNotFound(Long id) {
+        return "We could not find any rent with id " + id;
+    }
 }

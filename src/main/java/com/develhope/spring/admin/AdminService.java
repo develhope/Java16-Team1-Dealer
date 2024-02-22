@@ -9,15 +9,14 @@ import com.develhope.spring.seller.*;
 import com.develhope.spring.user.UserType;
 import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
-import org.hibernate.cache.spi.SecondLevelCacheLogger_$logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -327,7 +326,8 @@ public class AdminService {
     public ResponseEntity<ShowListVehicleAdminResponse> showVehicles() {
         if (vehicleRepository.findAll().size() > 0) {
             List<VehicleEntity> vehicles = vehicleRepository.findAll();
-            ShowListVehicleAdminResponse showListVehicleAdminResponse = new ShowListVehicleAdminResponse(errorMessagesAdmin.listVehiclesAdminOK(vehicles.size()), vehicles);
+            List<VehicleDTO> vehiclesDTO = vehicleEntityConverter(vehicles);
+            ShowListVehicleAdminResponse showListVehicleAdminResponse = new ShowListVehicleAdminResponse(errorMessagesAdmin.listVehiclesAdminOK(vehicles.size()), vehiclesDTO);
             return ResponseEntity.status(200).body(showListVehicleAdminResponse);
         } else {
             ShowListVehicleAdminResponse showListVehicleAdminResponse = new ShowListVehicleAdminResponse(errorMessagesAdmin.listVehiclesAdminEmpty(), Arrays.asList());
@@ -431,17 +431,17 @@ public class AdminService {
     }
 
 
-    public RentEntity newRent(RentDto rentDto) {
-        VehicleEntity vehicle = vehicleRepository.findById(rentDto.getIdVehicle()).get();
+    public RentEntity newRent(RentDtoInput rentDtoInput) {
+        VehicleEntity vehicle = vehicleRepository.findById(rentDtoInput.getIdVehicle()).get();
         if (vehicle.getRentable()) {
             RentEntity newRent = new RentEntity();
-            newRent.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
-            newRent.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
-            newRent.setVehicleId(vehicleRepository.findById(rentDto.getIdVehicle()).get());
-            newRent.setStartingDate(rentDto.getStartRent());
-            newRent.setEndingDate(rentDto.getEndRent());
-            newRent.setDailyFee(rentDto.getDailyFee());
-            newRent.setTotalFee(rentDto.getTotalFee());
+            newRent.setSellerId(sellerRepository.findById(rentDtoInput.getIdSeller()).get());
+            newRent.setClientId(clientRepository.findById(rentDtoInput.getIdClient()).get());
+            newRent.setVehicleId(vehicleRepository.findById(rentDtoInput.getIdVehicle()).get());
+            newRent.setStartingDate(rentDtoInput.getStartRent());
+            newRent.setEndingDate(rentDtoInput.getEndRent());
+            newRent.setDailyFee(rentDtoInput.getDailyFee());
+            newRent.setTotalFee(rentDtoInput.getTotalFee());
             newRent.setIsPaid(true);
             vehicle.setRentable(false);
             return newRent;
@@ -450,30 +450,30 @@ public class AdminService {
         }
     }
 
-    public RentEntity createRent(RentDto rentDto) {
-        return rentRepository.save(newRent(rentDto));
+    public RentEntity createRent(RentDtoInput rentDtoInput) {
+        return rentRepository.save(newRent(rentDtoInput));
     }
 
-    public RentEntity updateRent(Long idRent, RentDto rentDto) {
+    public RentEntity updateRent(Long idRent, RentDtoInput rentDtoInput) {
         for (RentEntity r : rentRepository.findAll()) {
             if (Objects.equals(r.getId(), idRent)) {
-                if (rentDto.getIdSeller() != null) {
-                    r.setSellerId(sellerRepository.findById(rentDto.getIdSeller()).get());
+                if (rentDtoInput.getIdSeller() != null) {
+                    r.setSellerId(sellerRepository.findById(rentDtoInput.getIdSeller()).get());
                 }
-                if (rentDto.getIdClient() != null) {
-                    r.setClientId(clientRepository.findById(rentDto.getIdClient()).get());
+                if (rentDtoInput.getIdClient() != null) {
+                    r.setClientId(clientRepository.findById(rentDtoInput.getIdClient()).get());
                 }
-                if (rentDto.getIdVehicle() != null) {
-                    r.setVehicleId(vehicleRepository.findById(rentDto.getIdVehicle()).get());
+                if (rentDtoInput.getIdVehicle() != null) {
+                    r.setVehicleId(vehicleRepository.findById(rentDtoInput.getIdVehicle()).get());
                 }
-                if (rentDto.getEndRent() != null) {
-                    r.setEndingDate(rentDto.getEndRent());
+                if (rentDtoInput.getEndRent() != null) {
+                    r.setEndingDate(rentDtoInput.getEndRent());
                 }
-                if (rentDto.getDailyFee() != null) {
-                    r.setDailyFee(rentDto.getDailyFee());
+                if (rentDtoInput.getDailyFee() != null) {
+                    r.setDailyFee(rentDtoInput.getDailyFee());
                 }
-                if (rentDto.getTotalFee() != null) {
-                    r.setTotalFee(rentDto.getTotalFee());
+                if (rentDtoInput.getTotalFee() != null) {
+                    r.setTotalFee(rentDtoInput.getTotalFee());
                 }
                 return rentRepository.save(r);
             }
@@ -500,40 +500,76 @@ public class AdminService {
         return null;
     }
 
-    public VehicleSalesInfoDto showMostSoldCarInPeriodRange(LocalDateTime firstDate, LocalDateTime secondDate) {
-        List<LocalDateTime> rangeDates = new ArrayList<>();
-        rangeDates.add(firstDate);
-        rangeDates.add(secondDate);
-        Collections.sort(rangeDates);
+    public ResponseEntity<ShowMostSoldCarInPeriodRangeResponse> showMostSoldCarInPeriodRange(LocalDateTime firstDate, LocalDateTime secondDate) {
+        if (firstDate == null || secondDate == null) {
+            ShowMostSoldCarInPeriodRangeResponse showMostSoldCarInPeriodRangeResponse = new ShowMostSoldCarInPeriodRangeResponse(errorMessagesAdmin.invalidDateInput(), new VehicleSalesInfoDto());
+            return ResponseEntity.status(400).body(showMostSoldCarInPeriodRangeResponse);
+        } else {
+            List<LocalDateTime> rangeDates = new ArrayList<>();
+            rangeDates.add(firstDate);
+            rangeDates.add(secondDate);
+            Collections.sort(rangeDates);
 
-        return vehicleRepository.showMostSoldCarInPeriodRange(rangeDates.get(0).toString(),rangeDates.get(1).toString());
+            VehicleSalesInfoDto mostSoldCarInPeriodRange = vehicleRepository.showMostSoldCarInPeriodRange(rangeDates.get(0).toString(), rangeDates.get(1).toString());
+            ShowMostSoldCarInPeriodRangeResponse showMostSoldCarInPeriodRangeResponse = new ShowMostSoldCarInPeriodRangeResponse(errorMessagesAdmin.validDateInputMostSoldCarInPeriodRange(firstDate, secondDate, mostSoldCarInPeriodRange), mostSoldCarInPeriodRange);
+            return ResponseEntity.status(200).body(showMostSoldCarInPeriodRangeResponse);
+        }
     }
 
-    public VehicleSalesInfoDto showMostExpensiveCarInPeriodRange(LocalDateTime firstDate, LocalDateTime secondDate) {
-        List<LocalDateTime> rangeDates = new ArrayList<>();
-        rangeDates.add(firstDate);
-        rangeDates.add(secondDate);
-        Collections.sort(rangeDates);
+    public ResponseEntity<ShowMostExpensiveCarSoldInPeriodRangeResponse> showMostExpensiveCarInPeriodRange(LocalDateTime firstDate, LocalDateTime secondDate) {
+        if (firstDate == null || secondDate == null) {
+            ShowMostExpensiveCarSoldInPeriodRangeResponse showMostExpensiveCarSoldInPeriodRangeResponse = new ShowMostExpensiveCarSoldInPeriodRangeResponse(errorMessagesAdmin.invalidDateInput(), new VehicleSalesInfoDto());
+            return ResponseEntity.status(400).body(showMostExpensiveCarSoldInPeriodRangeResponse);
+        } else {
+            List<LocalDateTime> rangeDates = new ArrayList<>();
+            rangeDates.add(firstDate);
+            rangeDates.add(secondDate);
+            Collections.sort(rangeDates);
 
-        return vehicleRepository.showMostExpensiveCarInPeriodRange(rangeDates.get(0).toString(),rangeDates.get(1).toString());
+            VehicleSalesInfoDto mostExpensiveCarSoldInPeriodRange = vehicleRepository.showMostExpensiveCarInPeriodRange(rangeDates.get(0).toString(), rangeDates.get(1).toString());
+            ShowMostExpensiveCarSoldInPeriodRangeResponse showMostExpensiveCarSoldInPeriodRangeResponse = new ShowMostExpensiveCarSoldInPeriodRangeResponse(errorMessagesAdmin.validDateInputMostExpensiveCarSoldCarInPeriodRange(firstDate, secondDate, mostExpensiveCarSoldInPeriodRange), mostExpensiveCarSoldInPeriodRange);
+            return ResponseEntity.status(200).body(showMostExpensiveCarSoldInPeriodRangeResponse);
+        }
     }
-
     public VehicleSalesInfoDto showMostSoldCarEver() {
         return vehicleRepository.showMostSoldCarEver();
     }
 
 
-    public String showEarningsInPeriodRange(LocalDateTime firstDate, LocalDateTime secondDate) {
-        List<LocalDateTime> rangeDates = new ArrayList<>();
-        rangeDates.add(firstDate);
-        rangeDates.add(secondDate);
-        Collections.sort(rangeDates);
+    public ResponseEntity<ShowEarningsInPeriodRangeResponse> showEarningsInPeriodRange(LocalDateTime firstDate, LocalDateTime secondDate) {
+        if (firstDate == null || secondDate == null) {
+            ShowEarningsInPeriodRangeResponse showEarningsInPeriodRangeResponse = new ShowEarningsInPeriodRangeResponse(errorMessagesAdmin.invalidDateInput(), 0);
+            return ResponseEntity.status(400).body(showEarningsInPeriodRangeResponse);
+        } else {
+            List<LocalDateTime> rangeDates = new ArrayList<>();
+            rangeDates.add(firstDate);
+            rangeDates.add(secondDate);
+            Collections.sort(rangeDates);
 
-        Integer totalEarnings = vehicleRepository.showEarningsInPeriodRange(firstDate.toString(),secondDate.toString());
-        return "The total earnings between " + firstDate.toLocalDate() + " and " + secondDate.toLocalDate() + " amount to " + totalEarnings;
+            Integer totalEarnings = vehicleRepository.showEarningsInPeriodRange(firstDate.toString(), secondDate.toString());
+            ShowEarningsInPeriodRangeResponse showEarningsInPeriodRangeResponse = new ShowEarningsInPeriodRangeResponse(errorMessagesAdmin.validDateInputEarningsInPeriodRange(firstDate, secondDate, totalEarnings), totalEarnings);
+            return ResponseEntity.status(200).body(showEarningsInPeriodRangeResponse);
+        }
     }
 
-    public List<VehicleEntity> showFilteredVehicles(String sellType) {
-        return vehicleRepository.showFilteredVehicles(sellType);
+    public ResponseEntity<ShowListVehicleAdminResponse> showFilteredVehicles(String sellType) {
+        if (vehicleRepository.showFilteredVehicles(sellType).size() > 0) {
+            List<VehicleEntity> vehicles = vehicleRepository.showFilteredVehicles(sellType);
+            List<VehicleDTO> vehicleDtos = vehicleEntityConverter(vehicles);
+            ShowListVehicleAdminResponse showListVehicleAdminResponse = new ShowListVehicleAdminResponse(errorMessagesAdmin.listVehiclesAdminOK(vehicles.size()), vehicleDtos);
+            return ResponseEntity.status(200).body(showListVehicleAdminResponse);
+        } else {
+            ShowListVehicleAdminResponse showListVehicleAdminResponse = new ShowListVehicleAdminResponse(errorMessagesAdmin.listVehiclesAdminEmpty(), Arrays.asList());
+            return ResponseEntity.status(404).body(showListVehicleAdminResponse);
+        }
     }
+
+    private List<VehicleDTO> vehicleEntityConverter(List<VehicleEntity> entityList) {
+        ModelMapper modelMapper = new ModelMapper();
+        List<VehicleDTO> dtoList = entityList.stream()
+                .map(vehicleEntity -> modelMapper.map(vehicleEntity, VehicleDTO.class))
+                .collect(Collectors.toList());
+        return dtoList;
+    }
+
 }

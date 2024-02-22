@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RentDto {
-
+public class RentDtoInput {
 
     private Long idSeller;
     private Long idClient;

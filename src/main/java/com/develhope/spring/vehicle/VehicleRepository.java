@@ -54,6 +54,15 @@ public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
 
     @Query(value = "SELECT * FROM vehicle WHERE sell_type = :selltype ;\n", nativeQuery = true)
     List<VehicleEntity> showFilteredVehicles(@Param("selltype") String sellType);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE vehicle AS v " +
+            "JOIN rents AS r " +
+            "ON v.id = r.id_vehicle " +
+            "SET v.rentable = 1 " +
+            "WHERE r.id = :parameter ;", nativeQuery = true)
+    void resetVehicleRentability(@Param("parameter") Long rentId);
 }
 
 

@@ -1,7 +1,10 @@
 package com.develhope.spring.admin.adminControllerResponse;
 
+import com.develhope.spring.vehicle.VehicleSalesInfoDto;
 import lombok.Data;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Data
 @Component
@@ -97,6 +100,24 @@ public class ErrorMessagesAdmin {
 
     public String clientNotExist(Long idClient){
         return "Client with id " + idClient + " does not exist";
+    }
+
+    public String invalidDateInput (){ return "You did not provide two valid dates for the search.\n" +
+            "Please make sure that your input matches the following format: yyyy-MM-ddTHH:mm:ss\n" +
+            "Example: 2024-02-20T14:30:00";
+    }
+
+
+    public String validDateInputEarningsInPeriodRange (LocalDateTime firstDate, LocalDateTime secondDate, Integer totalEarnings){
+        return "The total earnings between " + firstDate.toLocalDate() + " and " + secondDate.toLocalDate() + " amount to " + totalEarnings;
+    }
+
+    public String validDateInputMostSoldCarInPeriodRange (LocalDateTime firstDate, LocalDateTime secondDate, VehicleSalesInfoDto vehicle){
+        return "The most sold car between " + firstDate.toLocalDate() + " and " + secondDate.toLocalDate() + " was " + vehicle;
+    }
+
+    public String validDateInputMostExpensiveCarSoldCarInPeriodRange (LocalDateTime firstDate, LocalDateTime secondDate, VehicleSalesInfoDto vehicle){
+        return "The most expensive car sold between " + firstDate.toLocalDate() + " and " + secondDate.toLocalDate() + " was " + vehicle;
     }
 
 }
