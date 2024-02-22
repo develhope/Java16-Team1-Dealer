@@ -4,10 +4,7 @@ package com.develhope.spring.seller;
 import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.order.OrderState;
 import com.develhope.spring.rent.RentEntity;
-import com.develhope.spring.seller.sellerControllerResponse.GetVehicleByIdFromSellerResponse;
-import com.develhope.spring.seller.sellerControllerResponse.RentCreationFromSellerResponse;
-import com.develhope.spring.seller.sellerControllerResponse.RentDeletionByIdFromSellerResponse;
-import com.develhope.spring.seller.sellerControllerResponse.RentUpdateFromSellerResponse;
+import com.develhope.spring.seller.sellerControllerResponse.*;
 import com.develhope.spring.vehicle.VehicleEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -106,8 +103,10 @@ public class SellerController {
         return sellerService.deleteRent(id);
     }
 
+    @Operation(summary = "Get all vehicles")
+    @ApiResponse(responseCode = "200", description = "Vehicles found")
     @GetMapping(path = "/show/all/vehicles")
-    public List<VehicleEntity> getAllVehicles() {
+    public ResponseEntity<GetAllVehiclesFromSellerResponse> getAllVehicles() {
         return sellerService.getAllVehicles();
     }
 

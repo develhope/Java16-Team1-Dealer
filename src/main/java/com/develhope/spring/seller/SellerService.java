@@ -192,8 +192,10 @@ public class SellerService {
         }
     }
 
-    public List<VehicleEntity> getAllVehicles() {
-        return vehicleRepository.findAll();
+    public ResponseEntity<GetAllVehiclesFromSellerResponse> getAllVehicles() {
+        GetAllVehiclesFromSellerResponse okResponse = new GetAllVehiclesFromSellerResponse(errorMessageSeller.getAllVehicles(), vehicleRepository.findAll());
+        return ResponseEntity.status(200).body(okResponse);
+
     }
 
     public List<VehicleEntity> getAllVehiclesRfd() {

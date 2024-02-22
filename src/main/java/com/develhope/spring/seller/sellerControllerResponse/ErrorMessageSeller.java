@@ -53,4 +53,8 @@ public class ErrorMessageSeller {
         return "The rent with id " + idRent + " can't be deleted.\n" +
                 "Please make sure the selected ID matches an existing rent.";
     }
+
+    public String getAllVehicles() {
+        return "This is the list of the available vehicles: ";
+    }
 }
