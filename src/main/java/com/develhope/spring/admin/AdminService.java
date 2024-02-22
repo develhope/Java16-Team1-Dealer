@@ -505,8 +505,9 @@ public class AdminService {
 
     public ResponseEntity<ShowListVehicleAdminResponse> showFilteredVehicles(String sellType) {
         if (vehicleRepository.showFilteredVehicles(sellType).size() > 0) {
-            List<VehicleDTO> vehicles = vehicleRepository.showFilteredVehicles(sellType);
-            ShowListVehicleAdminResponse showListVehicleAdminResponse = new ShowListVehicleAdminResponse(errorMessagesAdmin.listVehiclesAdminOK(vehicles.size()), vehicles);
+            List<VehicleEntity> vehicles = vehicleRepository.showFilteredVehicles(sellType);
+            List<VehicleDTO> vehicleDtos = vehicleEntityConverter(vehicles);
+            ShowListVehicleAdminResponse showListVehicleAdminResponse = new ShowListVehicleAdminResponse(errorMessagesAdmin.listVehiclesAdminOK(vehicles.size()), vehicleDtos);
             return ResponseEntity.status(200).body(showListVehicleAdminResponse);
         } else {
             ShowListVehicleAdminResponse showListVehicleAdminResponse = new ShowListVehicleAdminResponse(errorMessagesAdmin.listVehiclesAdminEmpty(), Arrays.asList());
@@ -514,7 +515,7 @@ public class AdminService {
         }
     }
 
-    public List<VehicleDTO> vehicleEntityConverter(List<VehicleEntity> entityList) {
+    private List<VehicleDTO> vehicleEntityConverter(List<VehicleEntity> entityList) {
         ModelMapper modelMapper = new ModelMapper();
         List<VehicleDTO> dtoList = entityList.stream()
                 .map(vehicleEntity -> modelMapper.map(vehicleEntity, VehicleDTO.class))

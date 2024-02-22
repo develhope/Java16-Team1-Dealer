@@ -187,7 +187,7 @@ public class AdminController {
     @ApiResponse(responseCode = "200", description = "Show All Vehicles")
     @ApiResponse(responseCode = "404", description = "Vehicles not found")
     @GetMapping("/show/list/vehicle") // GET TUTTI I VEICOLI
-    public ResponseEntity<ShowListVehicleAdminResponse> getVehicleById() {
+    public ResponseEntity<ShowListVehicleAdminResponse> showAllVehicles() {
         return adminService.showVehicles();
     }
 
