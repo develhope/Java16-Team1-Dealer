@@ -4,7 +4,8 @@ package com.develhope.spring.seller;
 import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.order.OrderState;
 import com.develhope.spring.rent.RentEntity;
-import com.develhope.spring.seller.sellerControllerResponse.GetVehicleBySellerResponse;
+import com.develhope.spring.seller.sellerControllerResponse.GetVehicleByIdFromSellerResponse;
+import com.develhope.spring.seller.sellerControllerResponse.RentCreationFromSellerResponse;
 import com.develhope.spring.vehicle.VehicleEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -31,10 +31,9 @@ public class SellerController {
     @ApiResponse(responseCode = "200", description = "Vehicle correctly found")
     @ApiResponse(responseCode = "404", description = "Vehicle not found")
     @GetMapping(path = "/show/vehicle/id/{id}")
-    public ResponseEntity<GetVehicleBySellerResponse> getVehicleById(
-            @Parameter(description = "Vehicle ID", example = "1", required = true, name = "id")
-            @PathVariable(name = "id") Long id
-    ){
+    public ResponseEntity<GetVehicleByIdFromSellerResponse> getVehicleById(
+            @Parameter(description = "Vehicle ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long id
+    ) {
         return sellerService.getVehicleById(id);
     }
 
@@ -72,12 +71,16 @@ public class SellerController {
         return sellerService.checkAllOrdersByStatus(status);
     }
 
+    @Operation(summary = "Create new rent")
+    @ApiResponse(responseCode = "200", description = "Rent correctly created")
+//    @ApiResponse(responseCode = "432", description = "Vehicle not found")
     @PostMapping(path = "/create/rent")
-    public RentEntity createRent(
-            @RequestBody(required = true) RentEntity rent,
-            @RequestParam(name = "client_id", required = true) long idClient,
-            @RequestParam(name = "vehicle_id", required = true) long idVehicle) {
-        return sellerService.newRent(rent, idClient, idVehicle);
+    public @ResponseBody ResponseEntity<RentCreationFromSellerResponse> createNewRent(
+            @Parameter(description = "Rent info", example = "1", required = true) @RequestBody(required = true) RentEntity rent,
+            @Parameter(description = "Client ID", example = "1", required = true) @RequestParam(name = "client_id", required = true) long idClient,
+            @Parameter(description = "Vehicle ID", example = "1", required = true) @RequestParam(name = "vehicle_id", required = true) long idVehicle
+    ){
+        return sellerService.createRent(rent, idClient, idVehicle);
     }
 
     @DeleteMapping(path = "/delete/rent/{rentId}")
