@@ -65,4 +65,8 @@ public class ErrorMessageSeller {
     public String getAllVehiclesRfd() {
         return "This is the list of the vehicles ready for delivery: ";
     }
+
+    public String getAllRentableVehicles() {
+        return "This is the list of the rentable vehicles: ";
+    }
 }

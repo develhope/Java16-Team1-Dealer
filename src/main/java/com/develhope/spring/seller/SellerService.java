@@ -194,12 +194,12 @@ public class SellerService {
 
     public ResponseEntity<GetAllVehiclesFromSellerResponse> getAllVehicles() {
         List<VehicleEntity> vehicles = vehicleRepository.findAll();
-        if (!(vehicles.isEmpty())) {
-            GetAllVehiclesFromSellerResponse okResponse = new GetAllVehiclesFromSellerResponse(errorMessageSeller.getAllVehiclesOk(), vehicles);
-            return ResponseEntity.status(200).body(okResponse);
-        } else {
+        if (vehicles.isEmpty()) {
             GetAllVehiclesFromSellerResponse emptyRepoResponse = new GetAllVehiclesFromSellerResponse(errorMessageSeller.noVehiclesAvailable(), null);
             return ResponseEntity.status(404).body(emptyRepoResponse);
+        } else {
+            GetAllVehiclesFromSellerResponse okResponse = new GetAllVehiclesFromSellerResponse(errorMessageSeller.getAllVehiclesOk(), vehicles);
+            return ResponseEntity.status(200).body(okResponse);
         }
 
     }
@@ -215,8 +215,16 @@ public class SellerService {
         }
     }
 
-    public List<VehicleEntity> getAllRentableVehicles() {
-        return vehicleRepository.showAllRentableVehicles();
+    public ResponseEntity<GetAllRentableVehiclesFromSellerResponse> getAllRentableVehicles() {
+
+        List<VehicleEntity> vehicles = vehicleRepository.showAllRentableVehicles();
+        if (vehicles.isEmpty()) {
+            GetAllRentableVehiclesFromSellerResponse notFoundResponse = new GetAllRentableVehiclesFromSellerResponse(errorMessageSeller.noVehiclesAvailable(), null);
+            return ResponseEntity.status(404).body(notFoundResponse);
+        } else {
+            GetAllRentableVehiclesFromSellerResponse okResponse = new GetAllRentableVehiclesFromSellerResponse(errorMessageSeller.getAllRentableVehicles(), vehicles);
+            return ResponseEntity.status(200).body(okResponse);
+        }
     }
 
 }
