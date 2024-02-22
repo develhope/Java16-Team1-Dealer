@@ -9,6 +9,7 @@ import com.develhope.spring.seller.*;
 import com.develhope.spring.user.UserType;
 import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
