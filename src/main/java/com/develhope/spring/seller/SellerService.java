@@ -12,10 +12,7 @@ import com.develhope.spring.order.OrderType;
 import com.develhope.spring.rent.RentEntity;
 import com.develhope.spring.rent.RentRepository;
 import com.develhope.spring.rent.RentStatus;
-import com.develhope.spring.seller.sellerControllerResponse.ErrorMessageSeller;
-import com.develhope.spring.seller.sellerControllerResponse.GetClientByIdFromSellerResponse;
-import com.develhope.spring.seller.sellerControllerResponse.GetVehicleByIdFromSellerResponse;
-import com.develhope.spring.seller.sellerControllerResponse.RentCreationFromSellerResponse;
+import com.develhope.spring.seller.sellerControllerResponse.*;
 import com.develhope.spring.vehicle.SellType;
 import com.develhope.spring.vehicle.VehicleEntity;
 import com.develhope.spring.vehicle.VehicleRepository;
@@ -153,20 +150,12 @@ public class SellerService {
             RentCreationFromSellerResponse okResponse = new RentCreationFromSellerResponse(errorMessageSeller.rentCreation(), rent);
             return ResponseEntity.status(200).body(okResponse);
         }
-        RentCreationFromSellerResponse response2 = new RentCreationFromSellerResponse(errorMessageSeller.rentNotCreated(), null);
-        return ResponseEntity.status(404).body(response2);
+        RentCreationFromSellerResponse notCreatedRentResponse = new RentCreationFromSellerResponse(errorMessageSeller.rentNotCreated(), null);
+        return ResponseEntity.status(404).body(notCreatedRentResponse);
     }
 
-//    public RentEntity newRent(RentEntity rentEnt, Long clientId, Long vehicleId) {
-//        RentEntity rent = createRent(rentEnt, idLogin.getId(), clientId, vehicleId);
-//        if (rent != null) {
-//            return rentRepository.save(rent);
-//        } else {
-//            return null;
-//        }
-//    }
 
-    public RentEntity updateRent(RentEntity updatedRent, Long rentId) {
+    public ResponseEntity<RentUpdateFromSellerResponse> updateRent(RentEntity updatedRent, Long rentId) {
         Optional<RentEntity> toUpdateRent = rentRepository.findById(rentId);
         if (toUpdateRent.isPresent()) {
 
@@ -175,10 +164,15 @@ public class SellerService {
             toUpdateRent.get().setDailyFee(updatedRent.getDailyFee());
             toUpdateRent.get().setTotalFee(updatedRent.getTotalFee());
             toUpdateRent.get().setIsPaid(updatedRent.getIsPaid());
+            rentRepository.saveAndFlush(toUpdateRent.get());
 
-            return rentRepository.saveAndFlush(toUpdateRent.get());
+            RentUpdateFromSellerResponse okResponse = new RentUpdateFromSellerResponse(errorMessageSeller.rentCorrectlyUpdated(rentId), toUpdateRent.get());
+            return ResponseEntity.status(200).body(okResponse);
+
         } else {
-            return null;
+
+            RentUpdateFromSellerResponse notUpdatedRentResponse = new RentUpdateFromSellerResponse(errorMessageSeller.rentNotUpdated(rentId), null);
+            return ResponseEntity.status(404).body(notUpdatedRentResponse);
         }
     }
 

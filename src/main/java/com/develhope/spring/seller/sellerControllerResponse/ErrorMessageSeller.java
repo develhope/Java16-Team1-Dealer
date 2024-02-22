@@ -15,6 +15,14 @@ public class ErrorMessageSeller {
         return "Vehicle with id: " + idVehicle + " does not exists.";
     }
 
+    public String showFoundClient(Long idClient) {
+        return "Client with id: " + idClient + " correctly found. These are client's data: ";
+    }
+
+    public String clientNotFound(Long idClient) {
+        return "Client with id: " + idClient + " does not exists.";
+    }
+
     public String rentCreation() {
         return "Rent correctly created";
     }
@@ -27,11 +35,13 @@ public class ErrorMessageSeller {
                  -The client ID selected exists""";
     }
 
-    public String showFoundClient(Long idClient) {
-        return "Client with id: " + idClient + " correctly found. These are client's data: ";
+    public String rentCorrectlyUpdated(Long idRent) {
+        return "The rent with id " + idRent + " has been correctly updated.";
     }
 
-    public String clientNotFound(Long idClient) {
-        return "Client with id: " + idClient + " does not exists.";
+    public String rentNotUpdated(Long idRent) {
+        return "The rent with id " + idRent + " can't be updated.\n" +
+                "Please check whether the selected ID correctly matches an existing rent.";
+
     }
 }
