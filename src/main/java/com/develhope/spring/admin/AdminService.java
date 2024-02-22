@@ -9,7 +9,6 @@ import com.develhope.spring.seller.*;
 import com.develhope.spring.user.UserType;
 import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -172,7 +171,7 @@ public class AdminService {
                 UpdateClientbyAdminResponse updateClientbyAdminResponse = new UpdateClientbyAdminResponse(errorMessagesAdmin.updateClientbyAdminOK(idClient), client);
                 return ResponseEntity.status(513).body(updateClientbyAdminResponse);
             } else {
-                UpdateClientbyAdminResponse updateClientbyAdminResponse = new UpdateClientbyAdminResponse(errorMessagesAdmin.updateClientbyAdminNotFoundClient(idClient), client);
+                UpdateClientbyAdminResponse updateClientbyAdminResponse = new UpdateClientbyAdminResponse(errorMessagesAdmin.itsNotUser(), client);
                 return ResponseEntity.status(512).body(updateClientbyAdminResponse);
             }
         } else {
@@ -180,6 +179,56 @@ public class AdminService {
             return ResponseEntity.status(404).body(updateClientbyAdminResponse);
         }
     }
+    public ResponseEntity<UpdateSellerbyAdminResponse> updateSellerbyAdmin(SellerEntity sellerEntity, Long idSeller) {
+        SellerEntity seller = new SellerEntity();
+        if (sellerRepository.existsById(idSeller)) {
+            seller = sellerRepository.findById(idSeller).get();
+            if (seller.getType() == UserType.SELLER) {
+                if (sellerEntity.getName() != null) {
+                    seller.setName(sellerEntity.getName());
+                }
+                if (sellerEntity.getSurname() != null) {
+                    seller.setSurname(sellerEntity.getSurname());
+                }
+                if (sellerEntity.getEmail() != null) {
+                    boolean equals = false;
+                    for (SellerEntity c : sellerRepository.findAll()) {
+                        if (c.getEmail().equals(sellerEntity.getEmail())) {
+                            equals = true;
+                        }
+                    }
+                    if (!equals) {
+                        seller.setEmail(sellerEntity.getEmail());
+                    } else {
+                        UpdateSellerbyAdminResponse updateSellerbyAdminResponse= new UpdateSellerbyAdminResponse(errorMessagesAdmin.updateSellerbyAdminEmailExist(sellerEntity.getEmail()), new SellerEntity());
+                        return ResponseEntity.status(514).body(updateSellerbyAdminResponse);
+                    }
+                }
+                if (sellerEntity.getPsw() != null) {
+                    seller.setPsw(sellerEntity.getPsw());
+                }
+                sellerRepository.save(seller);
+                UpdateSellerbyAdminResponse updateSellerbyAdminResponse = new UpdateSellerbyAdminResponse(errorMessagesAdmin.updateSellerbyAdminOK(idSeller), seller);
+                return ResponseEntity.status(513).body(updateSellerbyAdminResponse);
+            } else {
+                UpdateSellerbyAdminResponse updateSellerbyAdminResponse = new UpdateSellerbyAdminResponse(errorMessagesAdmin.itsNotSeller(), seller);
+                return ResponseEntity.status(512).body(updateSellerbyAdminResponse);
+            }
+        } else {
+            UpdateSellerbyAdminResponse updateSellerbyAdminResponse = new UpdateSellerbyAdminResponse(errorMessagesAdmin.updateSellerbyAdminNotFoundClient(idSeller), seller);
+            return ResponseEntity.status(404).body(updateSellerbyAdminResponse);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
     public TruckEntity createTruck(VehicleEntity vehicle) {
         TruckEntity truck = new TruckEntity();

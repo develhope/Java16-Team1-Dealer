@@ -14,6 +14,18 @@ public class ErrorMessagesAdmin {
         return "Client with id " + idClient + " not found!";
     }
 
+    public String updateSellerbyAdminNotFoundClient(Long idSeller) {
+        return "Seller with id " + idSeller + " not found!";
+    }
+
+    public String itsNotUser(){
+        return "Its not a user";
+    }
+    public String itsNotSeller(){
+        return "Its not a Seller";
+    }
+
+
     public String updateClientbyAdminNotClient(Long idClient) {
         return "Client with id " + idClient + " is not a client";
     }
@@ -22,8 +34,17 @@ public class ErrorMessagesAdmin {
         return "Client with id " + idClient + " updated";
     }
 
+    public String updateSellerbyAdminOK(Long idSeller) {
+        return "Seller with id " + idSeller + " updated";
+    }
+
+
     public String updateClientbyAdminEmailExist(String email) {
         return "Client with email " + email + " already exist";
+    }
+
+    public String updateSellerbyAdminEmailExist(String email) {
+        return "Seller with email " + email + " already exist";
     }
 
     public String listVehiclesAdminOK(int size){

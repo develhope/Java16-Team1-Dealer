@@ -4,6 +4,7 @@ import com.develhope.spring.admin.adminControllerResponse.*;
 import com.develhope.spring.client.ClientEntity;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
+import com.develhope.spring.seller.SellerEntity;
 import com.develhope.spring.vehicle.VehicleEntity;
 import com.develhope.spring.vehicle.VehicleSalesInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -147,10 +148,10 @@ public class AdminController {
     }
 
     @Operation(summary = "Update Client Account by Admin")
-    @ApiResponse(responseCode = "201", description = "Order created")
-    @ApiResponse(responseCode = "600", description = "Vehicle does not exist")
-    @ApiResponse(responseCode = "601", description = "Seller does not exist")
-    @ApiResponse(responseCode = "602", description = "Vehicle is not orderable")
+    @ApiResponse(responseCode = "404", description = "Client not found")
+    @ApiResponse(responseCode = "512", description = "Wrong account type ")
+    @ApiResponse(responseCode = "513", description = "Update successful")
+    @ApiResponse(responseCode = "514", description = "Email already exists")
     @PatchMapping("/update/user/{id}")
     public ResponseEntity<UpdateClientbyAdminResponse> updateSingleUser(
             @Parameter(description = "Client ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long idClient,
@@ -169,9 +170,17 @@ public class AdminController {
         return adminService.deleteSellerbyAdmin(id);
     }
 
+    @Operation(summary = "Update Seller Account by Admin")
+    @ApiResponse(responseCode = "404", description = "Seller not found")
+    @ApiResponse(responseCode = "512", description = "Wrong account type ")
+    @ApiResponse(responseCode = "513", description = "Update successful")
+    @ApiResponse(responseCode = "514", description = "Email already exists")
     @PatchMapping("/update/seller/{id}")
-    public void updateSingleSeller() {
-
+    public ResponseEntity<UpdateSellerbyAdminResponse> updateSingleSeller(
+            @Parameter(description = "Seller ID", example = "1", required = true, name = "id") @PathVariable(name = "id") Long id,
+            @RequestBody SellerEntity sellerEntity
+    ) {
+            return adminService.updateSellerbyAdmin(sellerEntity,id);
     }
 
     @Operation(summary = "Create a new Vehicle")
