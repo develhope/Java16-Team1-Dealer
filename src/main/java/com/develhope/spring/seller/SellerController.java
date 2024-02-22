@@ -105,13 +105,17 @@ public class SellerController {
 
     @Operation(summary = "Get all vehicles")
     @ApiResponse(responseCode = "200", description = "Vehicles found")
+    @ApiResponse(responseCode = "404", description = "No vehicles available")
     @GetMapping(path = "/show/all/vehicles")
     public ResponseEntity<GetAllVehiclesFromSellerResponse> getAllVehicles() {
         return sellerService.getAllVehicles();
     }
 
+    @Operation(summary = "Get all vehicles ready for delivery")
+    @ApiResponse(responseCode = "200", description = "Vehicles RFD found")
+    @ApiResponse(responseCode = "200", description = "Vehicles RFD found")
     @GetMapping(path = "/show/all/vehicles/rfd")
-    public List<VehicleEntity> getAllVehiclesRfd() {
+    public ResponseEntity<GetVehiclesRfdFromSellerResponse> getAllVehiclesRfd() {
         return sellerService.getAllVehiclesRfd();
     }
 

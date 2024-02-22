@@ -54,7 +54,15 @@ public class ErrorMessageSeller {
                 "Please make sure the selected ID matches an existing rent.";
     }
 
-    public String getAllVehicles() {
+    public String getAllVehiclesOk() {
         return "This is the list of the available vehicles: ";
+    }
+
+    public String noVehiclesAvailable() {
+        return "There are not available vehicles";
+    }
+
+    public String getAllVehiclesRfd() {
+        return "This is the list of the vehicles ready for delivery: ";
     }
 }
