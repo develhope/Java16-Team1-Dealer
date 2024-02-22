@@ -1,18 +1,14 @@
 package com.develhope.spring.admin.adminControllerResponse;
 
-import com.develhope.spring.vehicle.VehicleDTO;
-import com.develhope.spring.vehicle.VehicleEntity;
+import com.develhope.spring.vehicle.VehicleSalesInfoDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ShowListVehicleAdminResponse {
-
+public class ShowMostExpensiveCarSoldInPeriodRangeResponse {
     private String message;
-    private List<VehicleDTO> vehicleDTO;
+    private VehicleSalesInfoDto vehicleDTO;
 }

@@ -2,7 +2,6 @@ package com.develhope.spring.admin;
 
 import com.develhope.spring.admin.adminControllerResponse.*;
 import com.develhope.spring.client.ClientEntity;
-import com.develhope.spring.client.clientControllerResponse.ListVehicleFilterResponse;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
 import com.develhope.spring.vehicle.VehicleEntity;
@@ -17,9 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @RequestMapping("/v1/admin")
 @RestController
@@ -56,8 +52,8 @@ public class AdminController {
 
     @PostMapping("/create/client/rent")
     @ResponseBody
-    public RentEntity createRent(@RequestBody RentDto rentDto) {
-        return adminService.createRent(rentDto);
+    public RentEntity createRent(@RequestBody RentDtoInput rentDtoInput) {
+        return adminService.createRent(rentDtoInput);
     }
 
     @DeleteMapping("/delete/client/rent/{id}")
@@ -66,8 +62,8 @@ public class AdminController {
     }
 
     @PatchMapping("/update/client/rent/{id}")
-    public RentEntity updateRent(@PathVariable Long id, @RequestBody RentDto rentDto) {
-        return adminService.updateRent(id, rentDto);
+    public RentEntity updateRent(@PathVariable Long id, @RequestBody RentDtoInput rentDtoInput) {
+        return adminService.updateRent(id, rentDtoInput);
     }
 
     @PostMapping("/create/purchase/client")
@@ -112,45 +108,32 @@ public class AdminController {
 
     }
 
+
+    @Operation(summary = "Find the most sold vehicle over a given period of time.")
+    @ApiResponse(responseCode = "200", description = "The statistics were successfully retrieved.")
+    @ApiResponse(responseCode = "400", description = "One or more invalid dates were passed to the controller.")
     @GetMapping("/show/mostsold/period")
-    public @ResponseBody VehicleSalesInfoDto showMostSoldCarInPeriodRange(@RequestParam LocalDateTime firstDate, @RequestParam LocalDateTime secondDate) {
+    public @ResponseBody ResponseEntity<ShowMostSoldCarInPeriodRangeResponse> showMostSoldCarInPeriodRange(
+            @Parameter(description = "First range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "firstDate") @RequestParam LocalDateTime firstDate,
+            @Parameter(description = "Second range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "secondDate") @RequestParam LocalDateTime secondDate){
         return adminService.showMostSoldCarInPeriodRange(firstDate, secondDate);
     }
 
+    @Operation(summary = "Find the most expensive vehicle sold over a given period of time.")
+    @ApiResponse(responseCode = "200", description = "The statistics were successfully retrieved.")
+    @ApiResponse(responseCode = "400", description = "One or more invalid dates were passed to the controller.")
     @GetMapping("/show/mostexpensivesold/period")
-    public @ResponseBody VehicleSalesInfoDto showMostExpensiveCarInPeriodRange(@RequestParam LocalDateTime firstDate, @RequestParam LocalDateTime secondDate) {
+    public @ResponseBody ResponseEntity<ShowMostExpensiveCarSoldInPeriodRangeResponse> showMostExpensiveCarInPeriodRange(
+            @Parameter(description = "First range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "firstDate") @RequestParam LocalDateTime firstDate,
+            @Parameter(description = "Second range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "secondDate") @RequestParam LocalDateTime secondDate) {
         return adminService.showMostExpensiveCarInPeriodRange(firstDate, secondDate);
     }
 
+    @Operation(summary = "Find the most sold vehicle ever")
+    @ApiResponse(responseCode = "200", description = "The statistics were successfully retrieved.")
     @GetMapping("/show/mostsoldever")
     public @ResponseBody VehicleSalesInfoDto showMostSoldCarEver() {
         return adminService.showMostSoldCarEver();
-    }
-
-
-    @GetMapping("/show/vehicle/orderable")
-    public void showAvailableVehicleOrderable() {
-
-    }
-
-    @GetMapping("/show/vehicle/rfdNew")
-    public void showAvailableVehiclerfdNew() {
-
-    }
-
-    @GetMapping("/show/vehicle/rfdUsed")
-    public void showAvailableVehiclerfdUsed() {
-
-    }
-
-    @GetMapping("/show/vehicle/used")
-    public void showAvailableVehicleused() {
-
-    }
-
-    @GetMapping("/show/vehicle/notAvaiable")
-    public void showAllVehicleNotAvailable() {
-
     }
 
     @Operation(summary = "Delete Client Account by Admin")
@@ -191,21 +174,6 @@ public class AdminController {
 
     }
 
-    @GetMapping("/show/vehicle/bestSeller/period")
-    public void showVehicleBestSellerInPeriodRange() {
-
-    }
-
-    @GetMapping("/show/vehicle/maxPrice")
-    public void showVehicleMaxPrice() {
-
-    }
-
-    @GetMapping("/show/vehicle/maxBuyer")
-    public void showVehicleMaxBuyer() {
-
-    }
-
     @Operation(summary = "Create a new Vehicle")
     @ApiResponse(responseCode = "201", description = "Vehicle created")
     @PostMapping("/create/vehicle") // POST CREAZIONE VEICOLO
@@ -219,7 +187,7 @@ public class AdminController {
     @ApiResponse(responseCode = "200", description = "Show All Vehicles")
     @ApiResponse(responseCode = "404", description = "Vehicles not found")
     @GetMapping("/show/list/vehicle") // GET TUTTI I VEICOLI
-    public ResponseEntity<ShowListVehicleAdminResponse> getVehicleById() {
+    public ResponseEntity<ShowListVehicleAdminResponse> showAllVehicles() {
         return adminService.showVehicles();
     }
 
@@ -253,20 +221,24 @@ public class AdminController {
     }
 
 
+    @Operation(summary = "Show earnings over a given time range.")
+    @ApiResponse(responseCode = "200", description = "Show earnings.")
+    @ApiResponse(responseCode = "400", description = "One or more invalid dates were passed to the controller.")
     @GetMapping("/show/earnings/period")
-    public @ResponseBody String showEarningsInPeriodRange(@RequestParam LocalDateTime firstDate,
-                                                          @RequestParam LocalDateTime secondDate) {
+    public @ResponseBody ResponseEntity<ShowEarningsInPeriodRangeResponse> showEarningsInPeriodRange(
+            @Parameter(description = "First range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "firstDate") @RequestParam LocalDateTime firstDate,
+            @Parameter(description = "Second range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "secondDate") @RequestParam LocalDateTime secondDate) {
         return adminService.showEarningsInPeriodRange(firstDate, secondDate);
     }
 
 
+    @Operation(summary = "Show vehicles filtered by their sell type.")
+    @ApiResponse(responseCode = "200", description = "Show filtered vehicles.")
+    @ApiResponse(responseCode = "404", description = "No vehicles matching your query have been found.")
     @GetMapping("/show/list/vehicle/byfilter")
-    public @ResponseBody List<VehicleEntity> showFilteredVehicles(
-            @RequestParam(name = "selltype", required = true) String sellType) {
-
+    public @ResponseBody ResponseEntity<ShowListVehicleAdminResponse> showFilteredVehicles(
+            @Parameter(description = "Sell type", example = "Possible values: RFD, USED, ORDERABLE", required = true, name = "sellType") @RequestParam(name = "selltype", required = true) String sellType) {
         return adminService.showFilteredVehicles(sellType);
     }
-
-
 
 }

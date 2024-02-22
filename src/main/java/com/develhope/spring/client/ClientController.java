@@ -74,20 +74,31 @@ public class ClientController {
     }
 
 
+    @Operation(summary = "Create a new rent")
+    @ApiResponse(responseCode = "201", description = "Rent created")
+    @ApiResponse(responseCode = "600", description = "The vehicle you would like to rent does not exist")
+    @ApiResponse(responseCode = "601", description = "The seller you would like to rent your car from does not exist")
+    @ApiResponse(responseCode = "602", description = "The vehicle you would like to rent is not rentable")
     @PostMapping("/create/rent")
-    @ResponseBody
-    public RentEntity newRent(@RequestBody RentDto rentDto) {
-        return clientService.newRent(rentDto);
+    public @ResponseBody ResponseEntity<NewRentResponse> newRent(
+            @Parameter(description = "A rent DTO", required = true, name = "rentDtoInput") @RequestBody RentDtoInput rentDtoInput) {
+        return clientService.newRent(rentDtoInput);
     }
 
+    @Operation(summary = "Show a complete list of the client's rents")
+    @ApiResponse(responseCode = "200", description = "Show client's rents.")
+    @ApiResponse(responseCode = "404", description = "No active rents were found.")
     @GetMapping("/show/rent/list")
-    public @ResponseBody List<RentEntity> showRents() {
+    public @ResponseBody ResponseEntity<ShowRentListClientResponse> showRents() {
         return clientService.showRents();
     }
 
+    @Operation(summary = "Delete a rent")
+    @ApiResponse(responseCode = "200", description = "Rent deleted")
+    @ApiResponse(responseCode = "404", description = "No rent matching the id was found")
     @DeleteMapping("/delete/rent/{id}")
-    public void deleteRent(@PathVariable Long id) {
-        clientService.deleteRent(id);
+    public ResponseEntity<RentDeletionClientResponse> deleteRent(@PathVariable Long id) {
+        return clientService.deleteRent(id);
     }
 
     @Operation(summary = "Delete My Account")
@@ -126,7 +137,7 @@ public class ClientController {
             @Parameter(description = "Vehicle Brand ", example = "FIAT", required = false, name = "brand") @RequestParam(name = "brand", required = false) String brand,
             @Parameter(description = "Vehicle Model", example = "PANDA", required = false, name = "model") @RequestParam(name = "model", required = false) String model,
             @Parameter(description = "Vehicle Color", example = "ORO", required = false, name = "color") @RequestParam(name = "color", required = false) String color) {
-        return clientService.showAllVehiclesFilteted(color, brand, model);
+        return clientService.showAllVehiclesFiltered(color, brand, model);
     }
 
     @Operation(summary = "Show Vehicle by Range Price")
