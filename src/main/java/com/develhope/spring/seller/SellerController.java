@@ -1,11 +1,17 @@
 package com.develhope.spring.seller;
 
 
-import com.develhope.spring.order.*;
-import com.develhope.spring.rent.*;
-import com.develhope.spring.vehicle.*;
+import com.develhope.spring.order.OrderEntity;
+import com.develhope.spring.order.OrderState;
+import com.develhope.spring.rent.RentEntity;
+import com.develhope.spring.seller.sellerControllerResponse.GetVehicleBySellerResponse;
+import com.develhope.spring.vehicle.VehicleEntity;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +27,14 @@ public class SellerController {
     private SellerService sellerService;
 
 
+    @Operation(summary = "Find vehicle by ID")
+    @ApiResponse(responseCode = "200", description = "Vehicle correctly found")
+    @ApiResponse(responseCode = "404", description = "Vehicle not found")
     @GetMapping(path = "/show/vehicle/id/{id}")
-    public Optional<VehicleEntity> getVehicleById(@PathVariable Long id) {
+    public ResponseEntity<GetVehicleBySellerResponse> getVehicleById(
+            @Parameter(description = "Vehicle ID", example = "1", required = true, name = "id")
+            @PathVariable(name = "id") Long id
+    ){
         return sellerService.getVehicleById(id);
     }
 

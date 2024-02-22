@@ -4,9 +4,12 @@ import com.develhope.spring.client.ClientRepository;
 import com.develhope.spring.loginSignup.IdLogin;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
+import com.develhope.spring.seller.sellerControllerResponse.ErrorMessageSeller;
+import com.develhope.spring.seller.sellerControllerResponse.GetVehicleBySellerResponse;
 import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,6 +32,9 @@ public class SellerService {
     private OrderRepository orderRepository;
     @Autowired
     private RentRepository rentRepository;
+
+    @Autowired
+    private ErrorMessageSeller errorMessageSeller;
 
 
     public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
@@ -88,12 +94,14 @@ public class SellerService {
 
     }
 
-    public Optional<VehicleEntity> getVehicleById(long id) {
+    public ResponseEntity<GetVehicleBySellerResponse> getVehicleById(long id) {
         Optional<VehicleEntity> vehicle = vehicleRepository.findById(id);
         if (vehicle.isPresent()) {
-            return vehicle;
+            GetVehicleBySellerResponse okResponse = new GetVehicleBySellerResponse(errorMessageSeller.showFoundVehicle(id), vehicle.get());
+            return ResponseEntity.status(200).body(okResponse);
         }
-        return Optional.empty();
+        GetVehicleBySellerResponse notFoundResponse = new GetVehicleBySellerResponse(errorMessageSeller.vehicleNotFound(id), null);
+        return ResponseEntity.status(404).body(notFoundResponse);
     }
 
     public RentEntity createRent(RentEntity rent, Long sellerId, Long clientId, Long vehicleId) {
