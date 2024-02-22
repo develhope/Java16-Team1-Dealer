@@ -44,4 +44,13 @@ public class ErrorMessageSeller {
                 "Please check whether the selected ID correctly matches an existing rent.";
 
     }
+
+    public String rentCorrectlyDeleted(Long idRent) {
+        return "The rent with id " + idRent + " has been deleted";
+    }
+
+    public String rentNotDeleted(Long idRent) {
+        return "The rent with id " + idRent + " can't be deleted.\n" +
+                "Please make sure the selected ID matches an existing rent.";
+    }
 }

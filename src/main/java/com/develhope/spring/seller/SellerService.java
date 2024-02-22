@@ -177,15 +177,18 @@ public class SellerService {
     }
 
 
-    public Boolean deleteRent(Long rentToDeleteId) {
+    public ResponseEntity<RentDeletionByIdFromSellerResponse> deleteRent(Long rentToDeleteId) {
         Optional<RentEntity> toDeleteRent = rentRepository.findById(rentToDeleteId);
         LocalDateTime actualDate = LocalDateTime.now();
         if (toDeleteRent.isPresent() && (actualDate.isBefore(toDeleteRent.get().getEndingDate()))) {
             toDeleteRent.get().setRentStatus(RentStatus.DELETED);
             rentRepository.save(toDeleteRent.get());
-            return true;
+            RentDeletionByIdFromSellerResponse okResponse = new RentDeletionByIdFromSellerResponse(errorMessageSeller.rentCorrectlyDeleted(rentToDeleteId), toDeleteRent.get());
+            return ResponseEntity.status(200).body(okResponse);
+
         } else {
-            return false;
+            RentDeletionByIdFromSellerResponse notDeletedResponse = new RentDeletionByIdFromSellerResponse(errorMessageSeller.rentNotDeleted(rentToDeleteId), null);
+            return ResponseEntity.status(404).body(notDeletedResponse);
         }
     }
 

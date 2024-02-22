@@ -6,6 +6,7 @@ import com.develhope.spring.order.OrderState;
 import com.develhope.spring.rent.RentEntity;
 import com.develhope.spring.seller.sellerControllerResponse.GetVehicleByIdFromSellerResponse;
 import com.develhope.spring.seller.sellerControllerResponse.RentCreationFromSellerResponse;
+import com.develhope.spring.seller.sellerControllerResponse.RentDeletionByIdFromSellerResponse;
 import com.develhope.spring.seller.sellerControllerResponse.RentUpdateFromSellerResponse;
 import com.develhope.spring.vehicle.VehicleEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,8 +96,13 @@ public class SellerController {
         return sellerService.updateRent(updatedRent, id);
     }
 
+    @Operation(summary = "Delete rent by ID")
+    @ApiResponse(responseCode = "200", description = "Rent correctly deleted")
+    @ApiResponse(responseCode = "404", description = "Rent can't be deleted")
     @DeleteMapping(path = "/delete/rent/{rentId}")
-    public Boolean deleteRent(@PathVariable(name = "rentId") long id) {
+
+    public ResponseEntity<RentDeletionByIdFromSellerResponse> deleteRent(
+            @Parameter(description = "Rent ID", example = "1", required = true) @PathVariable(name = "rentId") long id) {
         return sellerService.deleteRent(id);
     }
 
