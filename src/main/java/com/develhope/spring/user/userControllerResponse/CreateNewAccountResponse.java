@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class CreateNewAccountResponse {
     @Schema(description = "Message", example = "Client created successfully", required = true)
     private String message;
-    @Schema(description = "User Entity", required = true)
+    @Schema(description = "User Account", required = true)
     private UserEntity userEntity;
 }
