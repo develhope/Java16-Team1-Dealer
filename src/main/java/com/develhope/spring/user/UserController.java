@@ -3,6 +3,7 @@ package com.develhope.spring.user;
 import com.develhope.spring.loginSignup.IdLogin;
 import com.develhope.spring.loginSignup.LoginCredentials;
 import com.develhope.spring.user.userControllerResponse.CreateNewAccountResponse;
+import com.develhope.spring.user.userControllerResponse.LoginAccountResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,12 +36,14 @@ public class UserController {
         return userService.createUser(user);
     }
 
+    @Operation(summary = "Login with your credentials")
+    @ApiResponse(responseCode = "200", description = "Login successfully")
+    @ApiResponse(responseCode = "605", description = "Wrong email or password")
+    @ApiResponse(responseCode = "606", description = "Password cannot be blank")
+    @ApiResponse(responseCode = "607", description = "Email cannot be blank")
     @GetMapping(path = "/login")
-    public Optional<IdLogin> login(
+    public ResponseEntity<LoginAccountResponse> login(
             @RequestBody LoginCredentials loginCredentials) {
-        Optional<UserEntity> user = userService.login(loginCredentials);
-        idLogin.setId(user.get().getId());
-        idLogin.setType(user.get().getType().toString());
-        return Optional.ofNullable(idLogin);
+        return userService.login(loginCredentials);
     }
 }

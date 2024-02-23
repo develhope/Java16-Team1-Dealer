@@ -22,4 +22,20 @@ public class ErrorMessageUser {
     public String emailExist() {
         return "Email already exist";
     }
+
+    public String emailBlank() {
+        return "Email cannot be blank";
+    }
+
+    public String pswBlank() {
+        return "Password cannot be blank";
+    }
+
+    public String okLogin(String email) {
+        return "Login successfully with email: " + email ;
+    }
+
+    public String errorLogin() {
+        return "Wrong email or password";
+    }
 }
