@@ -4,6 +4,7 @@ import com.develhope.spring.loginSignup.IdLogin;
 import com.develhope.spring.loginSignup.LoginCredentials;
 import com.develhope.spring.user.userControllerResponse.CreateNewAccountResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class UserController {
 
     @PostMapping(path = "/create/new/user")
     public ResponseEntity<CreateNewAccountResponse> userCreation(
-            @RequestBody UserEntity user) {
+            @Parameter @RequestBody UserEntity user) {
         return userService.createUser(user);
     }
 
