@@ -29,10 +29,9 @@ public class UserController {
     @ApiResponse(responseCode = "601", description = "Client created successfully")
     @ApiResponse(responseCode = "602", description = "Seller created successfully")
     @ApiResponse(responseCode = "603", description = "Admin created successfully")
-
     @PostMapping(path = "/create/new/user")
     public ResponseEntity<CreateNewAccountResponse> userCreation(
-            @Parameter @RequestBody UserEntity user) {
+            @RequestBody UserEntity user) {
         return userService.createUser(user);
     }
 
