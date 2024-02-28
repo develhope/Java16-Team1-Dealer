@@ -4,6 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "users")
 @SuperBuilder
 @Schema(name = "User Account", description = "User Account")
-public class UserEntity {
+public class UserEntity implements UserDetails {
     @Schema(description = "Id", example = "1", required = true)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +48,38 @@ public class UserEntity {
     private UserType type;
 
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(type.name()));
+    }
 
+    @Override
+    public String getPassword() {
+        return this.getPsw();
+    }
 
+    @Override
+    public String getUsername() {
+        return this.getEmail();
+    }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

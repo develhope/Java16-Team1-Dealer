@@ -4,7 +4,6 @@ import com.develhope.spring.admin.AdminService;
 import com.develhope.spring.client.ClientEntity;
 import com.develhope.spring.client.ClientRepository;
 import com.develhope.spring.client.ClientService;
-import com.develhope.spring.loginSignup.IdLogin;
 import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.order.OrderRepository;
 import com.develhope.spring.order.OrderState;
@@ -29,9 +28,6 @@ import java.util.Optional;
 @Service
 @Transactional
 public class SellerService {
-
-    @Autowired
-    private IdLogin idLogin;
     @Autowired
     private ClientService clientService;
     @Autowired
@@ -70,7 +66,7 @@ public class SellerService {
     }
 
     public OrderEntity newOrder(OrderEntity orderEntity, Long idClient, Long idVehicle) {
-        OrderEntity order = createOrder(orderEntity, idLogin.getId(), idVehicle, idClient);
+        OrderEntity order = createOrder(orderEntity, idLogin.getId(), idVehicle, idClient); //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
         if (order != null) {
             return orderRepository.save(order);
         } else {
@@ -135,7 +131,7 @@ public class SellerService {
         if ((toRentVehicle.getRentable().equals(true)) && !(toRentVehicle.getSellType().equals(SellType.ORDERABLE))) {
             RentEntity newRent = new RentEntity();
 
-            newRent.setSellerId(sellerRepository.findById(idLogin.getId()).get());
+            newRent.setSellerId(sellerRepository.findById(idLogin.getId()).get()); //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
             newRent.setClientId(client);
             newRent.setVehicleId(toRentVehicle);
             newRent.setStartingDate(rent.getStartingDate());

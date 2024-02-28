@@ -3,12 +3,14 @@ package com.develhope.spring.client;
 import com.develhope.spring.client.clientControllerResponse.*;
 import com.develhope.spring.rent.*;
 import com.develhope.spring.order.dto.*;
+import com.develhope.spring.user.UserEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -38,8 +40,9 @@ public class ClientController {
     @ApiResponse(responseCode = "404", description = "Orders not found")
     @GetMapping("/show/order/list")
     @ResponseBody
-    public ResponseEntity<ListOrderResponse> orderEntityList() {
-        return clientService.orderEntityList();
+    public ResponseEntity<ListOrderResponse> orderEntityList(@AuthenticationPrincipal UserEntity user) {
+        System.out.println(user);
+        return clientService.orderEntityList(user);
     }
 
     @Operation(summary = "Update Order Status To Cancelled")

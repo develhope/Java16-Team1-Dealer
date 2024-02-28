@@ -1,12 +1,11 @@
 package com.develhope.spring.client;
 
-import com.develhope.spring.admin.adminControllerResponse.ShowListVehicleAdminResponse;
 import com.develhope.spring.client.clientControllerResponse.*;
-import com.develhope.spring.loginSignup.IdLogin;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
 import com.develhope.spring.order.dto.*;
 import com.develhope.spring.seller.*;
+import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -19,13 +18,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service
 public class ClientService {
-    @Autowired
-    private IdLogin idLogin;
     @Autowired
     private ClientRepository clientRepository;
     @Autowired
@@ -40,11 +36,11 @@ public class ClientService {
     private ErrorMessagesClient errorMessagesClient;
 
     public ResponseEntity<String> deleteAccount() {
-        clientRepository.delete(clientRepository.findById(idLogin.getId()).get());
+        clientRepository.delete(clientRepository.findById(idLogin.getId()).get()); //TODO aggiungere UserEntity e prendere id
         return ResponseEntity.status(200).body(errorMessagesClient.messageDeleteAccountOK());
     }
 
-    public ResponseEntity<UpdateAccountResponse> updateAccount(ClientEntity clientEntity) {
+    public ResponseEntity<UpdateAccountResponse> updateAccount(ClientEntity clientEntity) {  //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
         if (clientEntity != null) {
             ClientEntity client = clientRepository.findById(idLogin.getId()).get();
             if (clientEntity.getName() != null) {
@@ -86,7 +82,7 @@ public class ClientService {
         OrderEntity newOrder = new OrderEntity();
         VehicleEntity vehicle;
         SellerEntity seller;
-        ClientEntity client = clientRepository.findById(idLogin.getId()).get();
+        ClientEntity client = clientRepository.findById(idLogin.getId()).get();  //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
 
         if (sellerRepository.existsById(orderClientDTO.getIdSeller())) {
             seller = sellerRepository.findById(orderClientDTO.getIdSeller()).get();
@@ -119,8 +115,8 @@ public class ClientService {
         }
     }
 
-    public ResponseEntity<ListOrderResponse> orderEntityList() {
-        List<OrderEntity> listOrder = orderRepository.showListOrder(idLogin.getId());
+    public ResponseEntity<ListOrderResponse> orderEntityList(UserEntity user) {
+        List<OrderEntity> listOrder = orderRepository.showListOrder(user.getId());
         if (listOrder.size() > 0) {
             ListOrderResponse listOrderResponse = new ListOrderResponse(errorMessagesClient.ordersFound(), listOrder);
             return ResponseEntity.status(200).body(listOrderResponse);
@@ -147,7 +143,7 @@ public class ClientService {
         OrderEntity newOrder = new OrderEntity();
         VehicleEntity vehicle;
         SellerEntity seller;
-        ClientEntity client = clientRepository.findById(idLogin.getId()).get();
+        ClientEntity client = clientRepository.findById(idLogin.getId()).get();  //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
 
         if (sellerRepository.existsById(purchaseClientDTO.getIdSeller())) {
             seller = sellerRepository.findById(purchaseClientDTO.getIdSeller()).get();
@@ -181,8 +177,8 @@ public class ClientService {
     }
 
     public ResponseEntity<ListPurchaseResponse> purchaseList() {
-        List<OrderEntity> listOrder = orderRepository.showListPurchase(idLogin.getId());
-        ;
+        List<OrderEntity> listOrder = orderRepository.showListPurchase(idLogin.getId()); //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
+
         if (listOrder.size() > 0) {
             ListPurchaseResponse listPurchaseResponse = new ListPurchaseResponse(errorMessagesClient.purchasesFound(), listOrder);
             return ResponseEntity.status(200).body(listPurchaseResponse);
@@ -230,7 +226,7 @@ public class ClientService {
     public RentEntity createRent(RentDtoInput rentDtoInput, VehicleEntity vehicle, SellerEntity seller) {
         RentEntity rent = new RentEntity();
         rent.setSellerId(seller);
-        rent.setClientId(clientRepository.findById(idLogin.getId()).get());
+        rent.setClientId(clientRepository.findById(idLogin.getId()).get()); //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
         rent.setVehicleId(vehicle);
         rent.setStartingDate(rentDtoInput.getStartRent());
         rent.setEndingDate(rentDtoInput.getEndRent());
@@ -243,8 +239,8 @@ public class ClientService {
 
 
     public ResponseEntity<ShowRentListClientResponse> showRents() {
-        if (!rentRepository.showRentList(idLogin.getId()).isEmpty()) {
-            List<RentEntity> rentEntities = rentRepository.showRentList(idLogin.getId());
+        if (!rentRepository.showRentList(idLogin.getId()).isEmpty()) {  //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
+            List<RentEntity> rentEntities = rentRepository.showRentList(idLogin.getId()); //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
             List<RentDtoOutput> rentDtos = rentEntitiesConverter(rentEntities);
             ShowRentListClientResponse showRentListClientResponse = new ShowRentListClientResponse(errorMessagesClient.rentListClientOK(rentDtos.size()), rentDtos);
             return ResponseEntity.status(200).body(showRentListClientResponse);
@@ -287,7 +283,7 @@ public class ClientService {
     public ResponseEntity<RentDeletionClientResponse> deleteRent(Long id) {
         if (rentRepository.existsById(id)) {
             vehicleRepository.resetVehicleRentability(id);
-            rentRepository.customDeleteById(idLogin.getId(), id);
+            rentRepository.customDeleteById(idLogin.getId(), id);  //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
             RentDeletionClientResponse rentDeletionClientResponse = new RentDeletionClientResponse(errorMessagesClient.messageDeleteRentOK());
             return ResponseEntity.status(200).body(rentDeletionClientResponse);
         } else {

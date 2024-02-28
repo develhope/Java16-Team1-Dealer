@@ -6,6 +6,7 @@ import com.develhope.spring.loginSignup.*;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
 import com.develhope.spring.seller.*;
+import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.user.UserType;
 import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
@@ -22,8 +23,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class AdminService {
-    @Autowired
-    private IdLogin idLogin;
     @Autowired
     private ClientRepository clientRepository;
     @Autowired
@@ -57,7 +56,7 @@ public class AdminService {
     }
 
     public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        if (idLogin.getType().equals("ADMIN")) {
+        if (idLogin.getType().equals("ADMIN")) {  //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
             return orderRepository.save(newOrder(orderEntity, idSeller, idVehicle, idClient));
         } else {
             return null;
@@ -70,7 +69,7 @@ public class AdminService {
     }
 
     public OrderEntity updateOrder(OrderEntity orderEntity, Long idOrder) {
-        if (idLogin.getType().equals("ADMIN")) {
+
             OrderEntity order = orderRepository.findById(idOrder).get();
             if (orderEntity.getOrderType() != null) {
                 order.setOrderType(orderEntity.getOrderType());
@@ -82,10 +81,6 @@ public class AdminService {
                 order.setAdvPayment(orderEntity.getAdvPayment());
             }
             return orderRepository.save(order);
-        } else {
-            return null;
-        }
-
     }
 
     public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
@@ -106,11 +101,7 @@ public class AdminService {
     }
 
     public OrderEntity createPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        if (idLogin.getType().equals("ADMIN")) {
             return orderRepository.save(newPurchase(orderEntity, idSeller, idVehicle, idClient));
-        } else {
-            return null;
-        }
     }
 
     public OrderEntity updateStatusCancelledPurchase(Long idOrder) {
@@ -119,7 +110,6 @@ public class AdminService {
     }
 
     public OrderEntity updatePurchase(OrderEntity orderEntity, Long idOrder) {
-        if (idLogin.getType().equals("ADMIN")) {
             OrderEntity order = orderRepository.findById(idOrder).get();
             if (orderEntity.getOrderType() != null) {
                 order.setOrderType(orderEntity.getOrderType());
@@ -131,9 +121,6 @@ public class AdminService {
                 order.setAdvPayment(orderEntity.getAdvPayment());
             }
             return orderRepository.save(order);
-        } else {
-            return null;
-        }
 
     }
 
@@ -220,17 +207,6 @@ public class AdminService {
             return ResponseEntity.status(404).body(updateSellerbyAdminResponse);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
     public TruckEntity createTruck(VehicleEntity vehicle) {
         TruckEntity truck = new TruckEntity();
         truck.setBrand(vehicle.getBrand());
@@ -324,7 +300,7 @@ public class AdminService {
 
     }
 
-    public ResponseEntity<ShowListVehicleAdminResponse> showVehicles() {
+    public ResponseEntity<ShowListVehicleAdminResponse> showVehicles(UserEntity user) {
         if (vehicleRepository.findAll().size() > 0) {
             List<VehicleEntity> vehicles = vehicleRepository.findAll();
             List<VehicleDTO> vehiclesDTO = vehicleEntityConverter(vehicles);
