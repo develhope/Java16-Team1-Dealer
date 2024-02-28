@@ -35,6 +35,7 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/v1/user/**").permitAll()
+                        .requestMatchers("http://localhost:8080/swagger-ui/**").permitAll()
                         .requestMatchers("/v1/client/**").hasAuthority(UserType.CLIENT.name())
                         .requestMatchers("/v1/admin/**").hasAuthority(UserType.ADMIN.name())
                         .requestMatchers("/v1/seller/**").hasAuthority(UserType.SELLER.name())

@@ -5,6 +5,7 @@ import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.order.OrderState;
 import com.develhope.spring.rent.RentEntity;
 import com.develhope.spring.seller.sellerControllerResponse.*;
+import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.vehicle.VehicleEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,10 +41,11 @@ public class SellerController {
     @PostMapping(path = "/create/order")
     @ResponseBody
     public OrderEntity newOrder(
+            @AuthenticationPrincipal UserEntity user,
             @RequestBody(required = true) OrderEntity order,
             @RequestParam(name = "id_client", required = true) Long idClient,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle) {
-        return sellerService.newOrder(order, idClient, idVehicle);
+        return sellerService.newOrder(user, order, idClient, idVehicle);
     }
 
     @PutMapping(path = "/update/status/order/cancelled/{idOrder}")
@@ -75,11 +78,12 @@ public class SellerController {
     @ApiResponse(responseCode = "404", description = "Rent can't be updated")
     @PostMapping(path = "/create/rent")
     public @ResponseBody ResponseEntity<RentCreationFromSellerResponse> createNewRent(
+            @AuthenticationPrincipal UserEntity user,
             @Parameter(description = "Rent info", example = "1", required = true) @RequestBody(required = true) RentEntity rent,
             @Parameter(description = "Client ID", example = "1", required = true) @RequestParam(name = "client_id", required = true) long idClient,
             @Parameter(description = "Vehicle ID", example = "1", required = true) @RequestParam(name = "vehicle_id", required = true) long idVehicle
     ) {
-        return sellerService.createRent(rent, idClient, idVehicle);
+        return sellerService.createRent(user, rent, idClient, idVehicle);
     }
 
     @Operation(summary = "Update rent by ID")

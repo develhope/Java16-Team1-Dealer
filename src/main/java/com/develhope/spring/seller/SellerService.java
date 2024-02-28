@@ -12,10 +12,12 @@ import com.develhope.spring.rent.RentEntity;
 import com.develhope.spring.rent.RentRepository;
 import com.develhope.spring.rent.RentStatus;
 import com.develhope.spring.seller.sellerControllerResponse.*;
+import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.vehicle.SellType;
 import com.develhope.spring.vehicle.VehicleEntity;
 import com.develhope.spring.vehicle.VehicleRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -65,8 +67,8 @@ public class SellerService {
 
     }
 
-    public OrderEntity newOrder(OrderEntity orderEntity, Long idClient, Long idVehicle) {
-        OrderEntity order = createOrder(orderEntity, idLogin.getId(), idVehicle, idClient); //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
+    public OrderEntity newOrder(UserEntity user, OrderEntity orderEntity, Long idClient, Long idVehicle) {
+        OrderEntity order = createOrder(orderEntity, user.getId(), idVehicle, idClient); //DONE aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
         if (order != null) {
             return orderRepository.save(order);
         } else {
@@ -125,13 +127,13 @@ public class SellerService {
 
     }
 
-    public ResponseEntity<RentCreationFromSellerResponse> createRent(RentEntity rent, long clientId, long vehicleId) {
+    public ResponseEntity<RentCreationFromSellerResponse> createRent(UserEntity user, RentEntity rent, long clientId, long vehicleId) {
         VehicleEntity toRentVehicle = Objects.requireNonNull(getVehicleById(vehicleId).getBody()).getVehicleEntity();
         ClientEntity client = Objects.requireNonNull(getClientById(clientId).getBody()).getClientEntity();
         if ((toRentVehicle.getRentable().equals(true)) && !(toRentVehicle.getSellType().equals(SellType.ORDERABLE))) {
             RentEntity newRent = new RentEntity();
 
-            newRent.setSellerId(sellerRepository.findById(idLogin.getId()).get()); //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
+            newRent.setSellerId(sellerRepository.findById(user.getId()).get()); //DONE aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
             newRent.setClientId(client);
             newRent.setVehicleId(toRentVehicle);
             newRent.setStartingDate(rent.getStartingDate());

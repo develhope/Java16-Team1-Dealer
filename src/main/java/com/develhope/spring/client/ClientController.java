@@ -1,8 +1,9 @@
 package com.develhope.spring.client;
 
 import com.develhope.spring.client.clientControllerResponse.*;
-import com.develhope.spring.rent.*;
-import com.develhope.spring.order.dto.*;
+import com.develhope.spring.order.dto.OrderClientDTO;
+import com.develhope.spring.order.dto.PurchaseClientDTO;
+import com.develhope.spring.rent.RentDtoInput;
 import com.develhope.spring.user.UserEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/client")
@@ -31,8 +31,9 @@ public class ClientController {
     @PostMapping("/create/order")
     @ResponseBody
     public ResponseEntity<OrderResponse> newOrder(
+            @AuthenticationPrincipal UserEntity user,
             @RequestBody(required = true) OrderClientDTO orderClientDTO) {
-        return clientService.createOrder(orderClientDTO);
+        return clientService.createOrder(user, orderClientDTO);
     }
 
     @Operation(summary = "Get all Orders")
@@ -63,8 +64,9 @@ public class ClientController {
     @PostMapping("/create/purchase")
     @ResponseBody
     public ResponseEntity<PurchaseResponse> createPurchase(
+            @AuthenticationPrincipal UserEntity user,
             @RequestBody(required = true) PurchaseClientDTO purchaseClientDTO) {
-        return clientService.createPurchase(purchaseClientDTO);
+        return clientService.createPurchase(user, purchaseClientDTO);
     }
 
     @Operation(summary = "Get all Purchases")
@@ -72,8 +74,8 @@ public class ClientController {
     @ApiResponse(responseCode = "404", description = "Purchases not found")
     @GetMapping("/show/purchase/list")
     @ResponseBody
-    public ResponseEntity<ListPurchaseResponse> showPurchases() {
-        return clientService.purchaseList();
+    public ResponseEntity<ListPurchaseResponse> showPurchases(@AuthenticationPrincipal UserEntity user) {
+        return clientService.purchaseList(user);
     }
 
 
@@ -84,31 +86,34 @@ public class ClientController {
     @ApiResponse(responseCode = "602", description = "The vehicle you would like to rent is not rentable")
     @PostMapping("/create/rent")
     public @ResponseBody ResponseEntity<NewRentResponse> newRent(
+            @AuthenticationPrincipal UserEntity user,
             @Parameter(description = "A rent DTO", required = true, name = "rentDtoInput") @RequestBody RentDtoInput rentDtoInput) {
-        return clientService.newRent(rentDtoInput);
+        return clientService.newRent(user, rentDtoInput);
     }
 
     @Operation(summary = "Show a complete list of the client's rents")
     @ApiResponse(responseCode = "200", description = "Show client's rents.")
     @ApiResponse(responseCode = "404", description = "No active rents were found.")
     @GetMapping("/show/rent/list")
-    public @ResponseBody ResponseEntity<ShowRentListClientResponse> showRents() {
-        return clientService.showRents();
+    public @ResponseBody ResponseEntity<ShowRentListClientResponse> showRents(@AuthenticationPrincipal UserEntity user) {
+        return clientService.showRents(user);
     }
 
     @Operation(summary = "Delete a rent")
     @ApiResponse(responseCode = "200", description = "Rent deleted")
     @ApiResponse(responseCode = "404", description = "No rent matching the id was found")
     @DeleteMapping("/delete/rent/{id}")
-    public ResponseEntity<RentDeletionClientResponse> deleteRent(@PathVariable Long id) {
-        return clientService.deleteRent(id);
+    public ResponseEntity<RentDeletionClientResponse> deleteRent(
+            @AuthenticationPrincipal UserEntity user,
+            @PathVariable Long id) {
+        return clientService.deleteRent(user, id);
     }
 
     @Operation(summary = "Delete My Account")
     @ApiResponse(responseCode = "200", description = "Account deleted")
     @DeleteMapping("/delete/myaccount")
-    public ResponseEntity<String> deleteClient() {
-        return clientService.deleteAccount();
+    public ResponseEntity<String> deleteClient(@AuthenticationPrincipal UserEntity user) {
+        return clientService.deleteAccount(user);
     }
 
     @Operation(summary = "Update My Account")
@@ -117,8 +122,9 @@ public class ClientController {
     @PatchMapping("/upgrade/myaccount")
     @ResponseBody
     public ResponseEntity<UpdateAccountResponse> updateClient(
+            @AuthenticationPrincipal UserEntity user,
             @RequestBody ClientEntity updClient) {
-        return clientService.updateAccount(updClient);
+        return clientService.updateAccount(user, updClient);
     }
 
     @Operation(summary = "Show Vehicle by ID")
