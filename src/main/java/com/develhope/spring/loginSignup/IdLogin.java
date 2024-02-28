@@ -15,5 +15,9 @@ public class IdLogin {
 
     private Long id;
 
-    private String type;
+    private String type = "Cazzi";
+
+
+
+
 }

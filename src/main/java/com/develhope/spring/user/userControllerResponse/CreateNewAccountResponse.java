@@ -15,4 +15,10 @@ public class CreateNewAccountResponse {
     private String message;
     @Schema(description = "User Account", required = true)
     private UserEntity userEntity;
+    @Schema(description = "Access Token")
+    private String token;
+
+    public CreateNewAccountResponse(String message) {
+        this.message = message;
+    }
 }

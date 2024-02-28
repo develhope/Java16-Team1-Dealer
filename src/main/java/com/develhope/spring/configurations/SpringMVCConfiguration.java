@@ -12,17 +12,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SpringMVCConfiguration implements WebMvcConfigurer {
     @Autowired
     private ClientInterceptor clientInterceptor;
-    @Autowired
-    private AdminInterceptor adminInterceptor;
-    @Autowired
-    private SellerInterceptor sellerInterceptor;
+//    @Autowired
+//    private AdminInterceptor adminInterceptor;
+//    @Autowired
+//    private SellerInterceptor sellerInterceptor;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(clientInterceptor).addPathPatterns("/v1/client/**");
-        registry.addInterceptor(adminInterceptor).addPathPatterns("/v1/admin/**");
-        registry.addInterceptor(sellerInterceptor).addPathPatterns("/v1/seller/**");
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(clientInterceptor).addPathPatterns("/v1/client/**");
+//        registry.addInterceptor(adminInterceptor).addPathPatterns("/v1/admin/**");
+//        registry.addInterceptor(sellerInterceptor).addPathPatterns("/v1/seller/**");
+//    }
 
 
 }

@@ -7,6 +7,7 @@ import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
 import com.develhope.spring.order.dto.*;
 import com.develhope.spring.seller.*;
+import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -119,8 +120,8 @@ public class ClientService {
         }
     }
 
-    public ResponseEntity<ListOrderResponse> orderEntityList() {
-        List<OrderEntity> listOrder = orderRepository.showListOrder(idLogin.getId());
+    public ResponseEntity<ListOrderResponse> orderEntityList(UserEntity user) {
+        List<OrderEntity> listOrder = orderRepository.showListOrder(user.getId());
         if (listOrder.size() > 0) {
             ListOrderResponse listOrderResponse = new ListOrderResponse(errorMessagesClient.ordersFound(), listOrder);
             return ResponseEntity.status(200).body(listOrderResponse);

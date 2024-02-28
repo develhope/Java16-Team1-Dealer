@@ -6,6 +6,7 @@ import com.develhope.spring.loginSignup.*;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
 import com.develhope.spring.seller.*;
+import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.user.UserType;
 import com.develhope.spring.vehicle.*;
 import jakarta.transaction.Transactional;
@@ -324,7 +325,7 @@ public class AdminService {
 
     }
 
-    public ResponseEntity<ShowListVehicleAdminResponse> showVehicles() {
+    public ResponseEntity<ShowListVehicleAdminResponse> showVehicles(UserEntity user) {
         if (vehicleRepository.findAll().size() > 0) {
             List<VehicleEntity> vehicles = vehicleRepository.findAll();
             List<VehicleDTO> vehiclesDTO = vehicleEntityConverter(vehicles);

@@ -16,15 +16,15 @@ public class AdminInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if(idLogin.getId()==null){
-            response.sendError(512, "Please log in");
-            return false;
-        }
-
-        if(!(idLogin.getType().equals("ADMIN"))){
-            response.sendError(401, "You are not authorized");
-            return false;
-        }
+//        if(idLogin.getId()==null){
+//            response.sendError(512, "Please log in");
+//            return false;
+//        }
+//
+//        if(!(idLogin.getType().equals("ADMIN"))){
+//            response.sendError(401, "You are not authorized");
+//            return false;
+//        }
 
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }

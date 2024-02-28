@@ -1,5 +1,6 @@
 package com.develhope.spring.user;
 
+import com.develhope.spring.loginSignup.AuthenticationServiceImpl;
 import com.develhope.spring.loginSignup.IdLogin;
 import com.develhope.spring.loginSignup.LoginCredentials;
 import com.develhope.spring.user.userControllerResponse.CreateNewAccountResponse;
@@ -18,9 +19,8 @@ import java.util.Optional;
 @RequestMapping("/v1/user")
 @Tag(name = "User Controller", description = "User Controller API")
 public class UserController {
-
     @Autowired
-    private UserService userService;
+    private AuthenticationServiceImpl authenticationService;
 
     @Autowired
     private IdLogin idLogin;
@@ -32,17 +32,29 @@ public class UserController {
     @PostMapping(path = "/create/new/user")
     public ResponseEntity<CreateNewAccountResponse> userCreation(
             @RequestBody UserEntity user) {
-        return userService.createUser(user);
+        return authenticationService.signup(user);
     }
+
+//    @Operation(summary = "Login with your credentials")
+//    @ApiResponse(responseCode = "200", description = "Login successfully")
+//    @ApiResponse(responseCode = "605", description = "Wrong email or password")
+//    @ApiResponse(responseCode = "606", description = "Password cannot be blank")
+//    @ApiResponse(responseCode = "607", description = "Email cannot be blank")
+//    @PostMapping(path = "/login")
+//    public ResponseEntity<LoginAccountResponse> login(
+//            @RequestBody LoginCredentials loginCredentials) {
+//        return authenticationService.signin(loginCredentials);
+//    }
 
     @Operation(summary = "Login with your credentials")
     @ApiResponse(responseCode = "200", description = "Login successfully")
     @ApiResponse(responseCode = "605", description = "Wrong email or password")
     @ApiResponse(responseCode = "606", description = "Password cannot be blank")
     @ApiResponse(responseCode = "607", description = "Email cannot be blank")
-    @GetMapping(path = "/login")
-    public ResponseEntity<LoginAccountResponse> login(
+    @PostMapping(path = "/login/token")
+    public ResponseEntity<LoginAccountResponse> loginToken(
             @RequestBody LoginCredentials loginCredentials) {
-        return userService.login(loginCredentials);
+        return authenticationService.signin(loginCredentials);
     }
+
 }

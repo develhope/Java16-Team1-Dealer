@@ -5,6 +5,7 @@ import com.develhope.spring.client.ClientEntity;
 import com.develhope.spring.order.*;
 import com.develhope.spring.rent.*;
 import com.develhope.spring.seller.SellerEntity;
+import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.vehicle.VehicleEntity;
 import com.develhope.spring.vehicle.VehicleSalesInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -196,8 +198,8 @@ public class AdminController {
     @ApiResponse(responseCode = "200", description = "Show All Vehicles")
     @ApiResponse(responseCode = "404", description = "Vehicles not found")
     @GetMapping("/show/list/vehicle") // GET TUTTI I VEICOLI
-    public ResponseEntity<ShowListVehicleAdminResponse> showAllVehicles() {
-        return adminService.showVehicles();
+    public ResponseEntity<ShowListVehicleAdminResponse> showAllVehicles(@AuthenticationPrincipal UserEntity user) {
+        return adminService.showVehicles(user);
     }
 
     @Operation(summary = "Show Vehicle by ID")
