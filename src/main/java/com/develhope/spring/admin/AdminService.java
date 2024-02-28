@@ -1,11 +1,16 @@
 package com.develhope.spring.admin;
 
 import com.develhope.spring.admin.adminControllerResponse.*;
-import com.develhope.spring.client.*;
-import com.develhope.spring.loginSignup.*;
-import com.develhope.spring.order.*;
-import com.develhope.spring.rent.*;
-import com.develhope.spring.seller.*;
+import com.develhope.spring.client.ClientEntity;
+import com.develhope.spring.client.ClientRepository;
+import com.develhope.spring.order.OrderEntity;
+import com.develhope.spring.order.OrderRepository;
+import com.develhope.spring.order.OrderType;
+import com.develhope.spring.rent.RentDtoInput;
+import com.develhope.spring.rent.RentEntity;
+import com.develhope.spring.rent.RentRepository;
+import com.develhope.spring.seller.SellerEntity;
+import com.develhope.spring.seller.SellerRepository;
 import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.user.UserType;
 import com.develhope.spring.vehicle.*;
@@ -56,11 +61,8 @@ public class AdminService {
     }
 
     public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        if (idLogin.getType().equals("ADMIN")) {  //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
-            return orderRepository.save(newOrder(orderEntity, idSeller, idVehicle, idClient));
-        } else {
-            return null;
-        }
+
+        return orderRepository.save(newOrder(orderEntity, idSeller, idVehicle, idClient));
     }
 
     public OrderEntity updateStatusCancelled(Long idOrder) {
@@ -70,17 +72,17 @@ public class AdminService {
 
     public OrderEntity updateOrder(OrderEntity orderEntity, Long idOrder) {
 
-            OrderEntity order = orderRepository.findById(idOrder).get();
-            if (orderEntity.getOrderType() != null) {
-                order.setOrderType(orderEntity.getOrderType());
-            }
-            if (orderEntity.getOrderState() != null) {
-                order.setOrderState(orderEntity.getOrderState());
-            }
-            if (orderEntity.getAdvPayment() != null) {
-                order.setAdvPayment(orderEntity.getAdvPayment());
-            }
-            return orderRepository.save(order);
+        OrderEntity order = orderRepository.findById(idOrder).get();
+        if (orderEntity.getOrderType() != null) {
+            order.setOrderType(orderEntity.getOrderType());
+        }
+        if (orderEntity.getOrderState() != null) {
+            order.setOrderState(orderEntity.getOrderState());
+        }
+        if (orderEntity.getAdvPayment() != null) {
+            order.setAdvPayment(orderEntity.getAdvPayment());
+        }
+        return orderRepository.save(order);
     }
 
     public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
@@ -101,7 +103,7 @@ public class AdminService {
     }
 
     public OrderEntity createPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-            return orderRepository.save(newPurchase(orderEntity, idSeller, idVehicle, idClient));
+        return orderRepository.save(newPurchase(orderEntity, idSeller, idVehicle, idClient));
     }
 
     public OrderEntity updateStatusCancelledPurchase(Long idOrder) {
@@ -110,17 +112,17 @@ public class AdminService {
     }
 
     public OrderEntity updatePurchase(OrderEntity orderEntity, Long idOrder) {
-            OrderEntity order = orderRepository.findById(idOrder).get();
-            if (orderEntity.getOrderType() != null) {
-                order.setOrderType(orderEntity.getOrderType());
-            }
-            if (orderEntity.getOrderState() != null) {
-                order.setOrderState(orderEntity.getOrderState());
-            }
-            if (orderEntity.getAdvPayment() != null) {
-                order.setAdvPayment(orderEntity.getAdvPayment());
-            }
-            return orderRepository.save(order);
+        OrderEntity order = orderRepository.findById(idOrder).get();
+        if (orderEntity.getOrderType() != null) {
+            order.setOrderType(orderEntity.getOrderType());
+        }
+        if (orderEntity.getOrderState() != null) {
+            order.setOrderState(orderEntity.getOrderState());
+        }
+        if (orderEntity.getAdvPayment() != null) {
+            order.setAdvPayment(orderEntity.getAdvPayment());
+        }
+        return orderRepository.save(order);
 
     }
 
@@ -167,6 +169,7 @@ public class AdminService {
             return ResponseEntity.status(404).body(updateClientbyAdminResponse);
         }
     }
+
     public ResponseEntity<UpdateSellerbyAdminResponse> updateSellerbyAdmin(SellerEntity sellerEntity, Long idSeller) {
         SellerEntity seller = new SellerEntity();
         if (sellerRepository.existsById(idSeller)) {
@@ -188,7 +191,7 @@ public class AdminService {
                     if (!equals) {
                         seller.setEmail(sellerEntity.getEmail());
                     } else {
-                        UpdateSellerbyAdminResponse updateSellerbyAdminResponse= new UpdateSellerbyAdminResponse(errorMessagesAdmin.updateSellerbyAdminEmailExist(sellerEntity.getEmail()), new SellerEntity());
+                        UpdateSellerbyAdminResponse updateSellerbyAdminResponse = new UpdateSellerbyAdminResponse(errorMessagesAdmin.updateSellerbyAdminEmailExist(sellerEntity.getEmail()), new SellerEntity());
                         return ResponseEntity.status(514).body(updateSellerbyAdminResponse);
                     }
                 }
@@ -207,6 +210,7 @@ public class AdminService {
             return ResponseEntity.status(404).body(updateSellerbyAdminResponse);
         }
     }
+
     public TruckEntity createTruck(VehicleEntity vehicle) {
         TruckEntity truck = new TruckEntity();
         truck.setBrand(vehicle.getBrand());
@@ -508,6 +512,7 @@ public class AdminService {
             return ResponseEntity.status(200).body(showMostExpensiveCarSoldInPeriodRangeResponse);
         }
     }
+
     public VehicleSalesInfoDto showMostSoldCarEver() {
         return vehicleRepository.showMostSoldCarEver();
     }
