@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class AdminService {
     @Autowired
-    private IdLogin idLogin;
-    @Autowired
     private ClientRepository clientRepository;
     @Autowired
     private SellerRepository sellerRepository;
@@ -58,7 +56,7 @@ public class AdminService {
     }
 
     public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        if (idLogin.getType().equals("ADMIN")) {
+        if (idLogin.getType().equals("ADMIN")) {  //TODO aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
             return orderRepository.save(newOrder(orderEntity, idSeller, idVehicle, idClient));
         } else {
             return null;
@@ -71,7 +69,7 @@ public class AdminService {
     }
 
     public OrderEntity updateOrder(OrderEntity orderEntity, Long idOrder) {
-        if (idLogin.getType().equals("ADMIN")) {
+
             OrderEntity order = orderRepository.findById(idOrder).get();
             if (orderEntity.getOrderType() != null) {
                 order.setOrderType(orderEntity.getOrderType());
@@ -83,10 +81,6 @@ public class AdminService {
                 order.setAdvPayment(orderEntity.getAdvPayment());
             }
             return orderRepository.save(order);
-        } else {
-            return null;
-        }
-
     }
 
     public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
@@ -107,11 +101,7 @@ public class AdminService {
     }
 
     public OrderEntity createPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        if (idLogin.getType().equals("ADMIN")) {
             return orderRepository.save(newPurchase(orderEntity, idSeller, idVehicle, idClient));
-        } else {
-            return null;
-        }
     }
 
     public OrderEntity updateStatusCancelledPurchase(Long idOrder) {
@@ -120,7 +110,6 @@ public class AdminService {
     }
 
     public OrderEntity updatePurchase(OrderEntity orderEntity, Long idOrder) {
-        if (idLogin.getType().equals("ADMIN")) {
             OrderEntity order = orderRepository.findById(idOrder).get();
             if (orderEntity.getOrderType() != null) {
                 order.setOrderType(orderEntity.getOrderType());
@@ -132,9 +121,6 @@ public class AdminService {
                 order.setAdvPayment(orderEntity.getAdvPayment());
             }
             return orderRepository.save(order);
-        } else {
-            return null;
-        }
 
     }
 
@@ -221,17 +207,6 @@ public class AdminService {
             return ResponseEntity.status(404).body(updateSellerbyAdminResponse);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
     public TruckEntity createTruck(VehicleEntity vehicle) {
         TruckEntity truck = new TruckEntity();
         truck.setBrand(vehicle.getBrand());
