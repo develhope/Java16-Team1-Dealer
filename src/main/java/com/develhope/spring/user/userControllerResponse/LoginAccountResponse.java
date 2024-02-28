@@ -1,6 +1,5 @@
 package com.develhope.spring.user.userControllerResponse;
 
-import com.develhope.spring.loginSignup.IdLogin;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;

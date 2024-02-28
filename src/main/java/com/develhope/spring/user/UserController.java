@@ -1,19 +1,15 @@
 package com.develhope.spring.user;
 
 import com.develhope.spring.loginSignup.AuthenticationServiceImpl;
-import com.develhope.spring.loginSignup.IdLogin;
 import com.develhope.spring.loginSignup.LoginCredentials;
 import com.develhope.spring.user.userControllerResponse.CreateNewAccountResponse;
 import com.develhope.spring.user.userControllerResponse.LoginAccountResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/user")
