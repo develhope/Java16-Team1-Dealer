@@ -17,10 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +29,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     private ErrorMessageUser errorMessageUser;
 
-    @Autowired
-    private IdLogin idLogin;
     public Boolean checkEmail(String email) {
         for(UserEntity u : userRepository.findAll()) {
             if(u.getEmail().equals(email)) {
@@ -136,8 +130,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String jwt = jwtService.generateToken(user);
         LoginAccountResponse loginAccountResponse = new LoginAccountResponse(errorMessageUser.okLogin(loginCredentials.getEmail()), jwt);
 
-        idLogin.setType(user.getType().toString());
-        System.out.println(idLogin.getType());
         return ResponseEntity.status(200).body(loginAccountResponse);
     }
 

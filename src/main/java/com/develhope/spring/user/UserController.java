@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private AuthenticationServiceImpl authenticationService;
-
-    @Autowired
-    private IdLogin idLogin;
     @Operation(summary = "Create a new Account")
     @ApiResponse(responseCode = "600", description = "Email already exist")
     @ApiResponse(responseCode = "601", description = "Client created successfully")

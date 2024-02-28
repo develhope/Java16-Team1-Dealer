@@ -8,10 +8,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 @Component
 public class SellerInterceptor implements HandlerInterceptor {
-
-    @Autowired
-    private IdLogin idLogin;
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 //        if(idLogin.getId()==null){

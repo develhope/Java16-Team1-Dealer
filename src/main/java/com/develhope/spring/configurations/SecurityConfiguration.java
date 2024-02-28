@@ -25,7 +25,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-    private final IdLogin idLogin;
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Autowired
@@ -44,54 +43,6 @@ public class SecurityConfiguration {
                 .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//
-//        if(idLogin.getType().equals(UserType.CLIENT.toString())){
-//            http.csrf(AbstractHttpConfigurer::disable)
-//                    .authorizeHttpRequests(request -> request
-//                            .requestMatchers("/v1/client/**").permitAll()
-//                            .anyRequest().authenticated())
-//                    .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-//                    .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//            return http.build();
-//        } else if (idLogin.getType().equals(UserType.ADMIN.toString())) {
-//            http.csrf(AbstractHttpConfigurer::disable)
-//                    .authorizeHttpRequests(request -> request
-//                            .requestMatchers("/v1/admin/**").permitAll()
-//                            .anyRequest().authenticated())
-//                    .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-//                    .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//            return http.build();
-//        } else if (idLogin.getType().equals(UserType.SELLER.toString())) {
-//            http.csrf(AbstractHttpConfigurer::disable)
-//                    .authorizeHttpRequests(request -> request
-//                            .requestMatchers("/v1/seller/**").permitAll()
-//                            .anyRequest().authenticated())
-//                    .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-//                    .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//            return http.build();
-//        }else {
-//            http.csrf(AbstractHttpConfigurer::disable)
-//                    .authorizeHttpRequests(request -> request
-//                            .requestMatchers("/v1/user/**").permitAll()
-////                        .requestMatchers("/v1/client/**").hasAuthority()
-////                        .requestMatchers("/v1/admin/**").hasAuthority(UserType.ADMIN.name())
-////                        .requestMatchers("/v1/seller/**").hasAuthority(UserType.SELLER.name())
-//                            .anyRequest().authenticated())
-//                    .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-//                    .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//            return http.build();
-//        }
-//    }
-
-
-
-
-
-
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
