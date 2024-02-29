@@ -37,82 +37,82 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         return false;
     }
-//    public ResponseEntity<CreateNewAccountResponse> signup(UserEntity user) {
-//        switch (user.getType()) {
-//            case CLIENT -> {
-//                ClientEntity client = new ClientEntity();
-//                client.setName(user.getName());
-//                client.setSurname(user.getSurname());
-//                if(checkEmail(user.getEmail())) {
-//                    CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.emailExist());
-//                    return ResponseEntity.status(600).body(createNewAccountResponse);
-//                }else{
-//                    client.setEmail(user.getEmail());
-//                }
-//                client.setPsw(passwordEncoder.encode(user.getPsw()));
-//                client.setType(user.getType());
-//
-//                String token = jwtService.generateToken(client);
-//
-//                CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.clienCreate(), userRepository.save(client),token);
-//                return ResponseEntity.status(601).body(createNewAccountResponse);
-//            }
-//
-//            case SELLER -> {
-//                SellerEntity seller = new SellerEntity();
-//                seller.setName(user.getName());
-//                seller.setSurname(user.getSurname());
-//                if(checkEmail(user.getEmail())) {
-//                    CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.emailExist());
-//                    return ResponseEntity.status(600).body(createNewAccountResponse);
-//                }else{
-//                    seller.setEmail(user.getEmail());
-//                }
-//
-//                seller.setPsw(passwordEncoder.encode(user.getPsw()));
-//                seller.setType(user.getType());
-//
-//                String token = jwtService.generateToken(seller);
-//
-//                CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.sellerCreate(), userRepository.save(seller), token);
-//                return ResponseEntity.status(602).body(createNewAccountResponse);
-//            }
-//            case ADMIN -> {
-//                AdminEntity admin = new AdminEntity();
-//                admin.setName(user.getName());
-//                admin.setSurname(user.getSurname());
-//                if(checkEmail(user.getEmail())) {
-//                    CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.emailExist());
-//                    return ResponseEntity.status(600).body(createNewAccountResponse);
-//                }else{
-//                    admin.setEmail(user.getEmail());
-//                }
-//                admin.setPsw(passwordEncoder.encode(user.getPsw()));
-//                admin.setType(user.getType());
-//
-//                String token = jwtService.generateToken(admin);
-//
-//                CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.adminCreate(), userRepository.save(admin), token);
-//                return ResponseEntity.status(603).body(createNewAccountResponse);
-//            }
-//            default -> {
-//                return null;
-//            }
-//        }
-//    }
-    @Override
     public ResponseEntity<CreateNewAccountResponse> signup(UserEntity user) {
-        UserEntity user1 = UserEntity.builder()
-                .name(user.getName())
-                .surname(user.getSurname())
-                .email(user.getEmail())
-                .psw(passwordEncoder.encode(user.getPsw()))
-                .type((user.getType())).build();
+        switch (user.getType()) {
+            case CLIENT -> {
+                ClientEntity client = new ClientEntity();
+                client.setName(user.getName());
+                client.setSurname(user.getSurname());
+                if(checkEmail(user.getEmail())) {
+                    CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.emailExist());
+                    return ResponseEntity.status(600).body(createNewAccountResponse);
+                }else{
+                    client.setEmail(user.getEmail());
+                }
+                client.setPsw(passwordEncoder.encode(user.getPsw()));
+                client.setType(UserType.CLIENT);
 
-        var jwt = jwtService.generateToken(user);
-        CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.adminCreate(), userRepository.save(user), jwt);
-        return ResponseEntity.status(603).body(createNewAccountResponse);
+                String token = jwtService.generateToken(client);
+
+                CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.clienCreate(), userRepository.save(client),token);
+                return ResponseEntity.status(601).body(createNewAccountResponse);
+            }
+
+            case SELLER -> {
+                SellerEntity seller = new SellerEntity();
+                seller.setName(user.getName());
+                seller.setSurname(user.getSurname());
+                if(checkEmail(user.getEmail())) {
+                    CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.emailExist());
+                    return ResponseEntity.status(600).body(createNewAccountResponse);
+                }else{
+                    seller.setEmail(user.getEmail());
+                }
+
+                seller.setPsw(passwordEncoder.encode(user.getPsw()));
+                seller.setType(UserType.SELLER);
+
+                String token = jwtService.generateToken(seller);
+
+                CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.sellerCreate(), userRepository.save(seller), token);
+                return ResponseEntity.status(602).body(createNewAccountResponse);
+            }
+            case ADMIN -> {
+                AdminEntity admin = new AdminEntity();
+                admin.setName(user.getName());
+                admin.setSurname(user.getSurname());
+                if(checkEmail(user.getEmail())) {
+                    CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.emailExist());
+                    return ResponseEntity.status(600).body(createNewAccountResponse);
+                }else{
+                    admin.setEmail(user.getEmail());
+                }
+                admin.setPsw(passwordEncoder.encode(user.getPsw()));
+                admin.setType(UserType.ADMIN);
+
+                String token = jwtService.generateToken(admin);
+
+                CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.adminCreate(), userRepository.save(admin), token);
+                return ResponseEntity.status(603).body(createNewAccountResponse);
+            }
+            default -> {
+                return null;
+            }
+        }
     }
+//    @Override
+//    public ResponseEntity<CreateNewAccountResponse> signup(UserEntity user) {
+//        UserEntity user1 = UserEntity.builder()
+//                .name(user.getName())
+//                .surname(user.getSurname())
+//                .email(user.getEmail())
+//                .psw(passwordEncoder.encode(user.getPsw()))
+//                .type((user.getType())).build();
+//
+//        var jwt = jwtService.generateToken(user);
+//        CreateNewAccountResponse createNewAccountResponse = new CreateNewAccountResponse(errorMessageUser.adminCreate(), userRepository.save(user), jwt);
+//        return ResponseEntity.status(603).body(createNewAccountResponse);
+//    }
 
 
 
