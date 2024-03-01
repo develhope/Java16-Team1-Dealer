@@ -498,6 +498,11 @@ class ClientServiceTest {
 		assertThat(listVehicleFilterResponse.getBody().getMessage()).isEqualTo("Vehicles not found by range price");
 	}
 
+	@Test
+	void showAllVehiclesFilterTest() {
+
+	}
+
 
 
 
