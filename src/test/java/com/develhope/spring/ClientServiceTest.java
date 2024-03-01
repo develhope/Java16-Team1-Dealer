@@ -19,8 +19,6 @@ import com.develhope.spring.vehicle.GearType;
 import com.develhope.spring.vehicle.SellType;
 import com.develhope.spring.vehicle.VehicleEntity;
 import com.develhope.spring.vehicle.VehicleRepository;
-import org.assertj.core.api.Fail;
-import org.junit.After;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,17 +28,14 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @SpringBootTest
 @TestPropertySource(value = {"classpath:application-test.properties"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ClientServiceTest {
 	@Autowired
 	private OrderRepository orderRepository;
@@ -430,6 +425,78 @@ class ClientServiceTest {
 		assertThat(purchaseResponse.getBody().getMessageError()).isEqualTo("Vehicle with id " + purchaseClientDTO.getIdVehicle() + " does not exist");
 	}
 
+
+	@Test
+	void purchaseListTestNoOrder() {
+		ClientEntity client = createClient();
+		clientRepository.save(client);
+		UserEntity user = clientRepository.findById(client.getId()).get();
+
+		ResponseEntity<ListPurchaseResponse> orderEntityListResponse = clientService.purchaseList(user);
+
+		assertThat(orderEntityListResponse.getStatusCode().value()).isEqualTo(404);
+		assertThat(orderEntityListResponse.getBody().getOrderEntityList().size()).isEqualTo(0);
+		assertThat(orderEntityListResponse.getBody().getMessage()).isEqualTo("Purchases not found");
+	}
+
+	@Test
+	void purchaseListTest() {
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleOrderable();
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+
+		OrderEntity orderEntity = createOrder(seller,client,vehicle);
+		orderEntity.setOrderType(OrderType.PURCHASE);
+		orderRepository.save(orderEntity);
+
+		UserEntity user = clientRepository.findById(client.getId()).get();
+
+		ResponseEntity<ListPurchaseResponse> orderEntityListResponse = clientService.purchaseList(user);
+
+		assertThat(orderEntityListResponse.getStatusCode().value()).isEqualTo(200);
+		assertThat(orderEntityListResponse.getBody().getOrderEntityList().size()).isEqualTo(1);
+		assertThat(orderEntityListResponse.getBody().getMessage()).isEqualTo("Purchases found");
+	}
+
+	@Test
+	void filterByRangePriceTest() {
+		VehicleEntity vehicle = createVehicleOrderable();
+		vehicleRepository.save(vehicle);
+
+		ResponseEntity<ListVehicleFilterResponse> listVehicleFilterResponse = clientService.filterFindVehicleByRangePrice(BigDecimal.valueOf(0), BigDecimal.valueOf(100000));
+
+		assertThat(listVehicleFilterResponse.getStatusCode().value()).isEqualTo(302);
+		assertThat(listVehicleFilterResponse.getBody().getVehicleEntityList().size()).isEqualTo(1);
+		assertThat(listVehicleFilterResponse.getBody().getMessage()).isEqualTo("Vehicles found");
+	}
+
+	@Test
+	void filterByRangePriceTestInvert() {
+		VehicleEntity vehicle = createVehicleOrderable();
+		vehicleRepository.save(vehicle);
+
+		ResponseEntity<ListVehicleFilterResponse> listVehicleFilterResponse = clientService.filterFindVehicleByRangePrice(BigDecimal.valueOf(100000), BigDecimal.valueOf(0));
+
+		assertThat(listVehicleFilterResponse.getStatusCode().value()).isEqualTo(302);
+		assertThat(listVehicleFilterResponse.getBody().getVehicleEntityList().size()).isEqualTo(1);
+		assertThat(listVehicleFilterResponse.getBody().getMessage()).isEqualTo("Vehicles found");
+	}
+
+
+	@Test
+	void filterByRangePriceTestNotFound() {
+		VehicleEntity vehicle = createVehicleOrderable();
+		vehicleRepository.save(vehicle);
+
+		ResponseEntity<ListVehicleFilterResponse> listVehicleFilterResponse = clientService.filterFindVehicleByRangePrice(BigDecimal.valueOf(0), BigDecimal.valueOf(1000));
+
+		assertThat(listVehicleFilterResponse.getStatusCode().value()).isEqualTo(611);
+		assertThat(listVehicleFilterResponse.getBody().getVehicleEntityList().size()).isEqualTo(0);
+		assertThat(listVehicleFilterResponse.getBody().getMessage()).isEqualTo("Vehicles not found by range price");
+	}
 
 
 
