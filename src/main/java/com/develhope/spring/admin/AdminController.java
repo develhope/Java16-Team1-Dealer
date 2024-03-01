@@ -252,4 +252,29 @@ public class AdminController {
         return adminService.showFilteredVehicles(sellType);
     }
 
+
+    @Operation(summary = "Show a specific seller's revenue over a time period.")
+    @ApiResponse(responseCode = "200", description = "Show seller's revenue.")
+    @ApiResponse(responseCode = "404", description = "Seller not found.")
+    @ApiResponse(responseCode = "400", description = "One or more invalid dates were passed to the controller.")
+    @GetMapping("/show/seller/revenueovertime/{id}")
+    public @ResponseBody ResponseEntity<ShowSellerRevenueOverTimePeriod> showSellerRevenueOverTimePeriod(
+            @PathVariable(name = "id") Long id,
+            @Parameter(description = "First range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "firstDate") @RequestParam LocalDateTime firstDate,
+            @Parameter(description = "First range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "secondDate") @RequestParam LocalDateTime secondDate) {
+        return adminService.showSellerRevenueOverTimePeriod(id,firstDate,secondDate);
+    }
+
+    @Operation(summary = "Show how many cars a specific seller sold over a time period.")
+    @ApiResponse(responseCode = "200", description = "Show sold cars.")
+    @ApiResponse(responseCode = "404", description = "Seller not found.")
+    @ApiResponse(responseCode = "400", description = "One or more invalid dates were passed to the controller.")
+    @GetMapping("/show/seller/vehiclessoldovertime/{id}")
+    public @ResponseBody ResponseEntity<ShowSellerVehiclesSoldOverTimePeriod> showSellerVehiclesSoldOverTimePeriod(
+            @PathVariable(name = "id") Long id,
+            @Parameter(description = "First range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "firstDate") @RequestParam LocalDateTime firstDate,
+            @Parameter(description = "First range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "secondDate") @RequestParam LocalDateTime secondDate) {
+        return adminService.showSellerVehiclesSoldOverTimePeriod(id,firstDate,secondDate);
+    }
+
 }

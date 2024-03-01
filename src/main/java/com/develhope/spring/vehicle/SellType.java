@@ -5,6 +5,6 @@ import jakarta.persistence.Enumerated;
 
 public enum SellType {
     RFD,
-    USED,
-    ORDERABLE
+    ORDERABLE,
+    SOLD
 }
