@@ -4,46 +4,43 @@ import com.develhope.spring.admin.AdminEntity;
 import com.develhope.spring.client.ClientEntity;
 import com.develhope.spring.client.ClientRepository;
 import com.develhope.spring.client.ClientService;
-import com.develhope.spring.client.clientControllerResponse.ListOrderResponse;
-import com.develhope.spring.client.clientControllerResponse.OrderResponse;
-import com.develhope.spring.client.clientControllerResponse.ShowVehicleIDResponse;
-import com.develhope.spring.client.clientControllerResponse.UpdateAccountResponse;
+import com.develhope.spring.client.clientControllerResponse.*;
 import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.order.OrderRepository;
 import com.develhope.spring.order.OrderState;
 import com.develhope.spring.order.OrderType;
 import com.develhope.spring.order.dto.OrderClientDTO;
+import com.develhope.spring.order.dto.PurchaseClientDTO;
 import com.develhope.spring.seller.SellerEntity;
 import com.develhope.spring.seller.SellerRepository;
 import com.develhope.spring.user.UserEntity;
-import com.develhope.spring.user.UserRepository;
 import com.develhope.spring.user.UserType;
 import com.develhope.spring.vehicle.GearType;
 import com.develhope.spring.vehicle.SellType;
 import com.develhope.spring.vehicle.VehicleEntity;
 import com.develhope.spring.vehicle.VehicleRepository;
+import org.assertj.core.api.Fail;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpStatus.CREATED;
 
 
 import java.math.BigDecimal;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @SpringBootTest
 @TestPropertySource(value = {"classpath:application-test.properties"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ClientServiceTest {
 	@Autowired
 	private OrderRepository orderRepository;
@@ -55,24 +52,6 @@ class ClientServiceTest {
 	private SellerRepository sellerRepository;
 	@Autowired
 	private VehicleRepository vehicleRepository;
-
-//	@Before
-//	public void setUp() {
-//		ClientEntity client = createClient();
-//		VehicleEntity vehicleOrderable = createVehicleOrderable();
-//		VehicleEntity vehicleNotOrderable = createVehicleRentable();
-//		SellerEntity seller = createSeller();
-//		clientRepository.save(client); //ID ACCOUNT 1
-//		sellerRepository.save(seller); //ID ACCOUNT 2
-//		vehicleRepository.save(vehicleOrderable); //ID VEHICLE 1
-//		vehicleRepository.save(vehicleNotOrderable); // ID VEHICLE 2
-//
-//		System.out.println(client);
-//		System.out.println(seller);
-//		System.out.println(vehicleOrderable);
-//	}
-
-
 
 	public SellerEntity createSeller() {
 		SellerEntity seller = new SellerEntity();
@@ -128,6 +107,15 @@ class ClientServiceTest {
 				.idVehicle(Long.valueOf(1)).build();
 	}
 
+	public PurchaseClientDTO createPurchaseDTO(SellerEntity seller, VehicleEntity vehicle) {
+		return PurchaseClientDTO.builder()
+				.advPayment(BigDecimal.valueOf(200))
+				.isPaid(Boolean.TRUE)
+				.orderState(OrderState.DELIVERED)
+				.dateOrder(LocalDateTime.now())
+				.idSeller(seller.getId())
+				.idVehicle(vehicle.getId()).build();
+	}
 
 
 	public VehicleEntity createVehicleOrderable() {
@@ -163,7 +151,6 @@ class ClientServiceTest {
 				.rentable(false)
 				.sellType(SellType.USED).build();
 	}
-
 	public OrderEntity createOrder(SellerEntity seller, ClientEntity client, VehicleEntity vehicle) {
 		OrderEntity newOrder = new OrderEntity();
 		newOrder.setSellerId(seller);
@@ -177,14 +164,9 @@ class ClientServiceTest {
 		return newOrder;
 	}
 
-//	@Test
-//	@Before
-//    public void setUPTest(){
-//		setUp();
-//	}
 
 	@Test
-	void createOrderTest() {
+	void createOrderTest() throws SQLException {
 		ClientEntity client = createClient();
 		OrderClientDTO orderClientDTO = createOrderDTO();
 //		orderClientDTO.setIdVehicle(1L);
@@ -201,10 +183,11 @@ class ClientServiceTest {
 		assertThat(orderResponse.getStatusCode().value()).isEqualTo(201);
 		assertThat(orderResponse.getBody().getOrderEntity().getId()).isNotNull();
 		assertThat(orderResponse.getBody().getMessage()).isEqualTo("Order created successfully");
+
 	}
 
 	@Test
-	void createOrderTestIDVehicleNotOrderable() {
+	void createOrderTestIDVehicleNotOrderable() throws SQLException {
 		ClientEntity client = createClient();
 		OrderClientDTO orderClientDTO = createOrderDTO();
 //		orderClientDTO.setIdVehicle(2L);
@@ -221,6 +204,8 @@ class ClientServiceTest {
 		assertThat(orderResponse.getStatusCode().value()).isEqualTo(602);
 		assertThat(orderResponse.getBody().getOrderEntity().getId()).isNull();
 		assertThat(orderResponse.getBody().getMessage()).isEqualTo("Vehicle with id " + orderClientDTO.getIdVehicle() + " is not orderable");
+
+
 	}
 	@Test
 	void createOrderTestIDVehicleNotExist() {
@@ -240,6 +225,7 @@ class ClientServiceTest {
 		assertThat(orderResponse.getStatusCode().value()).isEqualTo(600);
 		assertThat(orderResponse.getBody().getOrderEntity().getId()).isNull();
 		assertThat(orderResponse.getBody().getMessage()).isEqualTo("Vehicle with id " + orderClientDTO.getIdVehicle() + " does not exist");
+
 	}
 
 	@Test
@@ -250,6 +236,8 @@ class ClientServiceTest {
 		assertThat(showVehicleIDResponse.getStatusCode().value()).isEqualTo(302);
 		assertThat(showVehicleIDResponse.getBody().getVehicleEntity().getId()).isEqualTo(vehicle.getId());
 		assertThat(showVehicleIDResponse.getBody().getMessage()).isEqualTo("Vehicle found");
+
+
 	}
 
 	@Test
@@ -258,6 +246,8 @@ class ClientServiceTest {
 		assertThat(showVehicleIDResponse.getStatusCode().value()).isEqualTo(404);
 		assertThat(showVehicleIDResponse.getBody().getVehicleEntity().getId()).isNull();
 		assertThat(showVehicleIDResponse.getBody().getMessage()).isEqualTo("Vehicle not found");
+
+
 	}
 
 	@Test
@@ -274,6 +264,8 @@ class ClientServiceTest {
 		assertThat(updateAccountResponse.getStatusCode().value()).isEqualTo(607);
 		assertThat(updateAccountResponse.getBody().getClientEntity().getId()).isEqualTo(user.getId());
 		assertThat(updateAccountResponse.getBody().getMessage()).isEqualTo("Account updated successfully");
+
+
 	}
 
 	@Test
@@ -286,6 +278,8 @@ class ClientServiceTest {
 		assertThat(updateAccountResponse.getStatusCode().value()).isEqualTo(406);
 		assertThat(updateAccountResponse.getBody().getClientEntity().getId()).isEqualTo(user.getId());
 		assertThat(updateAccountResponse.getBody().getMessage()).isEqualTo("Please enter details to update account");
+
+
 	}
 
 	@Test
@@ -297,6 +291,8 @@ class ClientServiceTest {
 
 		assertThat(deleteAccountResponse.getStatusCode().value()).isEqualTo(200);
 		assertThat(deleteAccountResponse.getBody()).isEqualTo("Account deleted successfully");
+
+
 	}
 
 	@Test
@@ -333,6 +329,106 @@ class ClientServiceTest {
 		assertThat(orderEntityListResponse.getBody().getMessage()).isEqualTo("Orders found");
 	}
 
+
+	@Test
+	void updateStatusCancelTest() {
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleOrderable();
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+
+		OrderEntity orderEntity = createOrder(seller,client,vehicle);
+		orderRepository.save(orderEntity);
+
+		UserEntity user = clientRepository.findById(client.getId()).get();
+
+		ResponseEntity<StatusCancelledResponse> statusCancelledResponse = clientService.updateStatusCancelled(orderEntity.getId());
+
+		assertThat(statusCancelledResponse.getStatusCode().value()).isEqualTo(200);
+		assertThat(statusCancelledResponse.getBody().getOrderEntity().getId()).isEqualTo(orderEntity.getId());
+		assertThat(statusCancelledResponse.getBody().getMessage()).isEqualTo("Order with id " + orderEntity.getId() + " cancelled");
+
+	}
+
+	@Test
+	void updateStatusCancelTestNoFoundOrder() {
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleOrderable();
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+
+		UserEntity user = clientRepository.findById(client.getId()).get();
+
+		ResponseEntity<StatusCancelledResponse> statusCancelledResponse = clientService.updateStatusCancelled(1L);
+
+		assertThat(statusCancelledResponse.getStatusCode().value()).isEqualTo(404);
+		assertThat(statusCancelledResponse.getBody().getOrderEntity().getId()).isNull();
+		assertThat(statusCancelledResponse.getBody().getMessage()).isEqualTo("Order with id " + 1 + " does not exist");
+
+	}
+
+	@Test
+	void createPurcaseTest() {
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleOrderable();
+		vehicle.setSellType(SellType.RFD);
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+		UserEntity user = clientRepository.findById(client.getId()).get();
+
+		PurchaseClientDTO purchaseClientDTO = createPurchaseDTO(seller, vehicle);
+
+		ResponseEntity<PurchaseResponse> purchaseResponse = clientService.createPurchase(user, purchaseClientDTO);
+
+		assertThat(purchaseResponse.getStatusCode().value()).isEqualTo(201);
+		assertThat(purchaseResponse.getBody().getOrderEntity().getId()).isNotNull();
+		assertThat(purchaseResponse.getBody().getMessageError()).isEqualTo("Purchase created successfully");
+	}
+
+	@Test
+	void createPurchaseTestIDVehicleNotOrderable() {
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleRentable();
+		vehicle.setSellType(SellType.USED);
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+		UserEntity user = clientRepository.findById(client.getId()).get();
+
+		PurchaseClientDTO purchaseClientDTO = createPurchaseDTO(seller, vehicle);
+
+		ResponseEntity<PurchaseResponse> purchaseResponse = clientService.createPurchase(user, purchaseClientDTO);
+
+		assertThat(purchaseResponse.getStatusCode().value()).isEqualTo(602);
+		assertThat(purchaseResponse.getBody().getOrderEntity().getId()).isNull();
+		assertThat(purchaseResponse.getBody().getMessageError()).isEqualTo("Vehicle with id " + purchaseClientDTO.getIdVehicle() + " is not purchasable");
+	}
+	@Test
+	void createPPurchaseTestIDVehicleNotExist() {
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleRentable();
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+		UserEntity user = clientRepository.findById(client.getId()).get();
+
+		PurchaseClientDTO purchaseClientDTO = createPurchaseDTO(seller, vehicle);
+		purchaseClientDTO.setIdVehicle(3L);
+
+		ResponseEntity<PurchaseResponse> purchaseResponse = clientService.createPurchase(user, purchaseClientDTO);
+
+		assertThat(purchaseResponse.getStatusCode().value()).isEqualTo(600);
+		assertThat(purchaseResponse.getBody().getOrderEntity().getId()).isNull();
+		assertThat(purchaseResponse.getBody().getMessageError()).isEqualTo("Vehicle with id " + purchaseClientDTO.getIdVehicle() + " does not exist");
+	}
 
 
 
