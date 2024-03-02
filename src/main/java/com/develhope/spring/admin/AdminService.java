@@ -9,10 +9,8 @@ import com.develhope.spring.order.OrderType;
 import com.develhope.spring.rent.RentDtoInput;
 import com.develhope.spring.rent.RentEntity;
 import com.develhope.spring.rent.RentRepository;
-import com.develhope.spring.seller.SellerEarningsDto;
 import com.develhope.spring.seller.SellerEntity;
 import com.develhope.spring.seller.SellerRepository;
-import com.develhope.spring.seller.SellerSalesDto;
 import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.user.UserType;
 import com.develhope.spring.vehicle.*;
@@ -573,9 +571,9 @@ public class AdminService {
                 rangeDates.add(secondDate);
                 Collections.sort(rangeDates);
 
-                SellerEarningsDto sellerEarningsDto = sellerRepository.showRevenueOverTimePeriod(id, rangeDates.get(0).toString(), rangeDates.get(1).toString());
+                BigDecimal sellerEarnings = sellerRepository.showRevenueOverTimePeriod(id, rangeDates.get(0).toString(), rangeDates.get(1).toString());
 
-                ShowSellerRevenueOverTimePeriod showSellerRevenueOverTimePeriod = new ShowSellerRevenueOverTimePeriod(errorMessagesAdmin.validDateInputSellerRevenueOverTimePeriod(id, firstDate, secondDate, sellerEarningsDto.getEarnings()), sellerEarningsDto.getEarnings());
+                ShowSellerRevenueOverTimePeriod showSellerRevenueOverTimePeriod = new ShowSellerRevenueOverTimePeriod(errorMessagesAdmin.validDateInputSellerRevenueOverTimePeriod(id, firstDate, secondDate, sellerEarnings), sellerEarnings);
                 return ResponseEntity.status(200).body(showSellerRevenueOverTimePeriod);
             }
         }
@@ -597,9 +595,9 @@ public class AdminService {
                 rangeDates.add(secondDate);
                 Collections.sort(rangeDates);
 
-                SellerSalesDto sellerSalesDto = sellerRepository.showVehiclesSoldOverTimePeriod(id, rangeDates.get(0).toString(), rangeDates.get(1).toString());
+                Integer sellerSales = sellerRepository.showVehiclesSoldOverTimePeriod(id, rangeDates.get(0).toString(), rangeDates.get(1).toString());
 
-                ShowSellerVehiclesSoldOverTimePeriod showSellerVehiclesSoldOverTimePeriod = new ShowSellerVehiclesSoldOverTimePeriod(errorMessagesAdmin.validDateInputSellerVehiclesSoldOverTimePeriod(id, firstDate, secondDate, sellerSalesDto.getVehiclesSold()), sellerSalesDto.getVehiclesSold());
+                ShowSellerVehiclesSoldOverTimePeriod showSellerVehiclesSoldOverTimePeriod = new ShowSellerVehiclesSoldOverTimePeriod(errorMessagesAdmin.validDateInputSellerVehiclesSoldOverTimePeriod(id, firstDate, secondDate, sellerSales), sellerSales);
                 return ResponseEntity.status(200).body(showSellerVehiclesSoldOverTimePeriod);
             }
         }

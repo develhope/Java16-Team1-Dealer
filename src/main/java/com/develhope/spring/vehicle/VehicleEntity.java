@@ -106,8 +106,6 @@ public class VehicleEntity {
     @Column(nullable = false)
     private Boolean rentable;
     @Column(nullable = false)
-    private Boolean isUsed;
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private SellType sellType;
 

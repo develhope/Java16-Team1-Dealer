@@ -13,16 +13,16 @@ public interface SellerRepository extends JpaRepository<SellerEntity, Long> {
 
     @Query(name = "showRevenueOverTimePeriod",
             nativeQuery = true)
-    SellerEarningsDto showRevenueOverTimePeriod(@Param(value = "id") Long id,
-                                         @Param(value = "firstDate") String firstDate,
-                                         @Param(value = "secondDate") String secondDate);
+    BigDecimal showRevenueOverTimePeriod(@Param(value = "id") Long id,
+                                         @Param(value = "firstdate") String firstDate,
+                                         @Param(value = "seconddate") String secondDate);
 
 
     @Query(name = "showVehiclesSoldOverTimePeriod",
             nativeQuery = true)
-    SellerSalesDto showVehiclesSoldOverTimePeriod(@Param(value = "id") Long id,
-                                           @Param(value = "firstDate") String firstDate,
-                                           @Param(value = "secondDate") String secondDate);
+    Integer showVehiclesSoldOverTimePeriod(@Param(value = "id") Long id,
+                                           @Param(value = "firstdate") String firstDate,
+                                           @Param(value = "seconddate") String secondDate);
 
 
 }
