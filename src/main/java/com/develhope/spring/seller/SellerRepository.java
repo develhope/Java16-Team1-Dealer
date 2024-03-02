@@ -11,28 +11,18 @@ import java.math.BigDecimal;
 @Repository
 public interface SellerRepository extends JpaRepository<SellerEntity, Long> {
 
-    @Query(name = "SELECT SUM(v.price - v.price_dscnt) " +
-            "FROM orders AS o " +
-            "JOIN vehicle AS v ON o.id_vehicle = v.id " +
-            "WHERE o.id_seller = :id " +
-            "AND o.order_stat != 'CANCELED' " +
-            "AND o.date_purch >= :firstDate " +
-            "AND o.date_purch <= :secondDate ;",
+    @Query(name = "showRevenueOverTimePeriod",
             nativeQuery = true)
-    BigDecimal showSellerRevenueOverTimePeriod(@Param(value = "id") Long id,
-                                               @Param(value = "firstDate") String firstDate,
-                                               @Param(value = "secondDate") String secondDate);
+    SellerEarningsDto showRevenueOverTimePeriod(@Param(value = "id") Long id,
+                                         @Param(value = "firstDate") String firstDate,
+                                         @Param(value = "secondDate") String secondDate);
 
 
-    @Query(name = "SELECT COUNT(*) FROM orders AS o " +
-            "WHERE o.id_seller = :id " +
-            "AND o.date_purch <= :firstDate " +
-            "AND o.date_purch >= :secondDate " +
-            "AND o.order_stat != 'CANCELED'",
+    @Query(name = "showVehiclesSoldOverTimePeriod",
             nativeQuery = true)
-    Integer showSellerVehiclesSoldOverTimePeriod(@Param(value = "id") Long id,
-                                                 @Param(value = "firstDate") String firstDate,
-                                                 @Param(value = "secondDate") String secondDate);
+    SellerSalesDto showVehiclesSoldOverTimePeriod(@Param(value = "id") Long id,
+                                           @Param(value = "firstDate") String firstDate,
+                                           @Param(value = "secondDate") String secondDate);
 
 
 }

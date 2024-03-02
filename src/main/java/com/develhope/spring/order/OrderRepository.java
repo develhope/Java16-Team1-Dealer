@@ -30,4 +30,5 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     @Query(value = "SELECT COUNT(*), u.name, u.surname FROM orders JOIN users AS u ON orders.id_seller = u.id WHERE u.id = :idSeller AND orders.date_purch BETWEEN :d1 AND :d2", nativeQuery = true)
     int checkNumberOfSalesSeller(@Param("idSeller") Long idSeller, @Param("d1") LocalDate firstDate, @Param("d2") LocalDate secondDate);
+
 }

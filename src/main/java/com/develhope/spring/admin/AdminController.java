@@ -272,8 +272,8 @@ public class AdminController {
     @GetMapping("/show/seller/vehiclessoldovertime/{id}")
     public @ResponseBody ResponseEntity<ShowSellerVehiclesSoldOverTimePeriod> showSellerVehiclesSoldOverTimePeriod(
             @PathVariable(name = "id") Long id,
-            @Parameter(description = "First range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "firstDate") @RequestParam LocalDateTime firstDate,
-            @Parameter(description = "First range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "secondDate") @RequestParam LocalDateTime secondDate) {
+            @RequestParam LocalDateTime firstDate,
+            @RequestParam LocalDateTime secondDate) {
         return adminService.showSellerVehiclesSoldOverTimePeriod(id,firstDate,secondDate);
     }
 

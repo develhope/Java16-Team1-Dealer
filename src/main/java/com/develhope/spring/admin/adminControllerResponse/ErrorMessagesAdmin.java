@@ -109,7 +109,7 @@ public class ErrorMessagesAdmin {
     }
 
 
-    public String validDateInputEarningsInPeriodRange (LocalDateTime firstDate, LocalDateTime secondDate, Integer totalEarnings){
+    public String validDateInputEarningsInPeriodRange (LocalDateTime firstDate, LocalDateTime secondDate, BigDecimal totalEarnings){
         return "The total earnings between " + firstDate.toLocalDate() + " and " + secondDate.toLocalDate() + " amount to " + totalEarnings;
     }
 

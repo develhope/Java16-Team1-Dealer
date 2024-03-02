@@ -46,7 +46,7 @@ public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
             "WHERE o.order_stat != 'CANCELED' " +
             "AND o.date_purch >= :firstDate " +
             "AND o.date_purch <= :secondDate ;", nativeQuery = true)
-    Integer showEarningsInPeriodRange(@Param("firstDate") String firstDate,@Param("secondDate") String secondDate);
+    BigDecimal showEarningsInPeriodRange(@Param("firstDate") String firstDate,@Param("secondDate") String secondDate);
 
 
     @Query(value = "SELECT * FROM vehicle WHERE sell_type = :selltype ;\n", nativeQuery = true)

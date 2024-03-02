@@ -9,8 +9,10 @@ import com.develhope.spring.order.OrderType;
 import com.develhope.spring.rent.RentDtoInput;
 import com.develhope.spring.rent.RentEntity;
 import com.develhope.spring.rent.RentRepository;
+import com.develhope.spring.seller.SellerEarningsDto;
 import com.develhope.spring.seller.SellerEntity;
 import com.develhope.spring.seller.SellerRepository;
+import com.develhope.spring.seller.SellerSalesDto;
 import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.user.UserType;
 import com.develhope.spring.vehicle.*;
@@ -521,7 +523,7 @@ public class AdminService {
 
     public ResponseEntity<ShowEarningsInPeriodRangeResponse> showEarningsInPeriodRange(LocalDateTime firstDate, LocalDateTime secondDate) {
         if (firstDate == null || secondDate == null) {
-            ShowEarningsInPeriodRangeResponse showEarningsInPeriodRangeResponse = new ShowEarningsInPeriodRangeResponse(errorMessagesAdmin.invalidDateInput(), 0);
+            ShowEarningsInPeriodRangeResponse showEarningsInPeriodRangeResponse = new ShowEarningsInPeriodRangeResponse(errorMessagesAdmin.invalidDateInput(), BigDecimal.valueOf(0));
             return ResponseEntity.status(400).body(showEarningsInPeriodRangeResponse);
         } else {
             List<LocalDateTime> rangeDates = new ArrayList<>();
@@ -529,7 +531,7 @@ public class AdminService {
             rangeDates.add(secondDate);
             Collections.sort(rangeDates);
 
-            Integer totalEarnings = vehicleRepository.showEarningsInPeriodRange(firstDate.toString(), secondDate.toString());
+            BigDecimal totalEarnings = vehicleRepository.showEarningsInPeriodRange(firstDate.toString(), secondDate.toString());
             ShowEarningsInPeriodRangeResponse showEarningsInPeriodRangeResponse = new ShowEarningsInPeriodRangeResponse(errorMessagesAdmin.validDateInputEarningsInPeriodRange(firstDate, secondDate, totalEarnings), totalEarnings);
             return ResponseEntity.status(200).body(showEarningsInPeriodRangeResponse);
         }
@@ -571,9 +573,9 @@ public class AdminService {
                 rangeDates.add(secondDate);
                 Collections.sort(rangeDates);
 
-                BigDecimal revenue = sellerRepository.showSellerRevenueOverTimePeriod(id, rangeDates.get(0).toString(), rangeDates.get(1).toString());
+                SellerEarningsDto sellerEarningsDto = sellerRepository.showRevenueOverTimePeriod(id, rangeDates.get(0).toString(), rangeDates.get(1).toString());
 
-                ShowSellerRevenueOverTimePeriod showSellerRevenueOverTimePeriod = new ShowSellerRevenueOverTimePeriod(errorMessagesAdmin.validDateInputSellerRevenueOverTimePeriod(id, firstDate, secondDate, revenue), revenue);
+                ShowSellerRevenueOverTimePeriod showSellerRevenueOverTimePeriod = new ShowSellerRevenueOverTimePeriod(errorMessagesAdmin.validDateInputSellerRevenueOverTimePeriod(id, firstDate, secondDate, sellerEarningsDto.getEarnings()), sellerEarningsDto.getEarnings());
                 return ResponseEntity.status(200).body(showSellerRevenueOverTimePeriod);
             }
         }
@@ -595,9 +597,9 @@ public class AdminService {
                 rangeDates.add(secondDate);
                 Collections.sort(rangeDates);
 
-                Integer vehiclesSold = sellerRepository.showSellerVehiclesSoldOverTimePeriod(id, rangeDates.get(0).toString(), rangeDates.get(1).toString());
+                SellerSalesDto sellerSalesDto = sellerRepository.showVehiclesSoldOverTimePeriod(id, rangeDates.get(0).toString(), rangeDates.get(1).toString());
 
-                ShowSellerVehiclesSoldOverTimePeriod showSellerVehiclesSoldOverTimePeriod = new ShowSellerVehiclesSoldOverTimePeriod(errorMessagesAdmin.validDateInputSellerVehiclesSoldOverTimePeriod(id, firstDate, secondDate, vehiclesSold), vehiclesSold);
+                ShowSellerVehiclesSoldOverTimePeriod showSellerVehiclesSoldOverTimePeriod = new ShowSellerVehiclesSoldOverTimePeriod(errorMessagesAdmin.validDateInputSellerVehiclesSoldOverTimePeriod(id, firstDate, secondDate, sellerSalesDto.getVehiclesSold()), sellerSalesDto.getVehiclesSold());
                 return ResponseEntity.status(200).body(showSellerVehiclesSoldOverTimePeriod);
             }
         }
