@@ -118,10 +118,10 @@ class AdminServiceTestIntegration {
         VehicleEntity testVehicleOne = vehicleRepository.save(createVehicleOrderable());
         VehicleEntity testVehicleTwo = vehicleRepository.save(createVehicleOrderable());
         ClientEntity testClient = clientRepository.save(createClient());
-        LocalDateTime dateOne = LocalDateTime.now().minusMonths(1);
+        LocalDateTime dateOne = LocalDateTime.now().minusMinutes(1);
         OrderEntity testOrderOne = orderRepository.save(createOrder(testSeller,testClient,testVehicleOne));
         OrderEntity testOrderTwo = orderRepository.save(createOrder(testSeller,testClient,testVehicleTwo));
-        LocalDateTime dateTwo = LocalDateTime.now().plusMonths(1);
+        LocalDateTime dateTwo = LocalDateTime.now().plusMinutes(1);
 
         ResponseEntity<ShowSellerRevenueOverTimePeriod> response = adminService.showSellerRevenueOverTimePeriod(testSeller.getId(),dateOne,dateTwo);
         response.getBody().setRevenue(response.getBody().getRevenue().setScale(2));
@@ -138,10 +138,10 @@ class AdminServiceTestIntegration {
         VehicleEntity testVehicleOne = vehicleRepository.save(createVehicleOrderable());
         VehicleEntity testVehicleTwo = vehicleRepository.save(createVehicleOrderable());
         ClientEntity testClient = clientRepository.save(createClient());
-        LocalDateTime dateOne = LocalDateTime.now().minusMonths(1);
+        LocalDateTime dateOne = LocalDateTime.now().minusMinutes(1);
         OrderEntity testOrderOne = orderRepository.save(createOrder(testSeller,testClient,testVehicleOne));
         OrderEntity testOrderTwo = orderRepository.save(createOrder(testSeller,testClient,testVehicleTwo));
-        LocalDateTime dateTwo = LocalDateTime.now().plusMonths(1);
+        LocalDateTime dateTwo = LocalDateTime.now().plusMinutes(1);
 
         ResponseEntity<ShowSellerRevenueOverTimePeriod> response = adminService.showSellerRevenueOverTimePeriod(Long.valueOf(-1),dateOne,dateTwo);
         response.getBody().setRevenue(response.getBody().getRevenue().setScale(2));
@@ -182,10 +182,10 @@ class AdminServiceTestIntegration {
         VehicleEntity testVehicleOne = vehicleRepository.save(createVehicleOrderable());
         VehicleEntity testVehicleTwo = vehicleRepository.save(createVehicleOrderable());
         ClientEntity testClient = clientRepository.save(createClient());
-        LocalDateTime dateOne = LocalDateTime.now().minusMonths(1);
+        LocalDateTime dateOne = LocalDateTime.now().minusMinutes(1);
         OrderEntity testOrderOne = orderRepository.save(createOrder(testSeller,testClient,testVehicleOne));
         OrderEntity testOrderTwo = orderRepository.save(createOrder(testSeller,testClient,testVehicleTwo));
-        LocalDateTime dateTwo = LocalDateTime.now().plusMonths(1);
+        LocalDateTime dateTwo = LocalDateTime.now().plusMinutes(1);
 
         ResponseEntity<ShowSellerVehiclesSoldOverTimePeriod> response = adminService.showSellerVehiclesSoldOverTimePeriod(testSeller.getId(),dateOne,dateTwo);
 
@@ -201,10 +201,10 @@ class AdminServiceTestIntegration {
         VehicleEntity testVehicleOne = vehicleRepository.save(createVehicleOrderable());
         VehicleEntity testVehicleTwo = vehicleRepository.save(createVehicleOrderable());
         ClientEntity testClient = clientRepository.save(createClient());
-        LocalDateTime dateOne = LocalDateTime.now().minusMonths(1);
+        LocalDateTime dateOne = LocalDateTime.now().minusMinutes(1);
         OrderEntity testOrderOne = orderRepository.save(createOrder(testSeller,testClient,testVehicleOne));
         OrderEntity testOrderTwo = orderRepository.save(createOrder(testSeller,testClient,testVehicleTwo));
-        LocalDateTime dateTwo = LocalDateTime.now().plusMonths(1);
+        LocalDateTime dateTwo = LocalDateTime.now().plusMinutes(1);
 
         ResponseEntity<ShowSellerVehiclesSoldOverTimePeriod> response = adminService.showSellerVehiclesSoldOverTimePeriod(Long.valueOf(-1),dateOne,dateTwo);
 
