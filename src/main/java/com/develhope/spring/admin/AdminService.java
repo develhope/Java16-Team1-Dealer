@@ -60,9 +60,9 @@ public class AdminService {
         }
     }
 
-    public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-
-        return orderRepository.save(newOrder(orderEntity, idSeller, idVehicle, idClient));
+    public ResponseEntity<String> createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
+        orderRepository.save(newOrder(orderEntity, idSeller, idVehicle, idClient));
+        return ResponseEntity.status(200).body(errorMessagesAdmin.orderCreatedOk());
     }
 
     public OrderEntity updateStatusCancelled(Long idOrder) {

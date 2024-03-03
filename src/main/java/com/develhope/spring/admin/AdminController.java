@@ -29,7 +29,7 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("/create/order/client")
-    public OrderEntity createOrder(
+    public ResponseEntity<String> createOrder(
             @RequestBody(required = true) OrderEntity order,
             @RequestParam(name = "id_seller", required = true) Long idSeller,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle,

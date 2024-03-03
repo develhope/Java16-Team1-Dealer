@@ -120,4 +120,8 @@ public class ErrorMessagesAdmin {
         return "The most expensive car sold between " + firstDate.toLocalDate() + " and " + secondDate.toLocalDate() + " was " + vehicle;
     }
 
+    public String orderCreatedOk(){
+        return "Order successfully created";
+    }
+
 }

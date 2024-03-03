@@ -5,6 +5,7 @@ import com.develhope.spring.admin.AdminService;
 import com.develhope.spring.client.ClientEntity;
 import com.develhope.spring.client.ClientRepository;
 import com.develhope.spring.order.OrderEntity;
+import com.develhope.spring.order.OrderRepository;
 import com.develhope.spring.order.OrderState;
 import com.develhope.spring.order.OrderType;
 import com.develhope.spring.seller.SellerEntity;
@@ -19,6 +20,7 @@ import com.develhope.spring.vehicle.VehicleRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -51,6 +53,9 @@ public class AdminServiceTest {
 
     @Autowired
     private SellerRepository sellerRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Test
     void contextLoads() {
@@ -167,5 +172,33 @@ public class AdminServiceTest {
 
         assertNull(order);
 
+    }
+
+    @Test
+    void createOrder(){
+        createClient();
+        createSeller();
+        createVehicleOrderable();
+        vehicleRepository.save(createVehicleOrderable());
+        sellerRepository.save(createSeller());
+        clientRepository.save(createClient());
+
+        VehicleEntity vehicle = vehicleRepository.findById(1L).get();
+        SellerEntity seller = sellerRepository.findById(1L).get();
+        ClientEntity client = clientRepository.findById(2L).get();
+
+        OrderEntity newOrder = new OrderEntity();
+        newOrder.setOrderType(OrderType.ORDER);
+        newOrder.setOrderState(OrderState.DELIVERED);
+        newOrder.setAdvPayment(BigDecimal.valueOf(10000));
+        newOrder.setIsPaid(true);
+        newOrder.setVehicleId(vehicle);
+        newOrder.setClientId(client);
+        newOrder.setSellerId(seller);
+
+        ResponseEntity<String> orderResponse = adminService.createOrder(newOrder,seller.getId(),vehicle.getId(),client.getId());
+
+        assertThat(orderResponse.getStatusCode().value()).isEqualTo(200);
+        assertThat(orderResponse.getBody()).isEqualTo("Order successfully created");
     }
 }
