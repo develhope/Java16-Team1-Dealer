@@ -124,4 +124,6 @@ public class ErrorMessagesAdmin {
         return "Order successfully created";
     }
 
+    public String updateOrderOk(){ return "Order successfully update";}
+
 }

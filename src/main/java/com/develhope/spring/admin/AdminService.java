@@ -70,7 +70,7 @@ public class AdminService {
         return orderRepository.findById(idOrder).get();
     }
 
-    public OrderEntity updateOrder(OrderEntity orderEntity, Long idOrder) {
+    public ResponseEntity<String> updateOrder(OrderEntity orderEntity, Long idOrder) {
 
         OrderEntity order = orderRepository.findById(idOrder).get();
         if (orderEntity.getOrderType() != null) {
@@ -82,7 +82,8 @@ public class AdminService {
         if (orderEntity.getAdvPayment() != null) {
             order.setAdvPayment(orderEntity.getAdvPayment());
         }
-        return orderRepository.save(order);
+        orderRepository.save(order);
+        return ResponseEntity.status(200).body(errorMessagesAdmin.updateOrderOk());
     }
 
     public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {

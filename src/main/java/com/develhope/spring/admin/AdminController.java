@@ -47,7 +47,7 @@ public class AdminController {
 
     @PatchMapping("/update/order/client/{idOrder}")
     @ResponseBody
-    public OrderEntity updateOrder(
+    public ResponseEntity<String> updateOrder(
             @RequestBody OrderEntity order,
             @PathVariable(name = "idOrder") Long idOrder) {
         return adminService.updateOrder(order, idOrder);

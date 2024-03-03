@@ -118,6 +118,30 @@ public class AdminServiceTest {
 
     }
 
+    private OrderEntity createOrderTest(){
+        createVehicleOrderable();
+        createSeller();
+        createClient();
+        vehicleRepository.save(createVehicleOrderable());
+        sellerRepository.save(createSeller());
+        clientRepository.save(createClient());
+
+        VehicleEntity vehicle = vehicleRepository.findById(1L).get();
+        SellerEntity seller = sellerRepository.findById(1L).get();
+        ClientEntity client = clientRepository.findById(2L).get();
+
+        OrderEntity newOrder = new OrderEntity();
+        newOrder.setOrderType(OrderType.ORDER);
+        newOrder.setOrderState(OrderState.DELIVERED);
+        newOrder.setAdvPayment(BigDecimal.valueOf(10000));
+        newOrder.setIsPaid(true);
+        newOrder.setVehicleId(vehicle);
+        newOrder.setClientId(client);
+        newOrder.setSellerId(seller);
+
+        return newOrder;
+    }
+
 
     @Test
     void newOrder() {
@@ -147,7 +171,6 @@ public class AdminServiceTest {
 
     @Test
     void newOrderWithNotOrderableVehicle() {
-
         createClient();
         createSeller();
         createVehicleUsed();
@@ -171,7 +194,6 @@ public class AdminServiceTest {
         OrderEntity order = adminService.newOrder(newOrder,seller.getId(),vehicle.getId(),client.getId());
 
         assertNull(order);
-
     }
 
     @Test
@@ -200,5 +222,18 @@ public class AdminServiceTest {
 
         assertThat(orderResponse.getStatusCode().value()).isEqualTo(200);
         assertThat(orderResponse.getBody()).isEqualTo("Order successfully created");
+    }
+
+    @Test
+    void updateOrder(){
+        OrderEntity order = createOrderTest();
+        orderRepository.save(order);
+        order.setAdvPayment(BigDecimal.TEN);
+
+        ResponseEntity<String> update = adminService.updateOrder(order, order.getId());
+
+        assertThat(update.getStatusCode().value()).isEqualTo(200);
+        assertThat(update.getBody()).isEqualTo("Order successfully update");
+
     }
 }
