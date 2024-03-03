@@ -79,6 +79,24 @@ public class AdminServiceTest {
         return vehicle;
     }
 
+    private VehicleEntity createVehicleRFD() {
+        VehicleEntity vehicle = new VehicleEntity();
+        vehicle.setBrand("Peguet");
+        vehicle.setModel("106");
+        vehicle.setEngineCapacity(1800);
+        vehicle.setColour("Blue");
+        vehicle.setHp(110);
+        vehicle.setGearType(GearType.MANUAL);
+        vehicle.setRegisterYear(LocalDate.of(2022, 01, 01));
+        vehicle.setFuelType("Gasoline");
+        vehicle.setPrice(BigDecimal.valueOf(35000));
+        vehicle.setPriceDscnt(8);
+        vehicle.setAccessories("full optional");
+        vehicle.setRentable(false);
+        vehicle.setSellType(SellType.RFD);
+        return vehicle;
+    }
+
     private VehicleEntity createVehicleUsed() {
         VehicleEntity vehicle = new VehicleEntity();
         vehicle.setBrand("Fiat");
@@ -235,5 +253,31 @@ public class AdminServiceTest {
         assertThat(update.getStatusCode().value()).isEqualTo(200);
         assertThat(update.getBody()).isEqualTo("Order successfully update");
 
+    }
+
+    @Test
+    void newPurchase() {
+        createVehicleRFD();
+        createSeller();
+        createClient();
+        vehicleRepository.save(createVehicleRFD());
+        sellerRepository.save(createSeller());
+        clientRepository.save(createClient());
+
+        VehicleEntity vehicle = vehicleRepository.findById(1L).get();
+        SellerEntity seller = sellerRepository.findById(1L).get();
+        ClientEntity clientEntity = clientRepository.findById(2L).get();
+
+
+        OrderEntity newOrder = new OrderEntity();
+        newOrder.setOrderType(OrderType.PURCHASE);
+        newOrder.setOrderState(OrderState.SHIPPED);
+        newOrder.setAdvPayment(BigDecimal.valueOf(10000));
+        newOrder.setIsPaid(true);
+        newOrder.setVehicleId(vehicle);
+        newOrder.setClientId(clientEntity);
+        newOrder.setSellerId(seller);
+
+        assertThat(adminService.newPurchase(newOrder, seller.getId(), vehicle.getId(), clientEntity.getId())).isNotNull();
     }
 }
