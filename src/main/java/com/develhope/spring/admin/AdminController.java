@@ -29,7 +29,7 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("/create/order/client")
-    public OrderEntity createOrder(
+    public ResponseEntity<String> createOrder(
             @RequestBody(required = true) OrderEntity order,
             @RequestParam(name = "id_seller", required = true) Long idSeller,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle,
@@ -47,7 +47,7 @@ public class AdminController {
 
     @PatchMapping("/update/order/client/{idOrder}")
     @ResponseBody
-    public OrderEntity updateOrder(
+    public ResponseEntity<String> updateOrder(
             @RequestBody OrderEntity order,
             @PathVariable(name = "idOrder") Long idOrder) {
         return adminService.updateOrder(order, idOrder);
@@ -71,7 +71,7 @@ public class AdminController {
 
     @PostMapping("/create/purchase/client")
     @ResponseBody
-    public OrderEntity createPurchase(
+    public ResponseEntity<String> createPurchase(
             @RequestBody(required = true) OrderEntity order,
             @RequestParam(name = "id_seller", required = true) Long idSeller,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle,
@@ -82,7 +82,7 @@ public class AdminController {
 
     @PutMapping("/update/status/purchase/client/cancelled/{idOrder}")
     @ResponseBody
-    public OrderEntity updateStatusCancelledIdPurchase(
+    public ResponseEntity<UpdateStatusCancelledPurchase> updateStatusCancelledIdPurchase(
             @PathVariable(name = "idOrder") Long id
     ) {
         return adminService.updateStatusCancelledPurchase(id);

@@ -60,9 +60,9 @@ public class AdminService {
         }
     }
 
-    public OrderEntity createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-
-        return orderRepository.save(newOrder(orderEntity, idSeller, idVehicle, idClient));
+    public ResponseEntity<String> createOrder(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
+        orderRepository.save(newOrder(orderEntity, idSeller, idVehicle, idClient));
+        return ResponseEntity.status(200).body(errorMessagesAdmin.orderCreatedOk());
     }
 
     public OrderEntity updateStatusCancelled(Long idOrder) {
@@ -70,7 +70,7 @@ public class AdminService {
         return orderRepository.findById(idOrder).get();
     }
 
-    public OrderEntity updateOrder(OrderEntity orderEntity, Long idOrder) {
+    public ResponseEntity<String> updateOrder(OrderEntity orderEntity, Long idOrder) {
 
         OrderEntity order = orderRepository.findById(idOrder).get();
         if (orderEntity.getOrderType() != null) {
@@ -82,7 +82,8 @@ public class AdminService {
         if (orderEntity.getAdvPayment() != null) {
             order.setAdvPayment(orderEntity.getAdvPayment());
         }
-        return orderRepository.save(order);
+        orderRepository.save(order);
+        return ResponseEntity.status(200).body(errorMessagesAdmin.updateOrderOk());
     }
 
     public OrderEntity newPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
@@ -102,13 +103,16 @@ public class AdminService {
         }
     }
 
-    public OrderEntity createPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
-        return orderRepository.save(newPurchase(orderEntity, idSeller, idVehicle, idClient));
+    public ResponseEntity<String> createPurchase(OrderEntity orderEntity, Long idSeller, Long idVehicle, Long idClient) {
+        orderRepository.save(newPurchase(orderEntity, idSeller, idVehicle, idClient));
+        return ResponseEntity.status(200).body(errorMessagesAdmin.createPurchaseOk());
     }
 
-    public OrderEntity updateStatusCancelledPurchase(Long idOrder) {
+    public ResponseEntity<UpdateStatusCancelledPurchase> updateStatusCancelledPurchase(Long idOrder) {
         orderRepository.updateStatusCancelledPurchaseWithId(idOrder);
-        return orderRepository.findById(idOrder).get();
+        OrderEntity order = orderRepository.findById(idOrder).get();
+        UpdateStatusCancelledPurchase updateStatusCancelledPurchaseResponse = new UpdateStatusCancelledPurchase(errorMessagesAdmin.updateStatusCancelledPurchaseOK(idOrder), order);
+        return ResponseEntity.status(200).body(updateStatusCancelledPurchaseResponse);
     }
 
     public OrderEntity updatePurchase(OrderEntity orderEntity, Long idOrder) {

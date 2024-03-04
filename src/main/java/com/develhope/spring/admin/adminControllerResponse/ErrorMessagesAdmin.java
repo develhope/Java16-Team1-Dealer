@@ -1,5 +1,6 @@
 package com.develhope.spring.admin.adminControllerResponse;
 
+import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.vehicle.VehicleSalesInfoDto;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -118,6 +119,18 @@ public class ErrorMessagesAdmin {
 
     public String validDateInputMostExpensiveCarSoldCarInPeriodRange (LocalDateTime firstDate, LocalDateTime secondDate, VehicleSalesInfoDto vehicle){
         return "The most expensive car sold between " + firstDate.toLocalDate() + " and " + secondDate.toLocalDate() + " was " + vehicle;
+    }
+
+    public String orderCreatedOk(){
+        return "Order successfully created";
+    }
+
+    public String updateOrderOk(){ return "Order successfully update";}
+
+    public String createPurchaseOk(){ return "Order successfully purchased";}
+
+    public String updateStatusCancelledPurchaseOK(Long idOrder){
+        return "The order " + idOrder + " is successfully cancelled";
     }
 
 }
