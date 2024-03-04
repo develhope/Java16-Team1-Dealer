@@ -5,6 +5,7 @@ import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.order.OrderState;
 import com.develhope.spring.rent.RentDtoInput;
 import com.develhope.spring.rent.RentEntity;
+import com.develhope.spring.rent.ToUpdateRentDtoInput;
 import com.develhope.spring.seller.sellerControllerResponse.*;
 import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.vehicle.VehicleEntity;
@@ -91,9 +92,9 @@ public class SellerController {
     @PatchMapping(path = "/update/rent/{rentId}")
     public ResponseEntity<RentUpdateFromSellerResponse> updateRent(
             @Parameter(description = "Rent ID", example = "1", required = true) @PathVariable(name = "rentId") long id,
-            @RequestBody RentEntity updatedRent
+            @RequestBody ToUpdateRentDtoInput toUpdateRentDtoInput
     ) {
-        return sellerService.updateRent(updatedRent, id);
+        return sellerService.updateRent(toUpdateRentDtoInput, id);
     }
 
     @Operation(summary = "Delete rent by ID")

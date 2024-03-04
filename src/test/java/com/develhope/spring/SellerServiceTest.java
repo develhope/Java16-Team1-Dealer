@@ -6,9 +6,7 @@ import com.develhope.spring.rent.*;
 import com.develhope.spring.seller.SellerEntity;
 import com.develhope.spring.seller.SellerRepository;
 import com.develhope.spring.seller.SellerService;
-import com.develhope.spring.seller.sellerControllerResponse.GetClientByIdFromSellerResponse;
-import com.develhope.spring.seller.sellerControllerResponse.GetVehicleByIdFromSellerResponse;
-import com.develhope.spring.seller.sellerControllerResponse.RentCreationFromSellerResponse;
+import com.develhope.spring.seller.sellerControllerResponse.*;
 import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.user.UserRepository;
 import com.develhope.spring.user.UserType;
@@ -16,7 +14,6 @@ import com.develhope.spring.vehicle.GearType;
 import com.develhope.spring.vehicle.SellType;
 import com.develhope.spring.vehicle.VehicleEntity;
 import com.develhope.spring.vehicle.VehicleRepository;
-import com.mysql.cj.xdevapi.Client;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -159,6 +156,16 @@ public class SellerServiceTest {
         return rentDtoInput;
     }
 
+    public ToUpdateRentDtoInput createToUpdateRentDtoInput() {
+        ToUpdateRentDtoInput toUpdateRentDtoInput = new ToUpdateRentDtoInput();
+        toUpdateRentDtoInput.setRentStartingDate(LocalDateTime.now());
+        toUpdateRentDtoInput.setRentEndingDate(toUpdateRentDtoInput.getRentStartingDate().plusDays(5));
+        toUpdateRentDtoInput.setDailyFee(BigDecimal.valueOf(40));
+        toUpdateRentDtoInput.setTotalFee(BigDecimal.valueOf(200));
+        toUpdateRentDtoInput.setIsPaid(true);
+        return toUpdateRentDtoInput;
+    }
+
 
     @Test
     void getVehicleByIdTestExistingVehicle() {
@@ -213,7 +220,7 @@ public class SellerServiceTest {
         SellerEntity seller = (SellerEntity) createAndSaveSeller();
         ClientEntity client = (ClientEntity) createAndSaveClient();
         VehicleEntity vehicle = createAndSaveRentableVehicle();
-        RentDtoInput rentDtoInput = createRentDtoInput(seller,client,vehicle);
+        RentDtoInput rentDtoInput = createRentDtoInput(seller, client, vehicle);
 
 
         ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rentDtoInput);
@@ -227,7 +234,7 @@ public class SellerServiceTest {
         SellerEntity seller = (SellerEntity) createAndSaveSeller();
         ClientEntity client = (ClientEntity) createAndSaveClient();
         VehicleEntity vehicle = createAndSaveOrderableVehicle();
-        RentDtoInput rentDtoInput = createRentDtoInput(seller,client,vehicle);
+        RentDtoInput rentDtoInput = createRentDtoInput(seller, client, vehicle);
 
         ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rentDtoInput);
 
@@ -278,7 +285,7 @@ public class SellerServiceTest {
         ClientEntity client2 = new ClientEntity();
         client2.setId(5L);
         VehicleEntity vehicle = createAndSaveRentableVehicle();
-        RentDtoInput rentDtoInput= createRentDtoInput(seller, client2, vehicle);
+        RentDtoInput rentDtoInput = createRentDtoInput(seller, client2, vehicle);
 
         ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rentDtoInput);
 
@@ -289,6 +296,52 @@ public class SellerServiceTest {
                  -The selected vehicle exists.
                  -The selected vehicle is rentable and it's status is not 'ORDERABLE'.
                  -The client ID selected exists""");
+    }
+
+    @Test
+    void UpdateExistingRent() {
+        SellerEntity seller = (SellerEntity) createAndSaveSeller();
+        ClientEntity client = (ClientEntity) createAndSaveClient();
+        VehicleEntity vehicle = createAndSaveRentableVehicle();
+        RentDtoInput rentDtoInput = createRentDtoInput(seller, client, vehicle);
+        RentEntity rent = createAndSaveRent(seller, rentDtoInput);
+
+        ToUpdateRentDtoInput toUpdateRentDtoInput = createToUpdateRentDtoInput();
+        ResponseEntity<RentUpdateFromSellerResponse> response = sellerService.updateRent(toUpdateRentDtoInput, rent.getId());
+
+        assertThat(response.getBody().getMessage()).isEqualTo("The rent with id " + rent.getId() + " has been correctly updated.");
+    }
+
+    @Test
+    void UpdateNonExistingRent() {
+        SellerEntity seller = (SellerEntity) createAndSaveSeller();
+        ClientEntity client = (ClientEntity) createAndSaveClient();
+        VehicleEntity vehicle = createAndSaveRentableVehicle();
+        RentDtoInput rentDtoInput = createRentDtoInput(seller, client, vehicle);
+        RentEntity rent = createAndSaveRent(seller, rentDtoInput);
+        RentEntity rent2 = new RentEntity();
+        rent2.setId(5L);
+
+        ToUpdateRentDtoInput toUpdateRentDtoInput = createToUpdateRentDtoInput();
+        ResponseEntity<RentUpdateFromSellerResponse> response = sellerService.updateRent(toUpdateRentDtoInput, rent2.getId());
+
+        assertThat(response.getBody().getMessage()).isEqualTo("The rent with id " + rent2.getId() + " can't be updated.\n" +
+                "Please check whether the selected ID correctly matches an existing rent.");
+    }
+
+    @Test
+    void ExistingRentDeletion() {
+        SellerEntity seller = (SellerEntity) createAndSaveSeller();
+        ClientEntity client = (ClientEntity) createAndSaveClient();
+        VehicleEntity vehicle = createAndSaveRentableVehicle();
+        RentDtoInput rentDtoInput = createRentDtoInput(seller, client, vehicle);
+        RentEntity rent = createAndSaveRent(seller, rentDtoInput);
+
+        ResponseEntity<RentDeletionByIdFromSellerResponse> response = sellerService.deleteRent(rent.getId());
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody().getMessage()).isEqualTo("The rent with id " + rent.getId() + " has been deleted");
+        assertThat(response.getBody().getRentEntity().getRentStatus()).isEqualTo(RentStatus.DELETED);
     }
 
 }

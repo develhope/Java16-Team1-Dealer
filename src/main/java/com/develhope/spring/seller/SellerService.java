@@ -8,10 +8,7 @@ import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.order.OrderRepository;
 import com.develhope.spring.order.OrderState;
 import com.develhope.spring.order.OrderType;
-import com.develhope.spring.rent.RentDtoInput;
-import com.develhope.spring.rent.RentEntity;
-import com.develhope.spring.rent.RentRepository;
-import com.develhope.spring.rent.RentStatus;
+import com.develhope.spring.rent.*;
 import com.develhope.spring.seller.sellerControllerResponse.*;
 import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.vehicle.SellType;
@@ -154,15 +151,15 @@ public class SellerService {
     }
 
 
-    public ResponseEntity<RentUpdateFromSellerResponse> updateRent(RentEntity updatedRent, Long rentId) {
+    public ResponseEntity<RentUpdateFromSellerResponse> updateRent(ToUpdateRentDtoInput toUpdateRentDtoInput, Long rentId) {
         Optional<RentEntity> toUpdateRent = rentRepository.findById(rentId);
         if (toUpdateRent.isPresent()) {
 
-            toUpdateRent.get().setStartingDate(updatedRent.getStartingDate());
-            toUpdateRent.get().setEndingDate(updatedRent.getEndingDate());
-            toUpdateRent.get().setDailyFee(updatedRent.getDailyFee());
-            toUpdateRent.get().setTotalFee(updatedRent.getTotalFee());
-            toUpdateRent.get().setIsPaid(updatedRent.getIsPaid());
+            toUpdateRent.get().setStartingDate(toUpdateRentDtoInput.getRentStartingDate());
+            toUpdateRent.get().setEndingDate(toUpdateRentDtoInput.getRentEndingDate());
+            toUpdateRent.get().setDailyFee(toUpdateRentDtoInput.getDailyFee());
+            toUpdateRent.get().setTotalFee(toUpdateRentDtoInput.getTotalFee());
+            toUpdateRent.get().setIsPaid(toUpdateRentDtoInput.getIsPaid());
             rentRepository.saveAndFlush(toUpdateRent.get());
 
             RentUpdateFromSellerResponse okResponse = new RentUpdateFromSellerResponse(errorMessageSeller.rentCorrectlyUpdated(rentId), toUpdateRent.get());
