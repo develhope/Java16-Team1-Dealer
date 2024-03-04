@@ -11,6 +11,10 @@ import com.develhope.spring.order.OrderState;
 import com.develhope.spring.order.OrderType;
 import com.develhope.spring.order.dto.OrderClientDTO;
 import com.develhope.spring.order.dto.PurchaseClientDTO;
+import com.develhope.spring.rent.RentDtoInput;
+import com.develhope.spring.rent.RentDtoOutput;
+import com.develhope.spring.rent.RentEntity;
+import com.develhope.spring.rent.RentRepository;
 import com.develhope.spring.seller.SellerEntity;
 import com.develhope.spring.seller.SellerRepository;
 import com.develhope.spring.user.UserEntity;
@@ -37,6 +41,8 @@ import java.time.LocalDateTime;
 @TestPropertySource(value = {"classpath:application-test.properties"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ClientServiceTest {
+	@Autowired
+	private RentRepository rentRepository;
 	@Autowired
 	private OrderRepository orderRepository;
 	@Autowired
@@ -500,10 +506,184 @@ class ClientServiceTest {
 
 	@Test
 	void showAllVehiclesFilterTest() {
+		VehicleEntity vehicle = createVehicleOrderable();
+		vehicleRepository.save(vehicle);
+
+		ResponseEntity<ListVehicleFilterResponse> listVehicleFilterResponse = clientService.showAllVehiclesFiltered(null, null, "Passat");
+
+		assertThat(listVehicleFilterResponse.getStatusCode().value()).isEqualTo(302);
+		assertThat(listVehicleFilterResponse.getBody().getVehicleEntityList().size()).isEqualTo(1);
+		assertThat(listVehicleFilterResponse.getBody().getMessage()).isEqualTo("List of vehicles filtered");
+
+	}
+
+	@Test
+	void showAllVehiclesFilterTestNoFilter() {
+		VehicleEntity vehicle = createVehicleOrderable();
+		vehicleRepository.save(vehicle);
+
+		ResponseEntity<ListVehicleFilterResponse> listVehicleFilterResponse = clientService.showAllVehiclesFiltered(null, null, null);
+
+		assertThat(listVehicleFilterResponse.getStatusCode().value()).isEqualTo(610);
+		assertThat(listVehicleFilterResponse.getBody().getVehicleEntityList().size()).isNotNull();
+		assertThat(listVehicleFilterResponse.getBody().getMessage()).isEqualTo("No filter applied, showing all vehicles");
+
+	}
+
+	RentDtoInput createRentDTOInput(UserEntity user, VehicleEntity vehicle, SellerEntity seller) {
+		RentDtoInput rentDtoInput = new RentDtoInput();
+		rentDtoInput.setIdClient(user.getId());
+		rentDtoInput.setIdVehicle(vehicle.getId());
+		rentDtoInput.setIdSeller(seller.getId());
+		rentDtoInput.setStartRent(LocalDateTime.now());
+		rentDtoInput.setEndRent(LocalDateTime.now().plusDays(1));
+		rentDtoInput.setDailyFee(BigDecimal.valueOf(100));
+		rentDtoInput.setTotalFee(BigDecimal.valueOf(100));
+		rentDtoInput.setIsPaid(true);
+		return rentDtoInput;
+	}
+
+	@Test
+	void createRentTest(){
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleOrderable();
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+		UserEntity user = clientRepository.findById(client.getId()).get();
+
+		RentDtoInput rentDtoInput = createRentDTOInput(user, vehicle, seller);
+
+		RentEntity rent = clientService.createRent(user, rentDtoInput);
+
+		assertThat(rent).isNotNull();
+		assertThat(rent.getId()).isNull();
+		assertThat(rent.getSellerId()).isEqualTo(seller);
+		assertThat(rent.getClientId()).isEqualTo(user);
+	}
+
+	@Test
+	void showRentTest(){
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleOrderable();
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+		UserEntity user = clientRepository.findById(client.getId()).get();
+
+		RentDtoInput rentDtoInput = createRentDTOInput(user, vehicle, seller);
+
+		RentEntity rent = clientService.createRent(user, rentDtoInput);
+		rentRepository.save(rent);
+
+		ResponseEntity<ShowRentListClientResponse> showRentListClientResponse = clientService.showRents(user);
+
+		assertThat(showRentListClientResponse.getBody().getRentDtoOutputList().size()).isEqualTo(1);
+		assertThat(showRentListClientResponse.getStatusCode().value()).isEqualTo(200);
+		assertThat(showRentListClientResponse.getBody().getMessage()).isEqualTo("Your rents: " + showRentListClientResponse.getBody().getRentDtoOutputList().size());
+
+	}
+
+	@Test
+	void showRentTestIsEmpty(){
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleOrderable();
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+		UserEntity user = clientRepository.findById(client.getId()).get();
+
+		ResponseEntity<ShowRentListClientResponse> showRentListClientResponse = clientService.showRents(user);
+
+		assertThat(showRentListClientResponse.getBody().getRentDtoOutputList().size()).isEqualTo(0);
+		assertThat(showRentListClientResponse.getStatusCode().value()).isEqualTo(404);
+		assertThat(showRentListClientResponse.getBody().getMessage()).isEqualTo("You have no active rents");
+
+	}
+
+	@Test
+	void newRentTest(){
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleOrderable();
+		vehicle.setRentable(true);
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+		UserEntity user = clientRepository.findById(client.getId()).get();
+		RentDtoInput rentDtoInput = createRentDTOInput(user, vehicle, seller);
+
+		ResponseEntity<NewRentResponse> newRentResponse = clientService.newRent(user, rentDtoInput);
+
+		assertThat(newRentResponse.getBody().getRentDtoOnput()).isNotNull();
+		assertThat(newRentResponse.getStatusCode().value()).isEqualTo(201);
+		assertThat(newRentResponse.getBody().getMessage()).isEqualTo("Rent created successfully");
+
+	}
+
+	@Test
+	void newRentTestNotRentable(){
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleOrderable();
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+		UserEntity user = clientRepository.findById(client.getId()).get();
+		RentDtoInput rentDtoInput = createRentDTOInput(user, vehicle, seller);
+
+		ResponseEntity<NewRentResponse> newRentResponse = clientService.newRent(user, rentDtoInput);
+
+		assertThat(newRentResponse.getBody().getRentDtoOnput()).isNotNull();
+		assertThat(newRentResponse.getStatusCode().value()).isEqualTo(602);
+		assertThat(newRentResponse.getBody().getMessage()).isEqualTo("Vehicle with id " + rentDtoInput.getIdVehicle() + " is not rentable");
+
+	}
+
+	@Test
+	void newRentTestSellerNotFound(){
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleOrderable();
+		vehicle.setRentable(true);
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+		UserEntity user = clientRepository.findById(client.getId()).get();
+		RentDtoInput rentDtoInput = createRentDTOInput(user, vehicle, seller);
+		rentDtoInput.setIdSeller(100L);
+
+		ResponseEntity<NewRentResponse> newRentResponse = clientService.newRent(user, rentDtoInput);
+
+		assertThat(newRentResponse.getBody().getRentDtoOnput()).isEqualTo(new RentDtoOutput());
+		assertThat(newRentResponse.getStatusCode().value()).isEqualTo(601);
+		assertThat(newRentResponse.getBody().getMessage()).isEqualTo("Seller with id " + rentDtoInput.getIdSeller() + " does not exist");
 
 	}
 
 
+	@Test
+	void newRentTestVehicleNotFound(){
+		ClientEntity client = createClient();
+		VehicleEntity vehicle = createVehicleOrderable();
+		vehicle.setRentable(true);
+		SellerEntity seller = createSeller();
+		clientRepository.save(client);
+		sellerRepository.save(seller);
+		vehicleRepository.save(vehicle);
+		UserEntity user = clientRepository.findById(client.getId()).get();
+		RentDtoInput rentDtoInput = createRentDTOInput(user, vehicle, seller);
+		rentDtoInput.setIdVehicle(200L);
 
+		ResponseEntity<NewRentResponse> newRentResponse = clientService.newRent(user, rentDtoInput);
+
+		assertThat(newRentResponse.getBody().getRentDtoOnput()).isEqualTo(new RentDtoOutput());
+		assertThat(newRentResponse.getStatusCode().value()).isEqualTo(600);
+		assertThat(newRentResponse.getBody().getMessage()).isEqualTo("Vehicle with id " + rentDtoInput.getIdVehicle() + " does not exist");
+
+	}
 
 }

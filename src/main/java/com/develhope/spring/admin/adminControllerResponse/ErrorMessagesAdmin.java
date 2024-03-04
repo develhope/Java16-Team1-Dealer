@@ -1,5 +1,6 @@
 package com.develhope.spring.admin.adminControllerResponse;
 
+import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.vehicle.VehicleSalesInfoDto;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -127,6 +128,18 @@ public class ErrorMessagesAdmin {
 
     public String validDateInputSellerVehiclesSoldOverTimePeriod(Long id, LocalDateTime firstDate, LocalDateTime secondDate, Integer vehicles) {
         return "The seller identified by id " + id + " has sold " + vehicles + " vehicles between " + firstDate + " and " + secondDate;
+    }
+
+    public String orderCreatedOk(){
+        return "Order successfully created";
+    }
+
+    public String updateOrderOk(){ return "Order successfully update";}
+
+    public String createPurchaseOk(){ return "Order successfully purchased";}
+
+    public String updateStatusCancelledPurchaseOK(Long idOrder){
+        return "The order " + idOrder + " is successfully cancelled";
     }
 
 }

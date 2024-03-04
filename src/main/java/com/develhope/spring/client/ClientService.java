@@ -225,17 +225,17 @@ public class ClientService {
     }
 
 
-    public RentEntity createRent(UserEntity user, RentDtoInput rentDtoInput, VehicleEntity vehicle, SellerEntity seller) {
+    public RentEntity createRent(UserEntity user, RentDtoInput rentDtoInput) {
         RentEntity rent = new RentEntity();
-        rent.setSellerId(seller);
+        rent.setSellerId(sellerRepository.findById(rentDtoInput.getIdSeller()).get());
         rent.setClientId(clientRepository.findById(user.getId()).get()); //DONE aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
-        rent.setVehicleId(vehicle);
+        rent.setVehicleId(vehicleRepository.findById(rentDtoInput.getIdVehicle()).get());
         rent.setStartingDate(rentDtoInput.getStartRent());
         rent.setEndingDate(rentDtoInput.getEndRent());
         rent.setDailyFee(rentDtoInput.getDailyFee());
         rent.setIsPaid(true);
         rent.setRentStatus(RentStatus.INPROGRESS);
-        vehicleRepository.updateVehicleRentability(vehicle.getId());
+        vehicleRepository.updateVehicleRentability(rentDtoInput.getIdVehicle());
         return rent;
     }
 
@@ -266,7 +266,7 @@ public class ClientService {
             VehicleEntity vehicle = vehicleRepository.findById(rentDtoInput.getIdVehicle()).get();
 
             if (vehicle.getRentable()) {
-                RentEntity rentEntity = rentRepository.save(createRent(user, rentDtoInput, vehicle, seller));
+                RentEntity rentEntity = rentRepository.save(createRent(user, rentDtoInput));
                 RentDtoOutput newRent = rentEntityConverter(rentEntity);
 
                 NewRentResponse newRentResponse = new NewRentResponse(errorMessagesClient.rentCreated(), newRent);
