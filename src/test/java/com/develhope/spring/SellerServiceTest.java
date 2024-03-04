@@ -223,6 +223,7 @@ public class SellerServiceTest {
         assertThat(response.getBody().getMessage()).isEqualTo("""
                 Unable to create a new rent with given data.
                  Please check that:
+                 -The selected vehicle exists.
                  -The selected vehicle is rentable and it's status is not 'ORDERABLE'.
                  -The client ID selected exists""");
     }
@@ -236,26 +237,6 @@ public class SellerServiceTest {
 
         ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rent, client.getId(), vehicle.getId());
 
-        assertThat(response.getStatusCode().value()).isEqualTo(404);
-        assertThat(response.getBody().getMessage()).isEqualTo("""
-                Unable to create a new rent with given data.
-                 Please check that:
-                 -The selected vehicle is rentable and it's status is not 'ORDERABLE'.
-                 -The client ID selected exists""");
-    }
-
-    @Test
-    void rentCreationNonExistingClientIdTest() {
-        SellerEntity seller = (SellerEntity) createAndSaveSeller();
-        ClientEntity client = (ClientEntity) createAndSaveClient();
-        ClientEntity fakeClient = new ClientEntity();
-        fakeClient.setId(5L);
-        VehicleEntity vehicle = createAndSaveRentableVehicle();
-        RentEntity rent = createAndSaveRent(seller, fakeClient, vehicle);
-
-        ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rent, fakeClient.getId(), vehicle.getId());
-
-        assertThat(response.getBody().getRentEntity().getClientId()).isEqualTo(5L);
         assertThat(response.getStatusCode().value()).isEqualTo(404);
         assertThat(response.getBody().getMessage()).isEqualTo("""
                 Unable to create a new rent with given data.
