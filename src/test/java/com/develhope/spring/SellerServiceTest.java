@@ -2,9 +2,7 @@ package com.develhope.spring;
 
 import com.develhope.spring.client.ClientEntity;
 import com.develhope.spring.client.ClientRepository;
-import com.develhope.spring.rent.RentEntity;
-import com.develhope.spring.rent.RentRepository;
-import com.develhope.spring.rent.RentStatus;
+import com.develhope.spring.rent.*;
 import com.develhope.spring.seller.SellerEntity;
 import com.develhope.spring.seller.SellerRepository;
 import com.develhope.spring.seller.SellerService;
@@ -133,11 +131,11 @@ public class SellerServiceTest {
         return client;
     }
 
-    public RentEntity createAndSaveRent(SellerEntity idSeller, ClientEntity idClient, VehicleEntity idVehicle) {
+    public RentEntity createAndSaveRent(SellerEntity idSeller, RentDtoInput rentDtoInput) {
         RentEntity rent = new RentEntity();
         rent.setSellerId(idSeller);
-        rent.setClientId(idClient);
-        rent.setVehicleId(idVehicle);
+        rent.setClientId(clientRepository.findById(rentDtoInput.getIdClient()).get());
+        rent.setVehicleId(vehicleRepository.findById(rentDtoInput.getIdVehicle()).get());
         rent.setStartingDate(LocalDateTime.now());
         rent.setEndingDate(LocalDateTime.from(rent.getStartingDate()).plusDays(5));
         rent.setDailyFee(BigDecimal.valueOf(100));
@@ -146,6 +144,19 @@ public class SellerServiceTest {
         rent.setRentStatus(RentStatus.INPROGRESS);
         rentRepository.save(rent);
         return rent;
+    }
+
+    public RentDtoInput createRentDtoInput(SellerEntity seller, ClientEntity client, VehicleEntity vehicle) {
+        RentDtoInput rentDtoInput = new RentDtoInput();
+        rentDtoInput.setIdSeller(seller.getId());
+        rentDtoInput.setIdClient(client.getId());
+        rentDtoInput.setIdVehicle(vehicle.getId());
+        rentDtoInput.setStartRent(LocalDateTime.now());
+        rentDtoInput.setEndRent(LocalDateTime.from(rentDtoInput.getStartRent().plusDays(5)));
+        rentDtoInput.setDailyFee(BigDecimal.valueOf(50));
+        rentDtoInput.setTotalFee(BigDecimal.valueOf(250));
+        rentDtoInput.setIsPaid(true);
+        return rentDtoInput;
     }
 
 
@@ -202,9 +213,10 @@ public class SellerServiceTest {
         SellerEntity seller = (SellerEntity) createAndSaveSeller();
         ClientEntity client = (ClientEntity) createAndSaveClient();
         VehicleEntity vehicle = createAndSaveRentableVehicle();
-        RentEntity rent = createAndSaveRent(seller, client, vehicle);
+        RentDtoInput rentDtoInput = createRentDtoInput(seller,client,vehicle);
 
-        ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rent, client.getId(), vehicle.getId());
+
+        ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rentDtoInput);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody().getMessage()).isEqualTo("Rent correctly created");
@@ -215,9 +227,9 @@ public class SellerServiceTest {
         SellerEntity seller = (SellerEntity) createAndSaveSeller();
         ClientEntity client = (ClientEntity) createAndSaveClient();
         VehicleEntity vehicle = createAndSaveOrderableVehicle();
-        RentEntity rent = createAndSaveRent(seller, client, vehicle);
+        RentDtoInput rentDtoInput = createRentDtoInput(seller,client,vehicle);
 
-        ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rent, client.getId(), vehicle.getId());
+        ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rentDtoInput);
 
         assertThat(response.getStatusCode().value()).isEqualTo(404);
         assertThat(response.getBody().getMessage()).isEqualTo("""
@@ -233,9 +245,9 @@ public class SellerServiceTest {
         SellerEntity seller = (SellerEntity) createAndSaveSeller();
         ClientEntity client = (ClientEntity) createAndSaveClient();
         VehicleEntity vehicle = createAndSaveRentableVehicleWithStatusOrderable();
-        RentEntity rent = createAndSaveRent(seller, client, vehicle);
+        RentDtoInput rentDtoInput = createRentDtoInput(seller, client, vehicle);
 
-        ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rent, client.getId(), vehicle.getId());
+        ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rentDtoInput);
 
         assertThat(response.getStatusCode().value()).isEqualTo(404);
         assertThat(response.getBody().getMessage()).isEqualTo("""
@@ -251,12 +263,32 @@ public class SellerServiceTest {
         SellerEntity seller = (SellerEntity) createAndSaveSeller();
         ClientEntity client = (ClientEntity) createAndSaveClient();
         VehicleEntity vehicle = createAndSaveRentableVehicle();
-        RentEntity rent = createAndSaveRent(seller, client, vehicle);
+        RentDtoInput rentDtoInput = createRentDtoInput(seller, client, vehicle);
 
-        ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rent, client.getId(), vehicle.getId());
+        ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rentDtoInput);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody().getMessage()).isEqualTo("Rent correctly created");
+    }
+
+    @Test
+    void RentCreationNonExistingClientTest() {
+        SellerEntity seller = (SellerEntity) createAndSaveSeller();
+        ClientEntity client = (ClientEntity) createAndSaveClient();
+        ClientEntity client2 = new ClientEntity();
+        client2.setId(5L);
+        VehicleEntity vehicle = createAndSaveRentableVehicle();
+        RentDtoInput rentDtoInput= createRentDtoInput(seller, client2, vehicle);
+
+        ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rentDtoInput);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(404);
+        assertThat(response.getBody().getMessage()).isEqualTo("""
+                Unable to create a new rent with given data.
+                 Please check that:
+                 -The selected vehicle exists.
+                 -The selected vehicle is rentable and it's status is not 'ORDERABLE'.
+                 -The client ID selected exists""");
     }
 
 }

@@ -8,6 +8,7 @@ import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.order.OrderRepository;
 import com.develhope.spring.order.OrderState;
 import com.develhope.spring.order.OrderType;
+import com.develhope.spring.rent.RentDtoInput;
 import com.develhope.spring.rent.RentEntity;
 import com.develhope.spring.rent.RentRepository;
 import com.develhope.spring.rent.RentStatus;
@@ -127,22 +128,22 @@ public class SellerService {
 
     }
 
-    public ResponseEntity<RentCreationFromSellerResponse> createRent(UserEntity user, RentEntity rent, long clientId, long vehicleId) {
-        VehicleEntity toRentVehicle = Objects.requireNonNull(getVehicleById(vehicleId).getBody()).getVehicleEntity();
-        Optional<ClientEntity> client = clientRepository.findById(clientId);
-        if ((toRentVehicle.getRentable().equals(true)) && !(toRentVehicle.getSellType().equals(SellType.ORDERABLE)) && client.isPresent()) {
+    public ResponseEntity<RentCreationFromSellerResponse> createRent(UserEntity user, RentDtoInput rent) {
+        Optional<VehicleEntity> toRentVehicle = vehicleRepository.findById(rent.getIdVehicle());
+        Optional<ClientEntity> client = clientRepository.findById(rent.getIdClient());
+        if ((toRentVehicle.isPresent()) && (toRentVehicle.get().getRentable().equals(true)) && !(toRentVehicle.get().getSellType().equals(SellType.ORDERABLE)) && client.isPresent()) {
             RentEntity newRent = new RentEntity();
 
             newRent.setSellerId(sellerRepository.findById(user.getId()).get()); //DONE aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
             newRent.setClientId(client.get());
-            newRent.setVehicleId(toRentVehicle);
-            newRent.setStartingDate(rent.getStartingDate());
-            newRent.setEndingDate(rent.getEndingDate());
+            newRent.setVehicleId(toRentVehicle.get());
+            newRent.setStartingDate(rent.getStartRent());
+            newRent.setEndingDate(rent.getEndRent());
             newRent.setDailyFee(rent.getDailyFee());
             newRent.setTotalFee(rent.getTotalFee());
             newRent.setIsPaid(rent.getIsPaid());
             newRent.setRentStatus(RentStatus.INPROGRESS);
-            toRentVehicle.setRentable(false);
+            toRentVehicle.get().setRentable(false);
             rentRepository.save(newRent);
 
             RentCreationFromSellerResponse okResponse = new RentCreationFromSellerResponse(errorMessageSeller.rentCreation(), rent);

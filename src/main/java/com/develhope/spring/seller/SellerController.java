@@ -3,6 +3,7 @@ package com.develhope.spring.seller;
 
 import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.order.OrderState;
+import com.develhope.spring.rent.RentDtoInput;
 import com.develhope.spring.rent.RentEntity;
 import com.develhope.spring.seller.sellerControllerResponse.*;
 import com.develhope.spring.user.UserEntity;
@@ -79,11 +80,9 @@ public class SellerController {
     @PostMapping(path = "/create/rent")
     public @ResponseBody ResponseEntity<RentCreationFromSellerResponse> createNewRent(
             @AuthenticationPrincipal UserEntity user,
-            @Parameter(description = "Rent info", example = "1", required = true) @RequestBody(required = true) RentEntity rent,
-            @Parameter(description = "Client ID", example = "1", required = true) @RequestParam(name = "client_id", required = true) long idClient,
-            @Parameter(description = "Vehicle ID", example = "1", required = true) @RequestParam(name = "vehicle_id", required = true) long idVehicle
+            @RequestBody(required = true) RentDtoInput rent
     ) {
-        return sellerService.createRent(user, rent, idClient, idVehicle);
+        return sellerService.createRent(user, rent);
     }
 
     @Operation(summary = "Update rent by ID")
