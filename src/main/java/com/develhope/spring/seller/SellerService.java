@@ -129,12 +129,12 @@ public class SellerService {
 
     public ResponseEntity<RentCreationFromSellerResponse> createRent(UserEntity user, RentEntity rent, long clientId, long vehicleId) {
         VehicleEntity toRentVehicle = Objects.requireNonNull(getVehicleById(vehicleId).getBody()).getVehicleEntity();
-        ClientEntity client = Objects.requireNonNull(getClientById(clientId).getBody()).getClientEntity();
-        if ((toRentVehicle.getRentable().equals(true)) && !(toRentVehicle.getSellType().equals(SellType.ORDERABLE))) {
+        Optional<ClientEntity> client = clientRepository.findById(clientId);
+        if ((toRentVehicle.getRentable().equals(true)) && !(toRentVehicle.getSellType().equals(SellType.ORDERABLE)) && client.isPresent()) {
             RentEntity newRent = new RentEntity();
 
             newRent.setSellerId(sellerRepository.findById(user.getId()).get()); //DONE aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
-            newRent.setClientId(client);
+            newRent.setClientId(client.get());
             newRent.setVehicleId(toRentVehicle);
             newRent.setStartingDate(rent.getStartingDate());
             newRent.setEndingDate(rent.getEndingDate());

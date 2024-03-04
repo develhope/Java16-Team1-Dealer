@@ -246,4 +246,17 @@ public class SellerServiceTest {
                  -The client ID selected exists""");
     }
 
+    @Test
+    void RentCreationExistingClientTest() {
+        SellerEntity seller = (SellerEntity) createAndSaveSeller();
+        ClientEntity client = (ClientEntity) createAndSaveClient();
+        VehicleEntity vehicle = createAndSaveRentableVehicle();
+        RentEntity rent = createAndSaveRent(seller, client, vehicle);
+
+        ResponseEntity<RentCreationFromSellerResponse> response = sellerService.createRent(seller, rent, client.getId(), vehicle.getId());
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody().getMessage()).isEqualTo("Rent correctly created");
+    }
+
 }
