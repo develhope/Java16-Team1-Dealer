@@ -1,5 +1,6 @@
 package com.develhope.spring.admin.adminControllerResponse;
 
+import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.vehicle.VehicleSalesInfoDto;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -125,5 +126,11 @@ public class ErrorMessagesAdmin {
     }
 
     public String updateOrderOk(){ return "Order successfully update";}
+
+    public String createPurchaseOk(){ return "Order successfully purchased";}
+
+    public String updateStatusCancelledPurchaseOK(Long idOrder){
+        return "The order " + idOrder + " is successfully cancelled";
+    }
 
 }

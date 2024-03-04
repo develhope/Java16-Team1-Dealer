@@ -2,6 +2,7 @@ package com.develhope.spring;
 
 import com.develhope.spring.admin.AdminRepository;
 import com.develhope.spring.admin.AdminService;
+import com.develhope.spring.admin.adminControllerResponse.UpdateStatusCancelledPurchase;
 import com.develhope.spring.client.ClientEntity;
 import com.develhope.spring.client.ClientRepository;
 import com.develhope.spring.order.OrderEntity;
@@ -27,6 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -136,7 +138,7 @@ public class AdminServiceTest {
 
     }
 
-    private OrderEntity createOrderTest(){
+    private OrderEntity createOrderTest() {
         createVehicleOrderable();
         createSeller();
         createClient();
@@ -158,6 +160,31 @@ public class AdminServiceTest {
         newOrder.setSellerId(seller);
 
         return newOrder;
+    }
+
+    private OrderEntity purchase(){
+        createVehicleRFD();
+        createSeller();
+        createClient();
+        vehicleRepository.save(createVehicleRFD());
+        sellerRepository.save(createSeller());
+        clientRepository.save(createClient());
+
+        VehicleEntity vehicle = vehicleRepository.findById(1L).get();
+        SellerEntity seller = sellerRepository.findById(1L).get();
+        ClientEntity clientEntity = clientRepository.findById(2L).get();
+
+
+        OrderEntity newOrder = new OrderEntity();
+        newOrder.setOrderType(OrderType.PURCHASE);
+        newOrder.setOrderState(OrderState.SHIPPED);
+        newOrder.setAdvPayment(BigDecimal.valueOf(10000));
+        newOrder.setIsPaid(true);
+        newOrder.setVehicleId(vehicle);
+        newOrder.setClientId(clientEntity);
+        newOrder.setSellerId(seller);
+
+        return  newOrder;
     }
 
 
@@ -209,13 +236,13 @@ public class AdminServiceTest {
         newOrder.setClientId(client);
         newOrder.setSellerId(seller);
 
-        OrderEntity order = adminService.newOrder(newOrder,seller.getId(),vehicle.getId(),client.getId());
+        OrderEntity order = adminService.newOrder(newOrder, seller.getId(), vehicle.getId(), client.getId());
 
         assertNull(order);
     }
 
     @Test
-    void createOrder(){
+    void createOrder() {
         createClient();
         createSeller();
         createVehicleOrderable();
@@ -236,14 +263,14 @@ public class AdminServiceTest {
         newOrder.setClientId(client);
         newOrder.setSellerId(seller);
 
-        ResponseEntity<String> orderResponse = adminService.createOrder(newOrder,seller.getId(),vehicle.getId(),client.getId());
+        ResponseEntity<String> orderResponse = adminService.createOrder(newOrder, seller.getId(), vehicle.getId(), client.getId());
 
         assertThat(orderResponse.getStatusCode().value()).isEqualTo(200);
         assertThat(orderResponse.getBody()).isEqualTo("Order successfully created");
     }
 
     @Test
-    void updateOrder(){
+    void updateOrder() {
         OrderEntity order = createOrderTest();
         orderRepository.save(order);
         order.setAdvPayment(BigDecimal.TEN);
@@ -279,5 +306,46 @@ public class AdminServiceTest {
         newOrder.setSellerId(seller);
 
         assertThat(adminService.newPurchase(newOrder, seller.getId(), vehicle.getId(), clientEntity.getId())).isNotNull();
+    }
+
+    @Test
+    void createPurchase(){
+        createVehicleRFD();
+        createSeller();
+        createClient();
+        vehicleRepository.save(createVehicleRFD());
+        sellerRepository.save(createSeller());
+        clientRepository.save(createClient());
+
+        VehicleEntity vehicle = vehicleRepository.findById(1L).get();
+        SellerEntity seller = sellerRepository.findById(1L).get();
+        ClientEntity clientEntity = clientRepository.findById(2L).get();
+
+
+        OrderEntity newOrder = new OrderEntity();
+        newOrder.setOrderType(OrderType.PURCHASE);
+        newOrder.setOrderState(OrderState.SHIPPED);
+        newOrder.setAdvPayment(BigDecimal.valueOf(10000));
+        newOrder.setIsPaid(true);
+        newOrder.setVehicleId(vehicle);
+        newOrder.setClientId(clientEntity);
+        newOrder.setSellerId(seller);
+
+        ResponseEntity<String> response = adminService.createPurchase(newOrder, seller.getId(), vehicle.getId(), clientEntity.getId());
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isEqualTo("Order successfully purchased");
+    }
+
+    @Test
+    void updateStatusCancelledPurchase(){
+        OrderEntity purchase = purchase();
+        orderRepository.save(purchase);
+
+        ResponseEntity<UpdateStatusCancelledPurchase> updateStatusCancelledPurchase = adminService.updateStatusCancelledPurchase(purchase.getId());
+
+        assertThat(updateStatusCancelledPurchase.getStatusCode().value()).isEqualTo(200);
+        assertThat(Objects.requireNonNull(updateStatusCancelledPurchase.getBody()).getMessage()).isEqualTo("The order " + purchase.getId() + " is successfully cancelled");
+
     }
 }
