@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -524,7 +525,7 @@ public class AdminService {
 
     public ResponseEntity<ShowEarningsInPeriodRangeResponse> showEarningsInPeriodRange(LocalDateTime firstDate, LocalDateTime secondDate) {
         if (firstDate == null || secondDate == null) {
-            ShowEarningsInPeriodRangeResponse showEarningsInPeriodRangeResponse = new ShowEarningsInPeriodRangeResponse(errorMessagesAdmin.invalidDateInput(), 0);
+            ShowEarningsInPeriodRangeResponse showEarningsInPeriodRangeResponse = new ShowEarningsInPeriodRangeResponse(errorMessagesAdmin.invalidDateInput(), BigDecimal.valueOf(0));
             return ResponseEntity.status(400).body(showEarningsInPeriodRangeResponse);
         } else {
             List<LocalDateTime> rangeDates = new ArrayList<>();
@@ -532,7 +533,7 @@ public class AdminService {
             rangeDates.add(secondDate);
             Collections.sort(rangeDates);
 
-            Integer totalEarnings = vehicleRepository.showEarningsInPeriodRange(firstDate.toString(), secondDate.toString());
+            BigDecimal totalEarnings = vehicleRepository.showEarningsInPeriodRange(firstDate.toString(), secondDate.toString());
             ShowEarningsInPeriodRangeResponse showEarningsInPeriodRangeResponse = new ShowEarningsInPeriodRangeResponse(errorMessagesAdmin.validDateInputEarningsInPeriodRange(firstDate, secondDate, totalEarnings), totalEarnings);
             return ResponseEntity.status(200).body(showEarningsInPeriodRangeResponse);
         }
@@ -556,6 +557,54 @@ public class AdminService {
                 .map(vehicleEntity -> modelMapper.map(vehicleEntity, VehicleDTO.class))
                 .collect(Collectors.toList());
         return dtoList;
+    }
+
+    public ResponseEntity<ShowSellerRevenueOverTimePeriod> showSellerRevenueOverTimePeriod(Long id, LocalDateTime firstDate, LocalDateTime secondDate) {
+        if (firstDate == null || secondDate == null) {
+            ShowSellerRevenueOverTimePeriod showSellerRevenueOverTimePeriod = new ShowSellerRevenueOverTimePeriod(errorMessagesAdmin.invalidDateInput(), BigDecimal.valueOf(0));
+            return ResponseEntity.status(400).body(showSellerRevenueOverTimePeriod);
+        } else {
+            boolean sellerCheck = sellerRepository.existsById(id);
+
+            if (!sellerCheck) {
+                ShowSellerRevenueOverTimePeriod showSellerRevenueOverTimePeriod = new ShowSellerRevenueOverTimePeriod(errorMessagesAdmin.sellerNotExist(id), BigDecimal.valueOf(0));
+                return ResponseEntity.status(404).body(showSellerRevenueOverTimePeriod);
+            } else {
+                List<LocalDateTime> rangeDates = new ArrayList<>();
+                rangeDates.add(firstDate);
+                rangeDates.add(secondDate);
+                Collections.sort(rangeDates);
+
+                BigDecimal sellerEarnings = sellerRepository.showRevenueOverTimePeriod(id, rangeDates.get(0).toString(), rangeDates.get(1).toString());
+
+                ShowSellerRevenueOverTimePeriod showSellerRevenueOverTimePeriod = new ShowSellerRevenueOverTimePeriod(errorMessagesAdmin.validDateInputSellerRevenueOverTimePeriod(id, firstDate, secondDate, sellerEarnings), sellerEarnings);
+                return ResponseEntity.status(200).body(showSellerRevenueOverTimePeriod);
+            }
+        }
+    }
+
+    public ResponseEntity<ShowSellerVehiclesSoldOverTimePeriod> showSellerVehiclesSoldOverTimePeriod(Long id, LocalDateTime firstDate, LocalDateTime secondDate) {
+        if (firstDate == null || secondDate == null) {
+            ShowSellerVehiclesSoldOverTimePeriod showSellerVehiclesSoldOverTimePeriod = new ShowSellerVehiclesSoldOverTimePeriod(errorMessagesAdmin.invalidDateInput(), Integer.valueOf(0));
+            return ResponseEntity.status(400).body(showSellerVehiclesSoldOverTimePeriod);
+        } else {
+            boolean sellerCheck = sellerRepository.existsById(id);
+
+            if (!sellerCheck) {
+                ShowSellerVehiclesSoldOverTimePeriod showSellerVehiclesSoldOverTimePeriod = new ShowSellerVehiclesSoldOverTimePeriod(errorMessagesAdmin.sellerNotExist(id), Integer.valueOf(0));
+                return ResponseEntity.status(404).body(showSellerVehiclesSoldOverTimePeriod);
+            } else {
+                List<LocalDateTime> rangeDates = new ArrayList<>();
+                rangeDates.add(firstDate);
+                rangeDates.add(secondDate);
+                Collections.sort(rangeDates);
+
+                Integer sellerSales = sellerRepository.showVehiclesSoldOverTimePeriod(id, rangeDates.get(0).toString(), rangeDates.get(1).toString());
+
+                ShowSellerVehiclesSoldOverTimePeriod showSellerVehiclesSoldOverTimePeriod = new ShowSellerVehiclesSoldOverTimePeriod(errorMessagesAdmin.validDateInputSellerVehiclesSoldOverTimePeriod(id, firstDate, secondDate, sellerSales), sellerSales);
+                return ResponseEntity.status(200).body(showSellerVehiclesSoldOverTimePeriod);
+            }
+        }
     }
 
 }

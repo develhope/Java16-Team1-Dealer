@@ -5,6 +5,7 @@ import com.develhope.spring.vehicle.VehicleSalesInfoDto;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -109,7 +110,7 @@ public class ErrorMessagesAdmin {
     }
 
 
-    public String validDateInputEarningsInPeriodRange (LocalDateTime firstDate, LocalDateTime secondDate, Integer totalEarnings){
+    public String validDateInputEarningsInPeriodRange (LocalDateTime firstDate, LocalDateTime secondDate, BigDecimal totalEarnings){
         return "The total earnings between " + firstDate.toLocalDate() + " and " + secondDate.toLocalDate() + " amount to " + totalEarnings;
     }
 
@@ -119,6 +120,14 @@ public class ErrorMessagesAdmin {
 
     public String validDateInputMostExpensiveCarSoldCarInPeriodRange (LocalDateTime firstDate, LocalDateTime secondDate, VehicleSalesInfoDto vehicle){
         return "The most expensive car sold between " + firstDate.toLocalDate() + " and " + secondDate.toLocalDate() + " was " + vehicle;
+    }
+
+    public String validDateInputSellerRevenueOverTimePeriod(Long id, LocalDateTime firstDate, LocalDateTime secondDate, BigDecimal revenue) {
+        return "The seller identified by id " + id + " has earned a revenue of " + revenue + " between " + firstDate + " and " + secondDate;
+    }
+
+    public String validDateInputSellerVehiclesSoldOverTimePeriod(Long id, LocalDateTime firstDate, LocalDateTime secondDate, Integer vehicles) {
+        return "The seller identified by id " + id + " has sold " + vehicles + " vehicles between " + firstDate + " and " + secondDate;
     }
 
     public String orderCreatedOk(){

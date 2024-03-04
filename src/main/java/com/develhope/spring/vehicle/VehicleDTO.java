@@ -32,6 +32,7 @@ public class VehicleDTO {
     private Integer priceDscnt;
     private String accessories;
     private Boolean rentable;
+    private Boolean isUsed;
     private SellType sellType;
 
 
