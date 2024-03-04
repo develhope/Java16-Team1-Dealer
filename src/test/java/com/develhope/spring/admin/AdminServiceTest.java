@@ -3,7 +3,6 @@ package com.develhope.spring.admin;
 import com.develhope.spring.admin.adminControllerResponse.ShowSellerVehiclesSoldOverTimePeriod;
 import com.develhope.spring.client.ClientEntity;
 import com.develhope.spring.client.ClientRepository;
-import com.develhope.spring.client.ClientService;
 import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.order.OrderRepository;
 import com.develhope.spring.order.OrderState;
@@ -15,7 +14,6 @@ import com.develhope.spring.vehicle.GearType;
 import com.develhope.spring.vehicle.SellType;
 import com.develhope.spring.vehicle.VehicleEntity;
 import com.develhope.spring.vehicle.VehicleRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @TestPropertySource(value = {"classpath:application-test.properties"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class AdminServiceTestIntegration {
+class TestIntegration {
 
 
     @Autowired
