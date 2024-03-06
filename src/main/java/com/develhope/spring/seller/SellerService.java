@@ -8,9 +8,7 @@ import com.develhope.spring.order.OrderEntity;
 import com.develhope.spring.order.OrderRepository;
 import com.develhope.spring.order.OrderState;
 import com.develhope.spring.order.OrderType;
-import com.develhope.spring.rent.RentEntity;
-import com.develhope.spring.rent.RentRepository;
-import com.develhope.spring.rent.RentStatus;
+import com.develhope.spring.rent.*;
 import com.develhope.spring.seller.sellerControllerResponse.*;
 import com.develhope.spring.user.UserEntity;
 import com.develhope.spring.vehicle.SellType;
@@ -127,22 +125,22 @@ public class SellerService {
 
     }
 
-    public ResponseEntity<RentCreationFromSellerResponse> createRent(UserEntity user, RentEntity rent, long clientId, long vehicleId) {
-        VehicleEntity toRentVehicle = Objects.requireNonNull(getVehicleById(vehicleId).getBody()).getVehicleEntity();
-        ClientEntity client = Objects.requireNonNull(getClientById(clientId).getBody()).getClientEntity();
-        if ((toRentVehicle.getRentable().equals(true)) && !(toRentVehicle.getSellType().equals(SellType.ORDERABLE))) {
+    public ResponseEntity<RentCreationFromSellerResponse> createRent(UserEntity user, RentDtoInput rent) {
+        Optional<VehicleEntity> toRentVehicle = vehicleRepository.findById(rent.getIdVehicle());
+        Optional<ClientEntity> client = clientRepository.findById(rent.getIdClient());
+        if ((toRentVehicle.isPresent()) && (toRentVehicle.get().getRentable().equals(true)) && !(toRentVehicle.get().getSellType().equals(SellType.ORDERABLE)) && client.isPresent()) {
             RentEntity newRent = new RentEntity();
 
             newRent.setSellerId(sellerRepository.findById(user.getId()).get()); //DONE aggiungere UserEntity e prendere id e nel metodo @AuthenticationPrincipal UserEntity user
-            newRent.setClientId(client);
-            newRent.setVehicleId(toRentVehicle);
-            newRent.setStartingDate(rent.getStartingDate());
-            newRent.setEndingDate(rent.getEndingDate());
+            newRent.setClientId(client.get());
+            newRent.setVehicleId(toRentVehicle.get());
+            newRent.setStartingDate(rent.getStartRent());
+            newRent.setEndingDate(rent.getEndRent());
             newRent.setDailyFee(rent.getDailyFee());
             newRent.setTotalFee(rent.getTotalFee());
             newRent.setIsPaid(rent.getIsPaid());
             newRent.setRentStatus(RentStatus.INPROGRESS);
-            toRentVehicle.setRentable(false);
+            toRentVehicle.get().setRentable(false);
             rentRepository.save(newRent);
 
             RentCreationFromSellerResponse okResponse = new RentCreationFromSellerResponse(errorMessageSeller.rentCreation(), rent);
@@ -153,15 +151,15 @@ public class SellerService {
     }
 
 
-    public ResponseEntity<RentUpdateFromSellerResponse> updateRent(RentEntity updatedRent, Long rentId) {
+    public ResponseEntity<RentUpdateFromSellerResponse> updateRent(ToUpdateRentDtoInput toUpdateRentDtoInput, Long rentId) {
         Optional<RentEntity> toUpdateRent = rentRepository.findById(rentId);
         if (toUpdateRent.isPresent()) {
 
-            toUpdateRent.get().setStartingDate(updatedRent.getStartingDate());
-            toUpdateRent.get().setEndingDate(updatedRent.getEndingDate());
-            toUpdateRent.get().setDailyFee(updatedRent.getDailyFee());
-            toUpdateRent.get().setTotalFee(updatedRent.getTotalFee());
-            toUpdateRent.get().setIsPaid(updatedRent.getIsPaid());
+            toUpdateRent.get().setStartingDate(toUpdateRentDtoInput.getRentStartingDate());
+            toUpdateRent.get().setEndingDate(toUpdateRentDtoInput.getRentEndingDate());
+            toUpdateRent.get().setDailyFee(toUpdateRentDtoInput.getDailyFee());
+            toUpdateRent.get().setTotalFee(toUpdateRentDtoInput.getTotalFee());
+            toUpdateRent.get().setIsPaid(toUpdateRentDtoInput.getIsPaid());
             rentRepository.saveAndFlush(toUpdateRent.get());
 
             RentUpdateFromSellerResponse okResponse = new RentUpdateFromSellerResponse(errorMessageSeller.rentCorrectlyUpdated(rentId), toUpdateRent.get());

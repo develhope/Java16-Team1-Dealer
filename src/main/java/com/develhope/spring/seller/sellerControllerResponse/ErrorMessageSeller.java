@@ -31,6 +31,7 @@ public class ErrorMessageSeller {
         return """
                 Unable to create a new rent with given data.
                  Please check that:
+                 -The selected vehicle exists.
                  -The selected vehicle is rentable and it's status is not 'ORDERABLE'.
                  -The client ID selected exists""";
     }
