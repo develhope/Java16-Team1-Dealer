@@ -309,6 +309,7 @@ public class SellerServiceTest {
         ToUpdateRentDtoInput toUpdateRentDtoInput = createToUpdateRentDtoInput();
         ResponseEntity<RentUpdateFromSellerResponse> response = sellerService.updateRent(toUpdateRentDtoInput, rent.getId());
 
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody().getMessage()).isEqualTo("The rent with id " + rent.getId() + " has been correctly updated.");
     }
 
@@ -325,6 +326,7 @@ public class SellerServiceTest {
         ToUpdateRentDtoInput toUpdateRentDtoInput = createToUpdateRentDtoInput();
         ResponseEntity<RentUpdateFromSellerResponse> response = sellerService.updateRent(toUpdateRentDtoInput, rent2.getId());
 
+        assertThat(response.getStatusCode().value()).isEqualTo(404);
         assertThat(response.getBody().getMessage()).isEqualTo("The rent with id " + rent2.getId() + " can't be updated.\n" +
                 "Please check whether the selected ID correctly matches an existing rent.");
     }
