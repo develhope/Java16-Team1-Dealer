@@ -54,7 +54,7 @@ public class SellerController {
     @ResponseBody
     public OrderEntity deleteOrder(
             @PathVariable(name = "idOrder") Long id) {
-        return sellerService.updateStatusCancelled(id);
+        return sellerService.updateStatusCanceled(id);
     }
 
     @PatchMapping(path = "/update/order/{idOrder}")

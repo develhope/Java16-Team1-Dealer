@@ -1,17 +1,15 @@
 package com.develhope.spring.admin.adminControllerResponse;
 
-import com.develhope.spring.vehicle.VehicleEntity;
+import com.develhope.spring.order.OrderEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class ShowEarningsInPeriodRangeResponse {
+@NoArgsConstructor
+public class UpdateStatusCancelledPurchase {
 
     private String message;
-    private BigDecimal earnings;
+    private OrderEntity orderEntity;
 }

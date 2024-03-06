@@ -75,7 +75,7 @@ public class SellerService {
     }
 
 
-    public OrderEntity updateStatusCancelled(Long idOrder) {
+    public OrderEntity updateStatusCanceled(Long idOrder) {
         orderRepository.updateStatusCancelledOrderWithId(idOrder);
         return orderRepository.findById(idOrder).get();
     }

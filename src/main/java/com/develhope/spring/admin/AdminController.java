@@ -29,7 +29,7 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("/create/order/client")
-    public OrderEntity createOrder(
+    public ResponseEntity<String> createOrder(
             @RequestBody(required = true) OrderEntity order,
             @RequestParam(name = "id_seller", required = true) Long idSeller,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle,
@@ -47,7 +47,7 @@ public class AdminController {
 
     @PatchMapping("/update/order/client/{idOrder}")
     @ResponseBody
-    public OrderEntity updateOrder(
+    public ResponseEntity<String> updateOrder(
             @RequestBody OrderEntity order,
             @PathVariable(name = "idOrder") Long idOrder) {
         return adminService.updateOrder(order, idOrder);
@@ -71,7 +71,7 @@ public class AdminController {
 
     @PostMapping("/create/purchase/client")
     @ResponseBody
-    public OrderEntity createPurchase(
+    public ResponseEntity<String> createPurchase(
             @RequestBody(required = true) OrderEntity order,
             @RequestParam(name = "id_seller", required = true) Long idSeller,
             @RequestParam(name = "id_vehicle", required = true) Long idVehicle,
@@ -82,7 +82,7 @@ public class AdminController {
 
     @PutMapping("/update/status/purchase/client/cancelled/{idOrder}")
     @ResponseBody
-    public OrderEntity updateStatusCancelledIdPurchase(
+    public ResponseEntity<UpdateStatusCancelledPurchase> updateStatusCancelledIdPurchase(
             @PathVariable(name = "idOrder") Long id
     ) {
         return adminService.updateStatusCancelledPurchase(id);
@@ -250,6 +250,31 @@ public class AdminController {
     public @ResponseBody ResponseEntity<ShowListVehicleAdminResponse> showFilteredVehicles(
             @Parameter(description = "Sell type", example = "Possible values: RFD, USED, ORDERABLE", required = true, name = "sellType") @RequestParam(name = "selltype", required = true) String sellType) {
         return adminService.showFilteredVehicles(sellType);
+    }
+
+
+    @Operation(summary = "Show a specific seller's revenue over a time period.")
+    @ApiResponse(responseCode = "200", description = "Show seller's revenue.")
+    @ApiResponse(responseCode = "404", description = "Seller not found.")
+    @ApiResponse(responseCode = "400", description = "One or more invalid dates were passed to the controller.")
+    @GetMapping("/show/seller/revenueovertime/{id}")
+    public @ResponseBody ResponseEntity<ShowSellerRevenueOverTimePeriod> showSellerRevenueOverTimePeriod(
+            @PathVariable(name = "id") Long id,
+            @Parameter(description = "First range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "firstDate") @RequestParam LocalDateTime firstDate,
+            @Parameter(description = "First range date", example = "YYYY-MM-DDThh:mm:ss", required = true, name = "secondDate") @RequestParam LocalDateTime secondDate) {
+        return adminService.showSellerRevenueOverTimePeriod(id,firstDate,secondDate);
+    }
+
+    @Operation(summary = "Show how many cars a specific seller sold over a time period.")
+    @ApiResponse(responseCode = "200", description = "Show sold cars.")
+    @ApiResponse(responseCode = "404", description = "Seller not found.")
+    @ApiResponse(responseCode = "400", description = "One or more invalid dates were passed to the controller.")
+    @GetMapping("/show/seller/vehiclessoldovertime/{id}")
+    public @ResponseBody ResponseEntity<ShowSellerVehiclesSoldOverTimePeriod> showSellerVehiclesSoldOverTimePeriod(
+            @PathVariable(name = "id") Long id,
+            @RequestParam LocalDateTime firstDate,
+            @RequestParam LocalDateTime secondDate) {
+        return adminService.showSellerVehiclesSoldOverTimePeriod(id,firstDate,secondDate);
     }
 
 }
