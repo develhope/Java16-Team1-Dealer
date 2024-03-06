@@ -408,4 +408,25 @@ public class SellerServiceTest {
         assertThat(response.getBody().getMessage()).isEqualTo("This is the list of the available vehicles: ");
 
     }
+
+    @Test
+    void getAllRentableVehiclesEmptyRepoTest() {
+        VehicleEntity vehicle = createAndSaveOrderableVehicle();
+        VehicleEntity vehicle1 = createAndSaveOrderableVehicle();
+
+        ResponseEntity<GetAllRentableVehiclesFromSellerResponse> response = sellerService.getAllRentableVehicles();
+        assertThat(response.getStatusCode().value()).isEqualTo(404);
+        assertThat(response.getBody().getMessage()).isEqualTo("There are not available vehicles");
+    }
+
+    @Test
+    void getAllRentableVehiclesOkTest() {
+        VehicleEntity vehicle = createAndSaveRentableVehicle();
+        VehicleEntity vehicle1 = createAndSaveRentableVehicle();
+
+        ResponseEntity<GetAllRentableVehiclesFromSellerResponse> response = sellerService.getAllRentableVehicles();
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody().getMessage()).isEqualTo("This is the list of the rentable vehicles: ");
+
+    }
 }
