@@ -133,8 +133,8 @@ public class SellerServiceTest {
         rent.setSellerId(idSeller);
         rent.setClientId(clientRepository.findById(rentDtoInput.getIdClient()).get());
         rent.setVehicleId(vehicleRepository.findById(rentDtoInput.getIdVehicle()).get());
-        rent.setStartingDate(LocalDateTime.now());
-        rent.setEndingDate(LocalDateTime.from(rent.getStartingDate()).plusDays(5));
+        rent.setStartingDate(rentDtoInput.getStartRent());
+        rent.setEndingDate(rentDtoInput.getEndRent());
         rent.setDailyFee(BigDecimal.valueOf(100));
         rent.setTotalFee(BigDecimal.valueOf(500));
         rent.setIsPaid(true);
@@ -149,6 +149,19 @@ public class SellerServiceTest {
         rentDtoInput.setIdClient(client.getId());
         rentDtoInput.setIdVehicle(vehicle.getId());
         rentDtoInput.setStartRent(LocalDateTime.now());
+        rentDtoInput.setEndRent(LocalDateTime.from(rentDtoInput.getStartRent().plusDays(5)));
+        rentDtoInput.setDailyFee(BigDecimal.valueOf(50));
+        rentDtoInput.setTotalFee(BigDecimal.valueOf(250));
+        rentDtoInput.setIsPaid(true);
+        return rentDtoInput;
+    }
+
+    public RentDtoInput createRentInPastDtoInput(SellerEntity seller, ClientEntity client, VehicleEntity vehicle) {
+        RentDtoInput rentDtoInput = new RentDtoInput();
+        rentDtoInput.setIdSeller(seller.getId());
+        rentDtoInput.setIdClient(client.getId());
+        rentDtoInput.setIdVehicle(vehicle.getId());
+        rentDtoInput.setStartRent(LocalDateTime.parse("2015-08-04T10:11:30"));
         rentDtoInput.setEndRent(LocalDateTime.from(rentDtoInput.getStartRent().plusDays(5)));
         rentDtoInput.setDailyFee(BigDecimal.valueOf(50));
         rentDtoInput.setTotalFee(BigDecimal.valueOf(250));
@@ -344,6 +357,36 @@ public class SellerServiceTest {
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody().getMessage()).isEqualTo("The rent with id " + rent.getId() + " has been deleted");
         assertThat(response.getBody().getRentEntity().getRentStatus()).isEqualTo(RentStatus.DELETED);
+    }
+
+    @Test
+    void NonExistingRentDeletion() {
+        SellerEntity seller = (SellerEntity) createAndSaveSeller();
+        ClientEntity client = (ClientEntity) createAndSaveClient();
+        VehicleEntity vehicle = createAndSaveRentableVehicle();
+        RentDtoInput rentDtoInput = createRentDtoInput(seller, client, vehicle);
+        RentEntity rent = createAndSaveRent(seller, rentDtoInput);
+        RentEntity nonExistingRent = new RentEntity();
+        nonExistingRent.setId(5L);
+
+        ResponseEntity<RentDeletionByIdFromSellerResponse> response = sellerService.deleteRent(5L);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(404);
+        assertThat(response.getBody().getMessage()).isEqualTo("The rent with id " + nonExistingRent.getId() + " can't be deleted.\n" + "Please make sure the selected ID matches an existing rent.");
+    }
+
+    @Test
+    void rentDeletionAfterEndingDateTest() {
+        SellerEntity seller = (SellerEntity) createAndSaveSeller();
+        ClientEntity client = (ClientEntity) createAndSaveClient();
+        VehicleEntity vehicle = createAndSaveRentableVehicle();
+        RentDtoInput rentDtoInput = createRentInPastDtoInput(seller, client, vehicle);
+        RentEntity rent = createAndSaveRent(seller, rentDtoInput);
+
+        ResponseEntity<RentDeletionByIdFromSellerResponse> response = sellerService.deleteRent(rent.getId());
+
+        assertThat(response.getStatusCode().value()).isEqualTo(404);
+        assertThat(response.getBody().getMessage()).isEqualTo("The rent with id " + rent.getId() + " can't be deleted.\n" + "Please make sure the selected ID matches an existing rent.");
     }
 
 }
